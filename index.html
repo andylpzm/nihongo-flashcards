@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nihongo Cards for Chris-kun - A beautiful, interactive Japanese learning application with hiragana, katakana, and vocabulary cards.">
+  <title>Nihongo Cards for Chris-kun</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Floating Background Glows -->
+  <div class="glow-orb orb-pink" aria-hidden="true"></div>
+  <div class="glow-orb orb-cyan" aria-hidden="true"></div>
+
+  <!-- 3D Theme Toggle Blue Cube -->
+  <div class="theme-cube-container" id="theme-toggle-cube" role="button" aria-label="Toggle Light/Dark Mode" tabindex="0">
+    <div class="cube">
+      <div class="cube-face front"></div>
+      <div class="cube-face back"></div>
+      <div class="cube-face right"></div>
+      <div class="cube-face left"></div>
+      <div class="cube-face top"></div>
+      <div class="cube-face bottom"></div>
+    </div>
+  </div>
+
+  <!-- Background Sports Illustrations (Light Mode Only) -->
+  <svg class="court-illustration shuttlecock" viewBox="0 0 100 100" aria-hidden="true">
+    <!-- Cork base -->
+    <path d="M45,75 C45,82 55,82 55,75 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="2.5"/>
+    <path d="M45,75 L55,75" stroke="#38bdf8" stroke-width="2.5"/>
+    <!-- Feathers -->
+    <path d="M30,30 L45,75 L55,75 L70,30 Z" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+    <!-- Ribs -->
+    <path d="M40,30 L47,75" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
+    <path d="M50,30 L50,75" stroke="#38bdf8" stroke-width="1.5"/>
+    <path d="M60,30 L53,75" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
+    <!-- Bands -->
+    <path d="M36,45 L64,45" stroke="#38bdf8" stroke-width="2"/>
+    <path d="M41,60 L59,60" stroke="#38bdf8" stroke-width="2"/>
+  </svg>
+
+  <svg class="court-illustration basketball" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="#f97316" stroke-width="3"/>
+    <!-- Ribs -->
+    <path d="M5,50 L95,50" stroke="#f97316" stroke-width="2.5"/>
+    <path d="M50,5 L50,95" stroke="#f97316" stroke-width="2.5"/>
+    <!-- Curves -->
+    <path d="M19,17 C37,30 37,70 19,83" fill="none" stroke="#f97316" stroke-width="2.5"/>
+    <path d="M81,17 C63,30 63,70 81,83" fill="none" stroke="#f97316" stroke-width="2.5"/>
+  </svg>
+
+  <!-- Main Layout wrapper -->
+  <div class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h2>Nihongo Academy</h2>
+        <span>For Chris-kun 🌸</span>
+      </div>
+      <ul class="sidebar-menu" role="menu">
+        <li class="menu-item active" id="menu-vocabulary" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+          Vocabulary Cards
+        </li>
+        <li class="menu-item" id="menu-hiragana" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-family="'Noto Sans JP', sans-serif" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">あ</text></svg>
+          Learn Hiragana
+        </li>
+        <li class="menu-item" id="menu-katakana" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-family="'Noto Sans JP', sans-serif" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">ア</text></svg>
+          Learn Katakana
+        </li>
+        <li class="menu-item" id="menu-story" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          💍 Story Mode
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="btn-forgotten" id="btn-forgotten-things">forgotten things</button>
+      </div>
+    </aside>
+
+    <!-- Right-side Main Content Panel -->
+    <div class="main-content">
+      
+      <!-- Top Title and Metrics Dashboard -->
+      <header>
+        <div class="logo-section">
+          <h1>Nihongo Cards for Chris-kun</h1>
+        </div>
+
+        <!-- Proposal Progress Dashboard -->
+        <div class="proposal-container" id="proposal-container">
+          <div class="proposal-header">
+            <span class="proposal-title">💍 Proposal Progress</span>
+            <div class="proposal-stats">
+              <span>Total: <strong id="count-total">10</strong></span>
+              <span style="margin-left: 1rem;">Learning: <strong id="count-learning">10</strong></span>
+            </div>
+          </div>
+          <div class="proposal-bar-bg" style="margin-bottom: 0.65rem;">
+            <div class="proposal-bar-fill" id="proposal-bar-fill"></div>
+          </div>
+          <div class="proposal-remaining" id="proposal-remaining">10 words left to master before proposing to Chiyo-chan</div>
+        </div>
+      </header>
+
+      <!-- Mode 1: Vocabulary Workspace -->
+      <section class="section" id="section-vocabulary">
+        <main style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <!-- Return to Story button (Only visible in story study mode) -->
+          <button class="btn hidden" id="btn-back-to-story">
+            ← Return to Story Roadmap
+          </button>
+
+          <!-- 3D Flippable Card Viewport -->
+          <div class="card-viewport" id="card-viewport" role="button" tabindex="0" aria-label="Flashcard. Click to flip.">
+            <div class="flashcard">
+              <!-- Front Face -->
+              <div class="card-face card-front" id="card-front">
+                <!-- Content injected dynamically via JS -->
+              </div>
+              <!-- Back Face -->
+              <div class="card-face card-back" id="card-back">
+                <!-- Content injected dynamically via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Panel -->
+          <div class="controls-container">
+            <!-- Mastered Status Toggle Button -->
+            <div class="status-buttons">
+              <button class="btn-status mastered" id="btn-mastered" title="Mark card as Mastered [M]">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5h-2v-2h2v2zm0-4h-2v-5h2v5z"/></svg>
+                Mark Mastered [M]
+              </button>
+            </div>
+
+            <!-- Navigation & Action Buttons -->
+            <div class="nav-buttons">
+              <button class="btn btn-nav-circle" id="btn-prev" title="Previous card [Left Arrow]" aria-label="Previous card">
+                <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+              </button>
+              
+
+
+              <button class="btn btn-nav-circle" id="btn-next" title="Next card [Right Arrow]" aria-label="Next card">
+                <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </button>
+            </div>
+
+            <!-- Filters & Customization Settings -->
+            <div class="options-row">
+              <div class="options-subrow">
+                <!-- Practice Mode Toggle -->
+                <div class="toggle-group" role="group" aria-label="Practice Mode">
+                  <button class="btn-toggle active" id="toggle-mode-flashcard">Flashcard Mode</button>
+                  <button class="btn-toggle" id="toggle-mode-typing">Typing Mode</button>
+                </div>
+
+                <!-- Progress Filters -->
+                <div class="toggle-group" role="group" aria-label="Card Progress Filter">
+                  <button class="btn-toggle active" id="filter-all">All Cards</button>
+                  <button class="btn-toggle" id="filter-learning">Learning</button>
+                  <button class="btn-toggle" id="filter-mastered">Mastered</button>
+                </div>
+              </div>
+
+              <!-- JLPT Level Filters (Hidden for Hiragana/Katakana) -->
+              <div class="toggle-group" role="group" aria-label="JLPT Level Filter" id="level-filter-group">
+                <button class="btn-toggle active" id="filter-level-all">All Levels</button>
+                <button class="btn-toggle" id="filter-level-n5">N5 Only</button>
+                <button class="btn-toggle" id="filter-level-n4">N4 Only</button>
+              </div>
+            </div>
+            
+            <!-- Typing Input Container (Hidden by default, shown in Typing Mode) -->
+            <div class="typing-container hidden" id="typing-container">
+              <input type="text" id="typing-input" placeholder="Type English translation..." autocomplete="off">
+              <button class="btn btn-primary" id="btn-submit-answer" title="Submit your answer [Enter]">Check</button>
+            </div>
+            <!-- Feedback message display -->
+            <div class="feedback-text" id="feedback-text"></div>
+          </div>
+        </main>
+      </section>
+
+      <!-- Mode 1B: Story Quest Map Workspace -->
+      <section class="section hidden" id="section-story">
+        <div class="kana-section" style="max-width: 800px; width: 100%;">
+          <div class="kana-section-header">
+            <h2>💍 Quest to Propose to Chiyo-chan</h2>
+            <p>Master themed chapters sequentially to unlock story dialogues and win Chiyo-chan's hand in marriage!</p>
+          </div>
+          
+          <div class="story-roadmap" id="story-roadmap">
+            <!-- Programmatically populated quest nodes -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Mode 2: Hiragana Learning Workspace -->
+      <section class="section hidden" id="section-hiragana">
+        <div class="kana-section">
+          <div class="kana-section-header">
+            <h2>Hiragana Academy</h2>
+            <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
+            <button class="btn btn-primary" id="btn-practice-hiragana" style="margin: 1.25rem auto 0;">
+              🌸 Study Hiragana Flashcards
+            </button>
+          </div>
+          <div class="kana-grid-container" id="hiragana-grid-container">
+            <!-- Programmatically populated via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Mode 3: Katakana Learning Workspace -->
+      <section class="section hidden" id="section-katakana">
+        <div class="kana-section">
+          <div class="kana-section-header">
+            <h2>Katakana Academy</h2>
+            <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
+            <button class="btn btn-primary" id="btn-practice-katakana" style="margin: 1.25rem auto 0; background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.8) 100%); box-shadow: 0 4px 15px var(--accent-cyan-glow);">
+              ⚡ Study Katakana Flashcards
+            </button>
+          </div>
+          <div class="kana-grid-container" id="katakana-grid-container">
+            <!-- Programmatically populated via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Keyboard Shortcuts Help Footer -->
+      <footer aria-label="Keyboard Shortcuts">
+        <div>
+          <span class="shortcut-tip"><kbd class="kb-shortcut">Space</kbd>Flip Card</span>
+        </div>
+        <div>
+          <span class="shortcut-tip"><kbd class="kb-shortcut">←</kbd> / <kbd class="kb-shortcut">→</kbd>Prev / Next</span>
+        </div>
+        <div>
+          <span class="shortcut-tip"><kbd class="kb-shortcut">M</kbd>Master Toggle</span>
+        </div>
+
+        <div>
+          <span class="shortcut-tip"><kbd class="kb-shortcut">A</kbd>Pronounce (Audio)</span>
+        </div>
+        <div>
+          <span class="shortcut-tip"><kbd class="kb-shortcut">R</kbd>Toggle Romaji</span>
+        </div>
+      </footer>
+      
+    </div>
+  </div>
+
+  <!-- Story Dialogue Modal Overlay -->
+  <div class="story-modal hidden" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-modal-title">
+    <div class="story-modal-content">
+      <div class="story-modal-header">
+        <h3 id="story-modal-title">Story Dialogue</h3>
+        <button class="btn-close" id="btn-close-story-modal" aria-label="Close story">&times;</button>
+      </div>
+      <div class="story-dialogue-body" id="story-dialogue-body">
+        <!-- Dialog items injected dynamically -->
+      </div>
+      <div class="story-modal-footer">
+        <button class="btn btn-primary" id="btn-close-story-modal-footer">Close Dialogue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Immersive Sky Transition Overlay -->
+  <div class="sky-transition-overlay hidden" id="sky-transition" aria-hidden="true"></div>
+
+  <!-- Forgotten Things Popup (Light Mode Only) -->
+  <div class="forgotten-popup" id="forgotten-popup" aria-label="Forgotten memory" aria-hidden="true">
+    <img src="forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
+  </div>
+
+  <!-- Scripts -->
+  <script src="cards.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
