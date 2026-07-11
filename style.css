@@ -31,6 +31,12 @@
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
 body {
   font-family: 'Outfit', 'Noto Sans JP', sans-serif;
   background-color: var(--bg-primary);
@@ -40,8 +46,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  overflow-x: hidden;
-  position: relative;
+}
+
+/* Decorations Container (Clips overflows on iOS) */
+.decorations-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Background Glowing Orbs */
@@ -946,96 +962,131 @@ footer {
   }
   
   .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-    padding: 0.5rem 4rem 0.5rem 0.5rem; /* compact height, leave space on right for theme cube */
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    position: sticky;
-    top: 0;
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    background: rgba(11, 15, 25, 0.8);
-    box-sizing: border-box;
-    height: 70px;
+    width: 260px !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    background: var(--bg-secondary) !important;
+    border-right: 1px solid var(--glass-border) !important;
+    border-bottom: none !important;
+    padding: 5rem 1.5rem 2rem !important; /* clear header area */
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    z-index: 1020 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow: 15px 0 45px rgba(0, 0, 0, 0.35) !important;
+    box-sizing: border-box !important;
+  }
+
+  body.light-theme .sidebar {
+    background: #ffffff !important;
+    box-shadow: 15px 0 45px rgba(2, 132, 199, 0.08) !important;
+  }
+
+  .sidebar.open {
+    transform: translateX(0) !important;
   }
   
   .sidebar-brand {
-    display: none;
+    display: block !important;
   }
   
   .sidebar-menu {
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-around;
-    gap: 0.25rem;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
     margin: 0;
     padding: 0;
   }
   
   .menu-item {
-    flex-direction: column; /* Stack icons and small text labels */
-    gap: 0.2rem;
-    padding: 0.4rem 0.25rem;
-    font-size: 0.65rem !important; /* compact size to fit on mobile */
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+    flex-direction: row !important;
+    gap: 1rem !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 0.95rem !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
   }
 
   .menu-item svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 20px !important;
+    height: 20px !important;
     margin: 0 !important;
   }
   
   .main-content {
-    padding: 1.5rem 1rem 5rem; /* extra bottom padding for floating actions */
+    padding: 4.5rem 1rem 2rem !important; /* space for fixed hamburger top bar */
   }
 
   .theme-cube-container {
-    position: absolute;
-    top: 1.15rem; /* center cube vertically inside 70px height sidebar */
-    right: 1.25rem;
+    position: fixed !important;
+    top: 1.25rem !important;
+    right: 1.25rem !important;
+    z-index: 1025 !important;
   }
 
-  /* Forgotten Things Floating Button on Mobile with high specificity to override body.light-theme */
-  body.light-theme .sidebar-footer,
-  .sidebar-footer {
-    position: fixed !important;
-    bottom: 1.5rem !important;
-    left: 1.5rem !important;
-    z-index: 1005 !important;
-    width: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  /* Forgotten Things inside Mobile Slide-in Drawer */
+  body.light-theme .sidebar-footer {
     display: block !important;
   }
 
+  .sidebar-footer {
+    position: static !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    padding-top: 1.5rem !important;
+    z-index: auto !important;
+  }
+
   body.light-theme .btn-forgotten {
-    width: auto !important;
-    font-size: 0.7rem !important;
-    background: rgba(255, 255, 255, 0.92) !important;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(2, 132, 199, 0.25) !important;
-    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15) !important;
-    padding: 0.4rem 0.85rem !important;
+    width: 100% !important;
+    font-size: 0.8rem !important;
+    background: transparent !important;
+    border: 1px solid rgba(2, 132, 199, 0.15) !important;
+    box-shadow: none !important;
+    padding: 0.5rem 0.85rem !important;
     text-align: center !important;
+    color: #0f4c81 !important;
   }
 
   .forgotten-popup {
-    bottom: 4.5rem !important;
-    left: 1.5rem !important;
-    width: 180px !important;
-    height: 180px !important;
+    position: fixed !important;
+    bottom: 5.5rem !important;
+    left: 2rem !important;
+    width: 220px !important;
+    height: 220px !important;
+    z-index: 1030 !important;
   }
 
-  body.light-theme::before {
+  body.light-theme .main-content::before {
     height: 90px !important; /* half height court net on mobile screens */
+  }
+
+  /* Sports Illustrations on Mobile (Centered in corners of viewport) */
+  body.light-theme .court-illustration {
+    display: block !important;
+    position: fixed !important;
+  }
+
+  body.light-theme .shuttlecock {
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+    width: 60px !important;
+    height: 60px !important;
+    opacity: 0.22 !important;
+  }
+
+  body.light-theme .basketball {
+    top: 5.5rem !important;
+    left: 1.5rem !important; /* on mobile, float under hamburger menu */
+    width: 45px !important;
+    height: 45px !important;
+    opacity: 0.22 !important;
   }
 }
 
@@ -1466,7 +1517,7 @@ body.light-theme {
 }
 
 /* Background Tennis/Badminton Net Grid Overlay (Light Mode Only) */
-body.light-theme::before {
+body.light-theme .main-content::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -1941,12 +1992,7 @@ body.light-theme .basketball {
   100% { transform: translateY(-8px) rotate(32deg); }
 }
 
-/* Hide sports drawings on tablets/mobile to avoid overlapping interface buttons */
-@media (max-width: 950px) {
-  body.light-theme .court-illustration {
-    display: none !important;
-  }
-}
+/* Removed desktop-only hide media query to let sports illustrations show in scaled format on mobile */
 /* ==================== SKY TRANSITION OVERLAY ==================== */
 .sky-transition-overlay {
   position: fixed;
