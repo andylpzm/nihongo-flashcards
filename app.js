@@ -1080,7 +1080,7 @@ function renderStoryRoadmap() {
     }
 
     node.innerHTML = `
-      <div class="story-node-info">
+      <div class="story-node-info ${isLocked ? 'spoiler-locked' : ''}">
         <div class="story-node-header">
           <h4 class="story-node-title">${chapter.title}</h4>
           <span class="story-node-badge ${badgeClass}">${badgeText}</span>
@@ -1088,10 +1088,23 @@ function renderStoryRoadmap() {
         <p class="story-node-desc">${chapter.description}</p>
         ${!isLocked ? `<div class="story-node-progress">Mastery Progress: ${percent}%</div>` : ''}
       </div>
+      ${isLocked ? `
+      <div class="spoiler-overlay-text">
+        <span>🤫 Spoiler Blocked - Tap to Reveal</span>
+      </div>
+      ` : ''}
       <div class="story-node-actions">
         ${actionsHtml}
       </div>
     `;
+
+    if (isLocked) {
+      node.addEventListener('click', (e) => {
+        // Do not toggle spoiler if they clicked inside the locked action button area
+        if (e.target.closest('.story-node-actions')) return;
+        node.classList.toggle('revealed');
+      });
+    }
 
     storyRoadmap.appendChild(node);
   });
@@ -1218,23 +1231,23 @@ function toggleTheme() {
         try {
           localStorage.setItem('nihongo_theme', 'light');
         } catch (e) {}
-      }, 700);
+      }, 400);
       
       // Step 3: Bleach sky and clouds to white
       setTimeout(() => {
         overlay.classList.add('fade-to-white');
-      }, 1200);
+      }, 700);
       
       // Step 4: Fade out the overlay to reveal the new theme
       setTimeout(() => {
         overlay.classList.remove('active');
-      }, 1800);
+      }, 1100);
       
       // Step 5: Put overlay back to hidden
       setTimeout(() => {
         overlay.classList.add('hidden');
         overlay.classList.remove('fade-to-white');
-      }, 2300);
+      }, 1500);
     } else {
       isLightTheme = true;
       document.body.classList.add('light-theme');

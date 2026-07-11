@@ -2004,8 +2004,10 @@ body.light-theme .basketball {
   background: radial-gradient(circle at 75% 25%, #ffffff 0%, #e0f2fe 18%, #38bdf8 52%, #0284c7 100%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.3s ease; /* optimized speed (was 0.5s) */
   overflow: hidden;
+  will-change: opacity; /* iOS GPU acceleration */
+  transform: translate3d(0,0,0); /* iOS GPU acceleration */
 }
 
 .sky-transition-overlay::after {
@@ -2017,8 +2019,9 @@ body.light-theme .basketball {
   height: 100%;
   background: #ffffff;
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 0.4s ease-in-out; /* optimized speed (was 0.8s) */
   pointer-events: none;
+  will-change: opacity; /* iOS GPU acceleration */
 }
 
 .sky-transition-overlay.active {
@@ -2028,6 +2031,59 @@ body.light-theme .basketball {
 
 .sky-transition-overlay.fade-to-white::after {
   opacity: 1;
+}
+
+/* ==================== STORY MODE SPOILER BLOCKS ==================== */
+.story-node.locked {
+  cursor: pointer;
+  position: relative;
+}
+
+.spoiler-locked {
+  filter: blur(6px);
+  opacity: 0.35;
+  pointer-events: none;
+  transition: filter 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+}
+
+.spoiler-overlay-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  background: rgba(11, 15, 25, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #38bdf8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+body.light-theme .spoiler-overlay-text {
+  background: rgba(255, 255, 255, 0.45);
+  color: #0284c7;
+}
+
+.story-node.locked.revealed .spoiler-locked {
+  filter: blur(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.story-node.locked.revealed .spoiler-overlay-text {
+  opacity: 0;
+  pointer-events: none;
 }
 /* ==================== FORGOTTEN THINGS EASTER EGG ==================== */
 .sidebar-footer {
