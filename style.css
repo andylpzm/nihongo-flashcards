@@ -35,12 +35,12 @@ body {
   font-family: 'Outfit', 'Noto Sans JP', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  overflow: hidden;
+  overflow-x: hidden;
   position: relative;
 }
 
@@ -743,9 +743,8 @@ footer {
 /* App Layout Container */
 .app-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
-  overflow: hidden;
 }
 
 .sidebar {
@@ -760,8 +759,6 @@ footer {
   gap: 2.5rem;
   flex-shrink: 0;
   z-index: 50;
-  height: 100vh;
-  box-sizing: border-box;
 }
 
 .sidebar-brand h2 {
@@ -840,10 +837,9 @@ footer {
   flex-direction: column;
   align-items: center;
   padding: 1.5rem 2rem;
-  height: 100vh;
-  overflow-y: auto;
   position: relative;
   box-sizing: border-box;
+  width: 100%;
 }
 
 /* Sections visibility toggles */
@@ -953,7 +949,7 @@ footer {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 4.5rem 1.25rem 1rem; /* leave space for the theme cube on the right */
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -963,6 +959,7 @@ footer {
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
     background: rgba(11, 15, 25, 0.8);
+    box-sizing: border-box;
   }
   
   .sidebar-brand {
@@ -977,14 +974,52 @@ footer {
   }
   
   .menu-item {
-    padding: 0.65rem 0.85rem;
-    font-size: 0.85rem;
+    padding: 0.65rem 0.5rem;
+    font-size: 0.8rem;
     flex: 1;
     justify-content: center;
   }
   
   .main-content {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem 5rem; /* extra bottom padding for floating actions */
+  }
+
+  .theme-cube-container {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+  }
+
+  /* Forgotten Things Floating Button on Mobile */
+  .sidebar-footer {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    z-index: 1005;
+    width: auto;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.light-theme .btn-forgotten {
+    width: auto;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(2, 132, 199, 0.25);
+    box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
+    padding: 0.4rem 0.85rem;
+  }
+
+  .forgotten-popup {
+    bottom: 4.25rem;
+    left: 1.25rem;
+    width: 180px;
+    height: 180px;
+  }
+
+  body.light-theme::before {
+    height: 90px !important; /* half height court net on mobile screens */
   }
 }
 
@@ -2002,4 +2037,27 @@ body.light-theme .btn-forgotten:hover {
   border-color: #0284c7;
   color: #0284c7;
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+
+/* ==================== DESKTOP HEIGHT SCROLL LOCK ==================== */
+@media (min-width: 769px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .app-layout {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .sidebar {
+    height: 100vh;
+    box-sizing: border-box;
+  }
+  
+  .main-content {
+    height: 100vh;
+    overflow-y: auto;
+  }
 }
