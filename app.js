@@ -370,6 +370,44 @@ function setupEventListeners() {
     FeedbackAudio.init();
   }, { once: true });
 
+  // Hamburger Menu drawer logic for mobile
+  const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+  const sidebarElement = document.querySelector('.sidebar');
+  const sidebarMenuItems = document.querySelectorAll('.sidebar .menu-item');
+
+  if (hamburgerBtn && sidebarElement) {
+    const toggleSidebar = () => {
+      hamburgerBtn.classList.toggle('active');
+      sidebarElement.classList.toggle('open');
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.toggle('active');
+      }
+    };
+
+    const closeSidebar = () => {
+      hamburgerBtn.classList.remove('active');
+      sidebarElement.classList.remove('open');
+      if (sidebarOverlay) {
+        sidebarOverlay.classList.remove('active');
+      }
+    };
+
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSidebar();
+    });
+
+    if (sidebarOverlay) {
+      sidebarOverlay.addEventListener('click', closeSidebar);
+    }
+
+    // Auto-close drawer when selecting a section
+    sidebarMenuItems.forEach(item => {
+      item.addEventListener('click', closeSidebar);
+    });
+  }
+
   // Keyboard Shortcuts
   document.addEventListener('keydown', handleKeyboardShortcuts);
 }
@@ -1138,15 +1176,11 @@ let isLightTheme = false;
 // Initialize theme from localStorage
 function initTheme() {
   try {
-    const savedTheme = localStorage.getItem('nihongo_theme');
-    if (savedTheme === 'light') {
-      isLightTheme = true;
-      document.body.classList.add('light-theme');
-      syncCubeRotation();
-    }
-  } catch (e) {
-    console.warn("Could not load theme from localStorage:", e);
-  }
+    localStorage.removeItem('nihongo_theme');
+  } catch (e) {}
+  isLightTheme = false;
+  document.body.classList.remove('light-theme');
+  syncCubeRotation();
 }
 
 // Sync cube 3D rotation based on active theme state

@@ -2077,3 +2077,139 @@ body.light-theme .btn-forgotten:hover {
     overflow-y: auto;
   }
 }
+/* ==================== MOBILE HAMBURGER DRAWER SYSTEM ==================== */
+@media (max-width: 768px) {
+  /* Hamburger Button */
+  .hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1025; /* above sidebar overlay and card elements */
+    position: fixed;
+    top: 1.5rem;
+    left: 1.5rem;
+  }
+
+  .hamburger-menu span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text-primary);
+    border-radius: 99px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Hamburger transform animation to X */
+  .hamburger-menu.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger-menu.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  /* Light theme color for hamburger bars */
+  body.light-theme .hamburger-menu span {
+    background-color: #0f4c81;
+  }
+
+  /* Translucent backdrop overlay */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1015;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Slide-in Sidebar layout */
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    height: 100vh !important;
+    width: 260px !important;
+    background: var(--bg-secondary) !important;
+    border-right: 1px solid var(--glass-border) !important;
+    border-bottom: none !important;
+    padding: 5rem 1.5rem 2rem !important; /* spacing to clear top header area */
+    flex-direction: column !important;
+    gap: 2.5rem !important;
+    z-index: 1020 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    box-shadow: 15px 0 45px rgba(0, 0, 0, 0.35) !important;
+    box-sizing: border-box !important;
+  }
+
+  body.light-theme .sidebar {
+    background: #ffffff !important;
+    box-shadow: 15px 0 45px rgba(2, 132, 199, 0.08) !important;
+  }
+
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-brand {
+    display: block !important;
+  }
+
+  .sidebar-menu {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 1.5rem !important;
+    align-items: flex-start !important;
+  }
+
+  .menu-item {
+    flex-direction: row !important;
+    gap: 1rem !important;
+    padding: 0.8rem 1rem !important;
+    font-size: 0.95rem !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+
+  .menu-item svg {
+    width: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+  }
+
+  /* Fixed Theme Toggler stays in top-right */
+  .theme-cube-container {
+    position: fixed !important;
+    top: 1.25rem !important;
+    right: 1.25rem !important;
+    z-index: 1025 !important;
+  }
+
+  /* Reset layout parameters in main-content */
+  .main-content {
+    padding: 4.5rem 1rem 2rem !important;
+  }
+}
