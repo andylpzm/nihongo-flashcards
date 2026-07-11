@@ -1080,31 +1080,20 @@ function renderStoryRoadmap() {
     }
 
     node.innerHTML = `
-      <div class="story-node-info ${isLocked ? 'spoiler-locked' : ''}">
+      <div class="story-node-info">
         <div class="story-node-header">
-          <h4 class="story-node-title">${chapter.title}</h4>
+          <h4 class="story-node-title">${isLocked ? `Chapter ${chapter.id}: Locked 🔒` : chapter.title}</h4>
           <span class="story-node-badge ${badgeClass}">${badgeText}</span>
         </div>
-        <p class="story-node-desc">${chapter.description}</p>
+        <p class="story-node-desc">
+          ${isLocked ? 'Master the previous chapters to unlock this story quest.' : chapter.description}
+        </p>
         ${!isLocked ? `<div class="story-node-progress">Mastery Progress: ${percent}%</div>` : ''}
       </div>
-      ${isLocked ? `
-      <div class="spoiler-overlay-text">
-        <span>🤫 Spoiler Blocked - Tap to Reveal</span>
-      </div>
-      ` : ''}
       <div class="story-node-actions">
         ${actionsHtml}
       </div>
     `;
-
-    if (isLocked) {
-      node.addEventListener('click', (e) => {
-        // Do not toggle spoiler if they clicked inside the locked action button area
-        if (e.target.closest('.story-node-actions')) return;
-        node.classList.toggle('revealed');
-      });
-    }
 
     storyRoadmap.appendChild(node);
   });
