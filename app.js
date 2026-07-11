@@ -259,11 +259,18 @@ function setupEventListeners() {
   cardViewport.addEventListener('click', flipCard);
 
   // Nav buttons
-  prevBtn.addEventListener('click', prevCard);
-  nextBtn.addEventListener('click', nextCard);
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    prevCard();
+  });
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    nextCard();
+  });
 
   // Mastered status toggle
   masteredToggleBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     e.stopPropagation(); // Avoid flipping the card when clicking the button on back face
     toggleMastered();
   });

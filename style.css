@@ -1088,6 +1088,60 @@ footer {
     height: 45px !important;
     opacity: 0.22 !important;
   }
+
+  /* Compact layout spacing for mobile to prevent scroll overflow */
+  header h1 {
+    font-size: 1.6rem !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .proposal-container {
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .proposal-stats {
+    gap: 0.5rem !important;
+  }
+
+  .proposal-title {
+    font-size: 0.95rem !important;
+  }
+
+  .proposal-desc {
+    font-size: 0.75rem !important;
+    margin-top: 0.4rem !important;
+  }
+
+  .card-viewport {
+    margin: 0.5rem 0 0.75rem !important;
+  }
+
+  .btn-status {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .nav-buttons {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .options-row {
+    margin-top: 0.5rem !important;
+    gap: 0.4rem !important;
+  }
+
+  .btn-pill {
+    padding: 0.3rem 0.65rem !important;
+    font-size: 0.7rem !important;
+  }
+
+  header {
+    padding: 1rem 1rem 0.5rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* Story Mode Active Sidebar tab styling */
