@@ -913,12 +913,24 @@ function speakJapanese(text) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel(); // Stop current speech
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ja-JP';
-    
     // Prioritize female Japanese voices across operating systems
     const voices = window.speechSynthesis.getVoices();
     const jaVoices = voices.filter(voice => voice.lang.toLowerCase().includes('ja'));
+    
+    // Firefox/Zen Fallback: If no Japanese voice pack is installed on the host OS
+    if (jaVoices.length === 0) {
+      try {
+        const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=ja&client=tw-ob&q=${encodeURIComponent(text)}`;
+        const audio = new Audio(fallbackUrl);
+        audio.play().catch(e => console.warn("Google TTS fallback failed:", e));
+      } catch (e) {
+        console.warn("Could not play fallback audio:", e);
+      }
+      return;
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'ja-JP';
     
     // Known female voice keywords: Kyoko (macOS), Haruka/Ayumi (Windows), Siri, Google
     const femaleKeywords = ['kyoko', 'haruka', 'ayumi', 'siri', 'google', 'female'];
