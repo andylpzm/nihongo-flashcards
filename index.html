@@ -324,7 +324,7 @@
       <div class="drawer-header">
         <div class="drawer-title-block">
           <h3>Filter Vocabulary</h3>
-          <p class="drawer-tip">Double-click or double-tap a category to study it exclusively</p>
+          <p class="drawer-tip">Tap a category to toggle, or tap <span style="font-weight:700;">[only]</span> to isolate it</p>
         </div>
         <button class="btn-close-drawer" id="btn-close-drawer" aria-label="Close Filters">&times;</button>
       </div>
@@ -334,10 +334,22 @@
         <div class="filter-section">
           <h4 class="filter-section-title">Word Types</h4>
           <div class="filter-grid types-grid" id="drawer-types-grid">
-            <button class="filter-chip-btn active" data-type="nouns">Nouns (名詞)</button>
-            <button class="filter-chip-btn active" data-type="verbs">Verbs (動詞)</button>
-            <button class="filter-chip-btn active" data-type="adjectives">Adjectives (形容詞)</button>
-            <button class="filter-chip-btn active" data-type="misc">Miscellaneous (その他)</button>
+            <button class="filter-chip-btn active" data-type="nouns">
+              <span>Nouns (名詞)</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-type="verbs">
+              <span>Verbs (動詞)</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-type="adjectives">
+              <span>Adjectives (形容詞)</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-type="misc">
+              <span>Miscellaneous (その他)</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
           </div>
         </div>
         
@@ -345,16 +357,46 @@
         <div class="filter-section">
           <h4 class="filter-section-title">Topics</h4>
           <div class="filter-grid topics-grid" id="drawer-topics-grid">
-            <button class="filter-chip-btn active" data-topic="numbers">Numbers & Counters</button>
-            <button class="filter-chip-btn active" data-topic="calendar">Calendar & Dates</button>
-            <button class="filter-chip-btn active" data-topic="time">Time & Hours</button>
-            <button class="filter-chip-btn active" data-topic="body">Body & Health</button>
-            <button class="filter-chip-btn active" data-topic="food">Food & Dining</button>
-            <button class="filter-chip-btn active" data-topic="family">Family & Social</button>
-            <button class="filter-chip-btn active" data-topic="school">School & Study</button>
-            <button class="filter-chip-btn active" data-topic="travel">Travel & Places</button>
-            <button class="filter-chip-btn active" data-topic="weather">Weather & Seasons</button>
-            <button class="filter-chip-btn active" data-topic="other">General / Others</button>
+            <button class="filter-chip-btn active" data-topic="numbers">
+              <span>Numbers & Counters</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="calendar">
+              <span>Calendar & Dates</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="time">
+              <span>Time & Hours</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="body">
+              <span>Body & Health</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="food">
+              <span>Food & Dining</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="family">
+              <span>Family & Social</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="school">
+              <span>School & Study</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="travel">
+              <span>Travel & Places</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="weather">
+              <span>Weather & Seasons</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
+            <button class="filter-chip-btn active" data-topic="other">
+              <span>General / Others</span>
+              <span class="btn-isolate-only">only</span>
+            </button>
           </div>
         </div>
       </div>

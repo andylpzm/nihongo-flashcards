@@ -1140,19 +1140,54 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   font-size: 0.8rem;
   font-family: 'Outfit', sans-serif;
   font-weight: 500;
-  padding: 0.7rem 0.9rem;
+  padding: 0.65rem 0.8rem;
   cursor: pointer;
   outline: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-align: center;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   user-select: none;
+  -webkit-user-select: none; /* Prevent text selection context menus on mobile long-presses */
+  -moz-user-select: none;
+  -ms-user-select: none;
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* Dedicated Only Isolation Badge */
+.btn-isolate-only {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+body.light-theme .btn-isolate-only {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.filter-chip-btn.active .btn-isolate-only {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+body.light-theme .filter-chip-btn.active .btn-isolate-only {
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.btn-isolate-only:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+  transform: scale(1.05);
 }
 
 body.light-theme .filter-chip-btn {

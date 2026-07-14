@@ -371,17 +371,20 @@ function setupEventListeners() {
     });
   }
 
-  // Bind click/double-click action events to Word Type chips
+  // Bind click action events to Word Type chips (single tap toggles, tapping [only] isolates)
   if (filterModalOverlay) {
     const typeBtns = filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn');
     typeBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
-        if (e.detail === 2) {
-          // Double Click: Isolate this category
+        const isOnlyTarget = e.target.classList.contains('btn-isolate-only') || e.target.closest('.btn-isolate-only');
+        
+        if (isOnlyTarget) {
+          e.stopPropagation();
+          // Isolate this category
           typeBtns.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
         } else {
-          // Single Click: Toggle active status (enforcing at least one remains active)
+          // Normal toggle (enforcing at least one remains active)
           const activeBtns = Array.from(typeBtns).filter(b => b.classList.contains('active'));
           if (btn.classList.contains('active')) {
             if (activeBtns.length <= 1) return; // Ignore deactivating the last active type
@@ -393,16 +396,19 @@ function setupEventListeners() {
       });
     });
 
-    // Bind click/double-click action events to Topic chips
+    // Bind click action events to Topic chips (single tap toggles, tapping [only] isolates)
     const topicBtns = filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn');
     topicBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
-        if (e.detail === 2) {
-          // Double Click: Isolate this category
+        const isOnlyTarget = e.target.classList.contains('btn-isolate-only') || e.target.closest('.btn-isolate-only');
+        
+        if (isOnlyTarget) {
+          e.stopPropagation();
+          // Isolate this category
           topicBtns.forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
         } else {
-          // Single Click: Toggle active status
+          // Normal toggle
           btn.classList.toggle('active');
         }
       });
