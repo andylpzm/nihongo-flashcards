@@ -1154,6 +1154,7 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   align-items: center;
   justify-content: center;
   text-align: center;
+  touch-action: manipulation; /* Disable double-tap-to-zoom delays on these buttons */
 }
 
 body.light-theme .filter-chip-btn {

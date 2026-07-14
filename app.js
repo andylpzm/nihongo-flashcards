@@ -374,19 +374,18 @@ function setupEventListeners() {
   // Helper to bind desktop double-clicks and mobile touch long-presses to filter chips
   function bindIsolateGesture(btn, typeOrTopic, siblingButtons) {
     let touchTimer = null;
-    let isLongPress = false;
+    let lastLongPressTime = 0;
     let startX = 0;
     let startY = 0;
 
     // Mobile touchstart event
     btn.addEventListener('touchstart', (e) => {
-      isLongPress = false;
       const touch = e.touches[0];
       startX = touch.clientX;
       startY = touch.clientY;
 
       touchTimer = setTimeout(() => {
-        isLongPress = true;
+        lastLongPressTime = Date.now();
         // Vibration pulse feedback
         if ('vibrate' in navigator) {
           navigator.vibrate(50);
@@ -406,12 +405,8 @@ function setupEventListeners() {
     });
 
     // Handle touchend
-    btn.addEventListener('touchend', (e) => {
+    btn.addEventListener('touchend', () => {
       clearTimeout(touchTimer);
-      if (isLongPress) {
-        // Prevent click/toggle from firing instantly upon release
-        e.preventDefault();
-      }
     });
 
     btn.addEventListener('touchcancel', () => {
@@ -420,8 +415,8 @@ function setupEventListeners() {
 
     // Pointer click event
     btn.addEventListener('click', (e) => {
-      if (isLongPress) {
-        isLongPress = false;
+      // If a touch long-press just fired within the last 1000ms, suppress this click trigger
+      if (Date.now() - lastLongPressTime < 1000) {
         return;
       }
 
