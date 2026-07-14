@@ -371,48 +371,88 @@ function setupEventListeners() {
     });
   }
 
-  // Bind click action events to Word Type chips (single tap toggles, tapping [only] isolates)
-  if (filterModalOverlay) {
-    const typeBtns = filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn');
-    typeBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const isOnlyTarget = e.target.classList.contains('btn-isolate-only') || e.target.closest('.btn-isolate-only');
-        
-        if (isOnlyTarget) {
-          e.stopPropagation();
-          // Isolate this category
-          typeBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        } else {
-          // Normal toggle (enforcing at least one remains active)
-          const activeBtns = Array.from(typeBtns).filter(b => b.classList.contains('active'));
+  // Helper to bind desktop double-clicks and mobile touch long-presses to filter chips
+  function bindIsolateGesture(btn, typeOrTopic, siblingButtons) {
+    let touchTimer = null;
+    let isLongPress = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Mobile touchstart event
+    btn.addEventListener('touchstart', (e) => {
+      isLongPress = false;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+
+      touchTimer = setTimeout(() => {
+        isLongPress = true;
+        // Vibration pulse feedback
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
+        // Isolate this chip
+        siblingButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }, 600); // 600ms long-press threshold
+    }, { passive: true });
+
+    // Cancel timer if finger drags/scrolls
+    btn.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      if (Math.abs(touch.clientX - startX) > 10 || Math.abs(touch.clientY - startY) > 10) {
+        clearTimeout(touchTimer);
+      }
+    });
+
+    // Handle touchend
+    btn.addEventListener('touchend', (e) => {
+      clearTimeout(touchTimer);
+      if (isLongPress) {
+        // Prevent click/toggle from firing instantly upon release
+        e.preventDefault();
+      }
+    });
+
+    btn.addEventListener('touchcancel', () => {
+      clearTimeout(touchTimer);
+    });
+
+    // Pointer click event
+    btn.addEventListener('click', (e) => {
+      if (isLongPress) {
+        isLongPress = false;
+        return;
+      }
+
+      if (e.detail === 2) {
+        // Desktop Double Click: Isolate
+        siblingButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        // Single Click: Toggle
+        if (typeOrTopic === 'type') {
+          const activeBtns = Array.from(siblingButtons).filter(b => b.classList.contains('active'));
           if (btn.classList.contains('active')) {
-            if (activeBtns.length <= 1) return; // Ignore deactivating the last active type
+            if (activeBtns.length <= 1) return; // Prevent empty Word Types
             btn.classList.remove('active');
           } else {
             btn.classList.add('active');
           }
-        }
-      });
-    });
-
-    // Bind click action events to Topic chips (single tap toggles, tapping [only] isolates)
-    const topicBtns = filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn');
-    topicBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const isOnlyTarget = e.target.classList.contains('btn-isolate-only') || e.target.closest('.btn-isolate-only');
-        
-        if (isOnlyTarget) {
-          e.stopPropagation();
-          // Isolate this category
-          topicBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
         } else {
-          // Normal toggle
           btn.classList.toggle('active');
         }
-      });
+      }
     });
+  }
+
+  // Bind type and topic elements
+  if (filterModalOverlay) {
+    const typeBtns = filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn');
+    typeBtns.forEach(btn => bindIsolateGesture(btn, 'type', typeBtns));
+
+    const topicBtns = filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn');
+    topicBtns.forEach(btn => bindIsolateGesture(btn, 'topic', topicBtns));
   }
 
   // Clear all category filters (deactivate all topics, leave nouns active for type)
