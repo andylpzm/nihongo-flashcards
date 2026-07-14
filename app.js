@@ -178,6 +178,7 @@ const filterMasteredBtn = document.getElementById('filter-mastered');
 
 // JLPT Level filter toggles
 const levelFilterGroup = document.getElementById('level-filter-group');
+const vocabDropdownFilters = document.getElementById('vocab-dropdown-filters');
 const filterLevelAllBtn = document.getElementById('filter-level-all');
 const filterLevelN5Btn = document.getElementById('filter-level-n5');
 const filterLevelN4Btn = document.getElementById('filter-level-n4');
@@ -226,6 +227,38 @@ const gojuonLayout = [
   "wa", null, null, null, "wo",
   "n", null, null, null, null
 ];
+
+// Voiced (Dakuon/Handakuon) Row Layout Template (G, Z, D, B, P rows)
+const voicedLayout = [
+  "ga", "gi", "gu", "ge", "go",
+  "za", "ji", "zu", "ze", "zo",
+  "da", "dji", "dzu", "de", "do",
+  "ba", "bi", "bu", "be", "bo",
+  "pa", "pi", "pu", "pe", "po"
+];
+
+// Contracted (Yōon) Layout Template (3-column layout)
+const combosLayout = [
+  "kya", "kyu", "kyo",
+  "sha", "shu", "sho",
+  "cha", "chu", "cho",
+  "nya", "nyu", "nyo",
+  "hya", "hyu", "hyo",
+  "mya", "myu", "myo",
+  "rya", "ryu", "ryo",
+  "gya", "gyu", "gyo",
+  "ja", "ju", "jo",
+  "bya", "byu", "byo",
+  "pya", "pyu", "pyo"
+];
+
+// Variation Active Tab States
+let activeHiraganaTab = 'basic';
+let activeKatakanaTab = 'basic';
+
+// Vocabulary Category & Context Filter States
+let vocabTypeFilter = 'all';
+let vocabTopicFilter = 'all';
 
 const deckTitleMap = {
   vocabulary: "Vocabulary Deck",
@@ -284,6 +317,26 @@ function setupEventListeners() {
   filterLevelAllBtn.addEventListener('click', () => changeLevelFilter('all'));
   filterLevelN5Btn.addEventListener('click', () => changeLevelFilter('N5'));
   filterLevelN4Btn.addEventListener('click', () => changeLevelFilter('N4'));
+
+  // Vocabulary dropdown select change listeners
+  const filterVocabTypeSelect = document.getElementById('filter-vocab-type');
+  const filterVocabTopicSelect = document.getElementById('filter-vocab-topic');
+  if (filterVocabTypeSelect) {
+    filterVocabTypeSelect.addEventListener('change', (e) => {
+      vocabTypeFilter = e.target.value;
+      currentIndex = 0;
+      applyFiltersAndShuffle();
+      renderCard();
+    });
+  }
+  if (filterVocabTopicSelect) {
+    filterVocabTopicSelect.addEventListener('change', (e) => {
+      vocabTopicFilter = e.target.value;
+      currentIndex = 0;
+      applyFiltersAndShuffle();
+      renderCard();
+    });
+  }
 
   // Practice Mode toggles
   modeFlashcardBtn.addEventListener('click', () => setPracticeMode('flashcard'));
@@ -354,6 +407,48 @@ function setupEventListeners() {
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
     loadDeck('katakana');
     switchSection('vocabulary', 'katakana');
+  });
+
+  // Hiragana Tab Event Listeners
+  const hiraganaTabBtns = document.querySelectorAll('#hiragana-tabs .btn-chart-tab');
+  hiraganaTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      hiraganaTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeHiraganaTab = btn.dataset.tab;
+      
+      // Update Practice Button Text dynamically
+      if (activeHiraganaTab === 'basic') {
+        btnPracticeHiragana.textContent = '🌸 Study Hiragana Flashcards';
+      } else if (activeHiraganaTab === 'voiced') {
+        btnPracticeHiragana.textContent = '🌸 Study Voiced Hiragana';
+      } else {
+        btnPracticeHiragana.textContent = '🌸 Study Combo Hiragana';
+      }
+      
+      renderKanaGrid('hiragana');
+    });
+  });
+
+  // Katakana Tab Event Listeners
+  const katakanaTabBtns = document.querySelectorAll('#katakana-tabs .btn-chart-tab');
+  katakanaTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      katakanaTabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeKatakanaTab = btn.dataset.tab;
+      
+      // Update Practice Button Text dynamically
+      if (activeKatakanaTab === 'basic') {
+        btnPracticeKatakana.textContent = '⚡ Study Katakana Flashcards';
+      } else if (activeKatakanaTab === 'voiced') {
+        btnPracticeKatakana.textContent = '⚡ Study Voiced Katakana';
+      } else {
+        btnPracticeKatakana.textContent = '⚡ Study Combo Katakana';
+      }
+      
+      renderKanaGrid('katakana');
+    });
   });
 
   // Forgotten Things Easter Egg listeners (Circular popup popup from bottom-left corner)
@@ -474,15 +569,35 @@ function loadDeck(deckName) {
   if (deckName === 'vocabulary') {
     cards = [...initialCards];
     if (levelFilterGroup) levelFilterGroup.classList.remove('hidden');
+    if (vocabDropdownFilters) vocabDropdownFilters.classList.remove('hidden');
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
   } else {
     if (deckName === 'hiragana') {
-      cards = [...hiraganaAlphabet];
+      if (activeHiraganaTab === 'basic') {
+        cards = [...hiraganaAlphabet];
+        deckTitleMap.hiragana = "Hiragana (Basic)";
+      } else if (activeHiraganaTab === 'voiced') {
+        cards = [...hiraganaVoiced];
+        deckTitleMap.hiragana = "Hiragana (Voiced)";
+      } else {
+        cards = [...hiraganaCombos];
+        deckTitleMap.hiragana = "Hiragana (Combos)";
+      }
     } else if (deckName === 'katakana') {
-      cards = [...katakanaAlphabet];
+      if (activeKatakanaTab === 'basic') {
+        cards = [...katakanaAlphabet];
+        deckTitleMap.katakana = "Katakana (Basic)";
+      } else if (activeKatakanaTab === 'voiced') {
+        cards = [...katakanaVoiced];
+        deckTitleMap.katakana = "Katakana (Voiced)";
+      } else {
+        cards = [...katakanaCombos];
+        deckTitleMap.katakana = "Katakana (Combos)";
+      }
     }
-    // Hide level filter for non-vocabulary decks and reset filter
+    // Hide level and category filters for non-vocabulary decks and reset filters
     if (levelFilterGroup) levelFilterGroup.classList.add('hidden');
+    if (vocabDropdownFilters) vocabDropdownFilters.classList.add('hidden');
     levelFilter = 'all';
     if (filterLevelAllBtn) filterLevelAllBtn.classList.add('active');
     if (filterLevelN5Btn) filterLevelN5Btn.classList.remove('active');
@@ -504,9 +619,28 @@ function renderKanaGrid(type) {
   if (!container) return;
 
   container.innerHTML = '';
-  const alphabet = type === 'hiragana' ? hiraganaAlphabet : katakanaAlphabet;
+  
+  // Determine active tab state
+  const activeTab = type === 'hiragana' ? activeHiraganaTab : activeKatakanaTab;
+  
+  let alphabet;
+  let layout;
+  
+  if (activeTab === 'basic') {
+    alphabet = type === 'hiragana' ? hiraganaAlphabet : katakanaAlphabet;
+    layout = gojuonLayout;
+    container.classList.remove('combos-layout');
+  } else if (activeTab === 'voiced') {
+    alphabet = type === 'hiragana' ? hiraganaVoiced : katakanaVoiced;
+    layout = voicedLayout;
+    container.classList.remove('combos-layout');
+  } else {
+    alphabet = type === 'hiragana' ? hiraganaCombos : katakanaCombos;
+    layout = combosLayout;
+    container.classList.add('combos-layout');
+  }
 
-  gojuonLayout.forEach(romaji => {
+  layout.forEach(romaji => {
     const cell = document.createElement('div');
     
     if (romaji === null) {
@@ -745,12 +879,95 @@ function changeLevelFilter(level) {
   renderCard();
 }
 
+// Classify vocabulary word type (Noun, Verb, Adjective, Phrase)
+function getWordType(card) {
+  if (!card) return 'other';
+  const hiragana = card.hiragana || '';
+  const english = (card.english || '').toLowerCase();
+  const notes = (card.notes || '').toLowerCase();
+
+  if (english.startsWith('to ') || notes.includes('verb')) {
+    return 'verbs';
+  }
+
+  // Detect Adjectives (i-adjectives ending in "i" except common noun outliers, and specific na-adjectives)
+  const nounBlacklist = ['もんだい', 'おてあらい', 'はい', 'けいたい', 'きょうだい', 'しゃかい', 'じしん', 'せいかつ', 'せかい', 'ちり', 'へや', 'みらい', 'めいし'];
+  const adjKeywords = ['hot', 'cold', 'warm', 'cool', 'big', 'small', 'large', 'new', 'old', 'good', 'bad', 'difficult', 'easy', 'expensive', 'cheap', 'busy', 'dirty', 'kind', 'famous', 'lively', 'quiet', 'clean', 'healthy', 'convenient', 'delicious', 'interesting', 'heavy', 'light', 'narrow', 'wide', 'short', 'long', 'slow', 'fast', 'pretty', 'cute', 'unpleasant', 'many', 'few', 'dark', 'bright', 'sweet', 'spicy', 'salty', 'bitter', 'sour', 'thin', 'thick', 'convenient', 'inconvenient', 'skilful', 'unskilful', 'poor', 'rich', 'famous', 'various', 'important', 'safe', 'dangerous', 'rude', 'kind', 'free', 'busy', 'happy', 'sad', 'sleepy', 'painful', 'lonely', 'noisy', 'polite', 'impolite'];
+  
+  const isAdjEnding = hiragana.endsWith('い') && !nounBlacklist.includes(hiragana);
+  const isAdjKeyword = adjKeywords.some(kw => {
+    const words = english.replace(/[?,.!();/]/g, ' ').split(/\s+/);
+    return words.includes(kw);
+  });
+
+  if (isAdjEnding || isAdjKeyword || notes.includes('adjective') || notes.includes('adj') || notes.includes(' na ') || notes.includes(' i ')) {
+    return 'adjectives';
+  }
+
+  // Detect Miscellaneous structural grammar words (pronouns, adverbs, numbers, counters, greetings, response words)
+  const miscKeywords = ['thank you', 'excuse me', 'sorry', 'hello', 'goodbye', 'welcome', 'congratulations', 'please', 'yes', 'no', 'this', 'that', 'these', 'those', 'who', 'what', 'where', 'when', 'why', 'how', 'which', 'very', 'little', 'slowly', 'gradually', 'together', 'sometimes', 'often', 'always', 'never', 'but', 'and', 'then', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'hundred', 'thousand', 'counter', 'times', 'floors', 'books', 'people', 'hours', 'minutes', 'days', 'months', 'years', 'me', 'you', 'he', 'she', 'we', 'they', 'my', 'your', 'his', 'her', 'here', 'there'];
+  const englishWords = english.replace(/[?,.!();/]/g, ' ').split(/\s+/).filter(Boolean);
+  const isMisc = miscKeywords.some(kw => {
+    if (kw.includes(' ')) {
+      return english.includes(kw);
+    }
+    return englishWords.includes(kw);
+  }) || ['はい', 'いいえ', 'ありがとう', 'すみません', 'ごめんなさい', 'はじめまして', 'ただいま', 'おかえり', 'いってきます', 'いってらっしゃい'].includes(hiragana) ||
+  notes.includes('counter') || english.includes('counter') || hiragana.startsWith('〜') || english.includes('?');
+
+  if (isMisc || notes.includes('phrase') || notes.includes('expression') || notes.includes('greeting') || english.includes('!')) {
+    return 'misc';
+  }
+
+  // Default fallback is nouns
+  return 'nouns';
+}
+
+// Classify vocabulary topic context (Food, School, Family, Travel, Time & Weather)
+function getWordTopic(card) {
+  if (!card) return 'other';
+  const notes = (card.notes || '').toLowerCase();
+  const english = (card.english || '').toLowerCase();
+
+  // 1. Food & Dining
+  const foodKeywords = ['tea', 'coffee', 'meat', 'fish', 'water', 'apple', 'bread', 'eat', 'drink', 'restaurant', 'menu', 'sweet', 'spicy', 'delicious', 'kitchen', 'meal', 'cook', 'sugar', 'salt', 'lunch', 'dinner', 'breakfast', 'vegetable', 'fruit', 'cafe'];
+  if (foodKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+    return 'food';
+  }
+
+  // 2. School & Study
+  const schoolKeywords = ['school', 'classroom', 'book', 'pen', 'paper', 'pencil', 'student', 'teacher', 'class', 'study', 'homework', 'problem', 'question', 'answer', 'test', 'exam', 'dictionary', 'read', 'write', 'lesson', 'library'];
+  if (schoolKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+    return 'school';
+  }
+
+  // 3. Family & Social
+  const familyKeywords = ['father', 'mother', 'sister', 'brother', 'friend', 'child', 'person', 'doctor', 'who', 'he', 'she', 'they', 'someone', 'family', 'husband', 'wife', 'parents', 'marriage', 'proposal', 'love'];
+  if (familyKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+    return 'family';
+  }
+
+  // 4. Travel & Places
+  const travelKeywords = ['station', 'train', 'car', 'bus', 'airplane', 'hotel', 'map', 'ticket', 'go', 'come', 'return', 'left', 'right', 'straight', 'near', 'far', 'here', 'there', 'street', 'road', 'walk', 'trip', 'travel', 'country', 'town', 'city'];
+  if (travelKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+    return 'travel';
+  }
+
+  // 5. Time & Weather
+  const timeKeywords = ['morning', 'night', 'today', 'yesterday', 'tomorrow', 'week', 'month', 'year', 'clock', 'time', 'rain', 'snow', 'hot', 'cold', 'wind', 'cloud', 'season', 'spring', 'summer', 'autumn', 'winter', 'now', 'hour', 'minute', 'second', 'day', 'pm', 'am'];
+  if (timeKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+    return 'time';
+  }
+
+  return 'other';
+}
+
 // Update the list layout order according to filter and shuffle state
 function applyFiltersAndShuffle() {
   // Filter index list
   let activeIndices = [];
   cards.forEach((card, index) => {
-    const isMastered = masteredCardIds.has(card.id);
+    const isMastered = isStoryModeActive ? storyMasteredIds.has(card.id) : masteredCardIds.has(card.id);
     
     const matchesProgress = filterMode === 'all' || 
        (filterMode === 'learning' && !isMastered) || 
@@ -762,7 +979,18 @@ function applyFiltersAndShuffle() {
 
     const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
 
-    if (matchesProgress && matchesLevel) {
+    // Check type and topic filters for Vocabulary deck
+    let matchesType = true;
+    let matchesTopic = true;
+    if (activeDeck === 'vocabulary' && !isStoryModeActive) {
+      const cardType = getWordType(card);
+      matchesType = vocabTypeFilter === 'all' || cardType === vocabTypeFilter;
+
+      const cardTopic = getWordTopic(card);
+      matchesTopic = vocabTopicFilter === 'all' || cardTopic === vocabTopicFilter;
+    }
+
+    if (matchesProgress && matchesLevel && matchesType && matchesTopic) {
       activeIndices.push(index);
     }
   });
@@ -1130,6 +1358,7 @@ function startStoryChapter(chapterId, mode) {
 
   // Disable/hide normal JLPT level selector
   if (levelFilterGroup) levelFilterGroup.classList.add('hidden');
+  if (vocabDropdownFilters) vocabDropdownFilters.classList.add('hidden');
 
   // Show back to story map button
   if (btnBackToStory) btnBackToStory.classList.remove('hidden');

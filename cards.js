@@ -9261,7 +9261,139 @@ const storyChapters = [
   }
 ];
 
+// Voiced (Dakuon/Handakuon) Hiragana Alphabet Data (25 Characters)
+const hiraganaVoiced = [
+  { id: "hv1", hiragana: "が", romaji: "ga", english: "ga", notes: "G-row: ga" },
+  { id: "hv2", hiragana: "ぎ", romaji: "gi", english: "gi", notes: "G-row: gi" },
+  { id: "hv3", hiragana: "ぐ", romaji: "gu", english: "gu", notes: "G-row: gu" },
+  { id: "hv4", hiragana: "げ", romaji: "ge", english: "ge", notes: "G-row: ge" },
+  { id: "hv5", hiragana: "ご", romaji: "go", english: "go", notes: "G-row: go" },
+  { id: "hv6", hiragana: "ざ", romaji: "za", english: "za", notes: "Z-row: za" },
+  { id: "hv7", hiragana: "じ", romaji: "ji", english: "ji", notes: "Z-row: ji" },
+  { id: "hv8", hiragana: "ず", romaji: "zu", english: "zu", notes: "Z-row: zu" },
+  { id: "hv9", hiragana: "ぜ", romaji: "ze", english: "ze", notes: "Z-row: ze" },
+  { id: "hv10", hiragana: "ぞ", romaji: "zo", english: "zo", notes: "Z-row: zo" },
+  { id: "hv11", hiragana: "だ", hiragana_full: "だ", romaji: "da", english: "da", notes: "D-row: da" },
+  { id: "hv12", hiragana: "ぢ", romaji: "dji", english: "ji (dji)", notes: "D-row: ji" },
+  { id: "hv13", hiragana: "づ", romaji: "dzu", english: "zu (dzu)", notes: "D-row: zu" },
+  { id: "hv14", hiragana: "で", romaji: "de", english: "de", notes: "D-row: de" },
+  { id: "hv15", hiragana: "ど", romaji: "do", english: "do", notes: "D-row: do" },
+  { id: "hv16", hiragana: "ば", romaji: "ba", english: "ba", notes: "B-row: ba" },
+  { id: "hv17", hiragana: "び", romaji: "bi", english: "bi", notes: "B-row: bi" },
+  { id: "hv18", hiragana: "ぶ", romaji: "bu", english: "bu", notes: "B-row: bu" },
+  { id: "hv19", hiragana: "べ", romaji: "be", english: "be", notes: "B-row: be" },
+  { id: "hv20", hiragana: "ぼ", romaji: "bo", english: "bo", notes: "B-row: bo" },
+  { id: "hv21", hiragana: "ぱ", romaji: "pa", english: "pa", notes: "P-row: pa" },
+  { id: "hv22", hiragana: "ぴ", romaji: "pi", english: "pi", notes: "P-row: pi" },
+  { id: "hv23", hiragana: "ぷ", romaji: "pu", english: "pu", notes: "P-row: pu" },
+  { id: "hv24", hiragana: "ぺ", romaji: "pe", english: "pe", notes: "P-row: pe" },
+  { id: "hv25", hiragana: "ぽ", romaji: "po", english: "po", notes: "P-row: po" }
+];
+
+// Voiced (Dakuon/Handakuon) Katakana Alphabet Data (25 Characters)
+const katakanaVoiced = [
+  { id: "kv1", hiragana: "ガ", romaji: "ga", english: "ga", notes: "G-row: ga" },
+  { id: "kv2", hiragana: "ギ", romaji: "gi", english: "gi", notes: "G-row: gi" },
+  { id: "kv3", hiragana: "グ", romaji: "gu", english: "gu", notes: "G-row: gu" },
+  { id: "kv4", hiragana: "ゲ", romaji: "ge", english: "ge", notes: "G-row: ge" },
+  { id: "kv5", hiragana: "ゴ", romaji: "go", english: "go", notes: "G-row: go" },
+  { id: "kv6", hiragana: "ザ", romaji: "za", english: "za", notes: "Z-row: za" },
+  { id: "kv7", hiragana: "ジ", romaji: "ji", english: "ji", notes: "Z-row: ji" },
+  { id: "kv8", hiragana: "ズ", romaji: "zu", english: "zu", notes: "Z-row: zu" },
+  { id: "kv9", hiragana: "ゼ", romaji: "ze", english: "ze", notes: "Z-row: ze" },
+  { id: "kv10", hiragana: "ゾ", romaji: "zo", english: "zo", notes: "Z-row: zo" },
+  { id: "kv11", hiragana: "ダ", romaji: "da", english: "da", notes: "D-row: da" },
+  { id: "kv12", hiragana: "ヂ", romaji: "dji", english: "ji (dji)", notes: "D-row: ji" },
+  { id: "kv13", hiragana: "ヅ", romaji: "dzu", english: "zu (dzu)", notes: "D-row: zu" },
+  { id: "kv14", hiragana: "デ", romaji: "de", english: "de", notes: "D-row: de" },
+  { id: "kv15", hiragana: "ド", romaji: "do", english: "do", notes: "D-row: do" },
+  { id: "kv16", hiragana: "バ", romaji: "ba", english: "ba", notes: "B-row: ba" },
+  { id: "kv17", hiragana: "ビ", romaji: "bi", english: "bi", notes: "B-row: bi" },
+  { id: "kv18", hiragana: "ブ", romaji: "bu", english: "bu", notes: "B-row: bu" },
+  { id: "kv19", hiragana: "ベ", romaji: "be", english: "be", notes: "B-row: be" },
+  { id: "kv20", hiragana: "ボ", romaji: "bo", english: "bo", notes: "B-row: bo" },
+  { id: "kv21", hiragana: "パ", romaji: "pa", english: "pa", notes: "P-row: pa" },
+  { id: "kv22", hiragana: "ピ", romaji: "pi", english: "pi", notes: "P-row: pi" },
+  { id: "kv23", hiragana: "プ", romaji: "pu", english: "pu", notes: "P-row: pu" },
+  { id: "kv24", hiragana: "ペ", romaji: "pe", english: "pe", notes: "P-row: pe" },
+  { id: "kv25", hiragana: "ポ", romaji: "po", english: "po", notes: "P-row: po" }
+];
+
+// Contracted (Yōon) Hiragana Alphabet Data (33 Characters)
+const hiraganaCombos = [
+  { id: "hc1", hiragana: "きゃ", romaji: "kya", english: "kya", notes: "K-row: kya" },
+  { id: "hc2", hiragana: "きゅ", romaji: "kyu", english: "kyu", notes: "K-row: kyu" },
+  { id: "hc3", hiragana: "きょ", romaji: "kyo", english: "kyo", notes: "K-row: kyo" },
+  { id: "hc4", hiragana: "しゃ", romaji: "sha", english: "sha", notes: "S-row: sha" },
+  { id: "hc5", hiragana: "しゅ", romaji: "shu", english: "shu", notes: "S-row: shu" },
+  { id: "hc6", hiragana: "しょ", romaji: "sho", english: "sho", notes: "S-row: sho" },
+  { id: "hc7", hiragana: "ちゃ", romaji: "cha", english: "cha", notes: "T-row: cha" },
+  { id: "hc8", hiragana: "ちゅ", romaji: "chu", english: "chu", notes: "T-row: chu" },
+  { id: "hc9", hiragana: "ちょ", romaji: "cho", english: "cho", notes: "T-row: cho" },
+  { id: "hc10", hiragana: "にゃ", romaji: "nya", english: "nya", notes: "N-row: nya" },
+  { id: "hc11", hiragana: "にゅ", romaji: "nyu", english: "nyu", notes: "N-row: nyu" },
+  { id: "hc12", hiragana: "にょ", romaji: "nyo", english: "nyo", notes: "N-row: nyo" },
+  { id: "hc13", hiragana: "ひゃ", romaji: "hya", english: "hya", notes: "H-row: hya" },
+  { id: "hc14", hiragana: "ひゅ", romaji: "hyu", english: "hyu", notes: "H-row: hyu" },
+  { id: "hc15", hiragana: "ひょ", romaji: "hyo", english: "hyo", notes: "H-row: hyo" },
+  { id: "hc16", hiragana: "みゃ", romaji: "mya", english: "mya", notes: "M-row: mya" },
+  { id: "hc17", hiragana: "みゅ", romaji: "myu", english: "myu", notes: "M-row: myu" },
+  { id: "hc18", hiragana: "みょ", romaji: "myo", english: "myo", notes: "M-row: myo" },
+  { id: "hc19", hiragana: "りゃ", romaji: "rya", english: "rya", notes: "R-row: rya" },
+  { id: "hc20", hiragana: "りゅ", romaji: "ryu", english: "ryu", notes: "R-row: ryu" },
+  { id: "hc21", hiragana: "りょ", romaji: "ryo", english: "ryo", notes: "R-row: ryo" },
+  { id: "hc22", hiragana: "ぎゃ", romaji: "gya", english: "gya", notes: "G-row: gya" },
+  { id: "hc23", hiragana: "ぎゅ", romaji: "gyu", english: "gyu", notes: "G-row: gyu" },
+  { id: "hc24", hiragana: "ぎょ", romaji: "gyo", english: "gyo", notes: "G-row: gyo" },
+  { id: "hc25", hiragana: "じゃ", romaji: "ja", english: "ja", notes: "Z-row: ja" },
+  { id: "hc26", hiragana: "じゅ", romaji: "ju", english: "ju", notes: "Z-row: ju" },
+  { id: "hc27", hiragana: "じょ", romaji: "jo", english: "jo", notes: "Z-row: jo" },
+  { id: "hc28", hiragana: "びゃ", romaji: "bya", english: "bya", notes: "B-row: bya" },
+  { id: "hc29", hiragana: "びゅ", romaji: "byu", english: "byu", notes: "B-row: byu" },
+  { id: "hc30", hiragana: "びょ", romaji: "byo", english: "byo", notes: "B-row: byo" },
+  { id: "hc31", hiragana: "ぴゃ", romaji: "pya", english: "pya", notes: "P-row: pya" },
+  { id: "hc32", hiragana: "ぴゅ", romaji: "pyu", english: "pyu", notes: "P-row: pyu" },
+  { id: "hc33", hiragana: "ぴょ", romaji: "pyo", english: "pyo", notes: "P-row: pyo" }
+];
+
+// Contracted (Yōon) Katakana Alphabet Data (33 Characters)
+const katakanaCombos = [
+  { id: "kc1", hiragana: "キャ", romaji: "kya", english: "kya", notes: "K-row: kya" },
+  { id: "kc2", hiragana: "キュ", romaji: "kyu", english: "kyu", notes: "K-row: kyu" },
+  { id: "kc3", hiragana: "キョ", romaji: "kyo", english: "kyo", notes: "K-row: kyo" },
+  { id: "kc4", hiragana: "シャ", romaji: "sha", english: "sha", notes: "S-row: sha" },
+  { id: "kc5", hiragana: "シュ", romaji: "shu", english: "shu", notes: "S-row: shu" },
+  { id: "kc6", hiragana: "ショ", romaji: "sho", english: "sho", notes: "S-row: sho" },
+  { id: "kc7", hiragana: "チャ", romaji: "cha", english: "cha", notes: "T-row: cha" },
+  { id: "kc8", hiragana: "チュ", romaji: "chu", english: "chu", notes: "T-row: chu" },
+  { id: "kc9", hiragana: "チョ", romaji: "cho", english: "cho", notes: "T-row: cho" },
+  { id: "kc10", hiragana: "ニャ", romaji: "nya", english: "nya", notes: "N-row: nya" },
+  { id: "kc11", hiragana: "ニュ", romaji: "nyu", english: "nyu", notes: "N-row: nyu" },
+  { id: "kc12", hiragana: "ニョ", romaji: "nyo", english: "nyo", notes: "N-row: nyo" },
+  { id: "kc13", hiragana: "ヒャ", romaji: "hya", english: "hya", notes: "H-row: hya" },
+  { id: "kc14", hiragana: "ヒュ", romaji: "hyu", english: "hyu", notes: "H-row: hyu" },
+  { id: "kc15", hiragana: "ヒョ", romaji: "hyo", english: "hyo", notes: "H-row: hyo" },
+  { id: "kc16", hiragana: "ミャ", romaji: "mya", english: "mya", notes: "M-row: mya" },
+  { id: "kc17", hiragana: "ミュ", romaji: "myu", english: "myu", notes: "M-row: myu" },
+  { id: "kc18", hiragana: "ミョ", romaji: "myo", english: "myo", notes: "M-row: myo" },
+  { id: "kc19", hiragana: "リャ", romaji: "rya", english: "rya", notes: "R-row: rya" },
+  { id: "kc20", hiragana: "リュ", romaji: "ryu", english: "ryu", notes: "R-row: ryu" },
+  { id: "kc21", hiragana: "リョ", romaji: "ryo", english: "ryo", notes: "R-row: ryo" },
+  { id: "kc22", hiragana: "ギャ", romaji: "gya", english: "gya", notes: "G-row: gya" },
+  { id: "kc23", hiragana: "ギュ", romaji: "gyu", english: "gyu", notes: "G-row: gyu" },
+  { id: "kc24", hiragana: "ギョ", romaji: "gyo", english: "gyo", notes: "G-row: gyo" },
+  { id: "kc25", hiragana: "ジャ", romaji: "ja", english: "ja", notes: "Z-row: ja" },
+  { id: "kc26", hiragana: "ジュ", romaji: "ju", english: "ju", notes: "Z-row: ju" },
+  { id: "kc27", hiragana: "ジョ", romaji: "jo", english: "jo", notes: "Z-row: jo" },
+  { id: "kc28", hiragana: "ビャ", romaji: "bya", english: "bya", notes: "B-row: bya" },
+  { id: "kc29", hiragana: "ビュ", romaji: "byu", english: "byu", notes: "B-row: byu" },
+  { id: "kc30", hiragana: "ビョ", romaji: "byo", english: "byo", notes: "B-row: byo" },
+  { id: "kc31", hiragana: "ピャ", romaji: "pya", english: "pya", notes: "P-row: pya" },
+  { id: "kc32", hiragana: "ピュ", romaji: "pyu", english: "pyu", notes: "P-row: pyu" },
+  { id: "kc33", hiragana: "ピョ", romaji: "pyo", english: "pyo", notes: "P-row: pyo" }
+];
+
 // Exports for modular usage if required
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { initialCards, hiraganaAlphabet, katakanaAlphabet, storyChapters };
+  module.exports = { initialCards, hiraganaAlphabet, katakanaAlphabet, storyChapters, hiraganaVoiced, katakanaVoiced, hiraganaCombos, katakanaCombos };
 }

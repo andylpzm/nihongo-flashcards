@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="description" content="Nihongo Cards for Chris-kun - A beautiful, interactive Japanese learning application with hiragana, katakana, and vocabulary cards.">
   <title>Nihongo Cards for Chris-kun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="apple-touch-icon" href="https://andylpzm.github.io/nihongo-flashcards/apple-touch-icon.png?v=2">
   <link rel="shortcut icon" href="https://andylpzm.github.io/nihongo-flashcards/apple-touch-icon.png?v=2">
@@ -191,6 +194,29 @@
                 <button class="btn-toggle" id="filter-level-n5">N5 Only</button>
                 <button class="btn-toggle" id="filter-level-n4">N4 Only</button>
               </div>
+
+              <!-- Vocabulary Dropdown Filters (Hidden for Hiragana/Katakana) -->
+              <div class="dropdown-filter-group" id="vocab-dropdown-filters">
+                <div class="select-wrapper">
+                  <select id="filter-vocab-type" aria-label="Vocabulary Word Type">
+                    <option value="all">All Types</option>
+                    <option value="nouns">Nouns (名詞)</option>
+                    <option value="verbs">Verbs (動詞)</option>
+                    <option value="adjectives">Adjectives (形容詞)</option>
+                    <option value="misc">Miscellaneous (その他)</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <select id="filter-vocab-topic" aria-label="Vocabulary Topic Context">
+                    <option value="all">All Topics</option>
+                    <option value="food">Food & Dining</option>
+                    <option value="school">School & Study</option>
+                    <option value="family">Family & Social</option>
+                    <option value="travel">Travel & Places</option>
+                    <option value="time">Time & Weather</option>
+                  </select>
+                </div>
+              </div>
             </div>
             
             <!-- Typing Input Container (Hidden by default, shown in Typing Mode) -->
@@ -224,7 +250,12 @@
           <div class="kana-section-header">
             <h2>Hiragana Academy</h2>
             <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
-            <button class="btn btn-primary" id="btn-practice-hiragana" style="margin: 1.25rem auto 0;">
+            <div class="chart-tab-group" id="hiragana-tabs">
+              <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
+              <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
+              <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
+            </div>
+            <button class="btn btn-primary" id="btn-practice-hiragana" style="margin: 1rem auto 0;">
               🌸 Study Hiragana Flashcards
             </button>
           </div>
@@ -240,7 +271,12 @@
           <div class="kana-section-header">
             <h2>Katakana Academy</h2>
             <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
-            <button class="btn btn-primary" id="btn-practice-katakana" style="margin: 1.25rem auto 0; background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.8) 100%); box-shadow: 0 4px 15px var(--accent-cyan-glow);">
+            <div class="chart-tab-group" id="katakana-tabs">
+              <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
+              <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
+              <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
+            </div>
+            <button class="btn btn-primary" id="btn-practice-katakana" style="margin: 1rem auto 0; background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.8) 100%); box-shadow: 0 4px 15px var(--accent-cyan-glow);">
               ⚡ Study Katakana Flashcards
             </button>
           </div>
