@@ -929,33 +929,36 @@ function getWordTopic(card) {
   const notes = (card.notes || '').toLowerCase();
   const english = (card.english || '').toLowerCase();
 
+  // Split english translation into clean lowercase words to avoid substring matches (e.g. expensive matching pen)
+  const words = english.replace(/[?,.!();/]/g, ' ').split(/\s+/).filter(Boolean);
+
   // 1. Food & Dining
-  const foodKeywords = ['tea', 'coffee', 'meat', 'fish', 'water', 'apple', 'bread', 'eat', 'drink', 'restaurant', 'menu', 'sweet', 'spicy', 'delicious', 'kitchen', 'meal', 'cook', 'sugar', 'salt', 'lunch', 'dinner', 'breakfast', 'vegetable', 'fruit', 'cafe'];
-  if (foodKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+  const foodKeywords = ['food', 'eat', 'drink', 'ate', 'drinking', 'delicious', 'tasty', 'sweet', 'spicy', 'sour', 'salty', 'bitter', 'kitchen', 'restaurant', 'cafe', 'meal', 'cook', 'cooking', 'sugar', 'salt', 'lunch', 'dinner', 'breakfast', 'vegetable', 'fruit', 'apple', 'bread', 'butter', 'milk', 'water', 'tea', 'coffee', 'juice', 'beer', 'sake', 'wine', 'meat', 'beef', 'pork', 'chicken', 'fish', 'egg', 'eggs', 'rice', 'soup', 'dining', 'taste', 'hungry'];
+  if (foodKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'food';
   }
 
   // 2. School & Study
-  const schoolKeywords = ['school', 'classroom', 'book', 'pen', 'paper', 'pencil', 'student', 'teacher', 'class', 'study', 'homework', 'problem', 'question', 'answer', 'test', 'exam', 'dictionary', 'read', 'write', 'lesson', 'library'];
-  if (schoolKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+  const schoolKeywords = ['school', 'classroom', 'desk', 'blackboard', 'notebook', 'book', 'books', 'pen', 'pens', 'pencil', 'pencils', 'paper', 'student', 'students', 'teacher', 'teachers', 'class', 'classes', 'study', 'studying', 'homework', 'problem', 'problems', 'question', 'questions', 'answer', 'answers', 'test', 'tests', 'exam', 'exams', 'examination', 'dictionary', 'dictionaries', 'read', 'reading', 'write', 'writing', 'lesson', 'lessons', 'library', 'libraries', 'teach', 'teaching', 'learn', 'learning', 'education', 'textbook'];
+  if (schoolKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'school';
   }
 
   // 3. Family & Social
-  const familyKeywords = ['father', 'mother', 'sister', 'brother', 'friend', 'child', 'person', 'doctor', 'who', 'he', 'she', 'they', 'someone', 'family', 'husband', 'wife', 'parents', 'marriage', 'proposal', 'love'];
-  if (familyKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+  const familyKeywords = ['family', 'father', 'mother', 'sister', 'brother', 'friend', 'friends', 'child', 'children', 'person', 'people', 'doctor', 'someone', 'anyone', 'husband', 'wife', 'parents', 'marriage', 'proposal', 'love', 'boy', 'girl', 'baby', 'uncle', 'aunt', 'grandpa', 'grandma', 'grandfather', 'grandmother', 'man', 'woman', 'men', 'women', 'son', 'daughter', 'he', 'she', 'they', 'who'];
+  if (familyKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'family';
   }
 
   // 4. Travel & Places
-  const travelKeywords = ['station', 'train', 'car', 'bus', 'airplane', 'hotel', 'map', 'ticket', 'go', 'come', 'return', 'left', 'right', 'straight', 'near', 'far', 'here', 'there', 'street', 'road', 'walk', 'trip', 'travel', 'country', 'town', 'city'];
-  if (travelKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+  const travelKeywords = ['travel', 'trip', 'station', 'train', 'car', 'bus', 'airplane', 'hotel', 'map', 'ticket', 'tickets', 'go', 'going', 'went', 'come', 'coming', 'came', 'return', 'returning', 'returned', 'left', 'right', 'straight', 'near', 'far', 'here', 'there', 'street', 'road', 'walk', 'walking', 'walked', 'country', 'town', 'city', 'subway', 'taxi', 'bicycle', 'ship', 'airport', 'passport', 'tourist', 'visit', 'arrive', 'arrival', 'depart', 'departure'];
+  if (travelKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'travel';
   }
 
   // 5. Time & Weather
-  const timeKeywords = ['morning', 'night', 'today', 'yesterday', 'tomorrow', 'week', 'month', 'year', 'clock', 'time', 'rain', 'snow', 'hot', 'cold', 'wind', 'cloud', 'season', 'spring', 'summer', 'autumn', 'winter', 'now', 'hour', 'minute', 'second', 'day', 'pm', 'am'];
-  if (timeKeywords.some(kw => english.includes(kw) || notes.includes(kw))) {
+  const timeKeywords = ['time', 'clock', 'watch', 'hour', 'hours', 'minute', 'minutes', 'second', 'seconds', 'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years', 'calendar', 'date', 'now', 'today', 'yesterday', 'tomorrow', 'tonight', 'morning', 'afternoon', 'evening', 'night', 'noon', 'pm', 'am', 'always', 'often', 'sometimes', 'usually', 'never', 'already', 'yet', 'date', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'spring', 'summer', 'autumn', 'fall', 'winter', 'season', 'weather', 'rain', 'rainy', 'snow', 'snowy', 'wind', 'windy', 'cloud', 'cloudy', 'sunny', 'hot', 'cold', 'warm', 'cool'];
+  if (timeKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'time';
   }
 
