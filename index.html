@@ -197,24 +197,39 @@
 
               <!-- Vocabulary Dropdown Filters (Hidden for Hiragana/Katakana) -->
               <div class="dropdown-filter-group" id="vocab-dropdown-filters">
-                <div class="select-wrapper">
-                  <select id="filter-vocab-type" aria-label="Vocabulary Word Type">
-                    <option value="all">All Types</option>
-                    <option value="nouns">Nouns (名詞)</option>
-                    <option value="verbs">Verbs (動詞)</option>
-                    <option value="adjectives">Adjectives (形容詞)</option>
-                    <option value="misc">Miscellaneous (その他)</option>
-                  </select>
+                <!-- Word Types Multi-Select -->
+                <div class="custom-select" id="select-vocab-types">
+                  <button class="custom-select-trigger" id="types-trigger">Word Types: All</button>
+                  <div class="custom-select-options hidden">
+                    <label class="select-option"><input type="checkbox" value="nouns" checked> Nouns (名詞)</label>
+                    <label class="select-option"><input type="checkbox" value="verbs" checked> Verbs (動詞)</label>
+                    <label class="select-option"><input type="checkbox" value="adjectives" checked> Adjectives (形容詞)</label>
+                    <label class="select-option"><input type="checkbox" value="misc" checked> Miscellaneous (その他)</label>
+                  </div>
                 </div>
-                <div class="select-wrapper">
-                  <select id="filter-vocab-topic" aria-label="Vocabulary Topic Context">
-                    <option value="all">All Topics</option>
-                    <option value="food">Food & Dining</option>
-                    <option value="school">School & Study</option>
-                    <option value="family">Family & Social</option>
-                    <option value="travel">Travel & Places</option>
-                    <option value="time">Time & Weather</option>
-                  </select>
+
+                <!-- Topics Multi-Select (Logically Sorted) -->
+                <div class="custom-select" id="select-vocab-topics">
+                  <button class="custom-select-trigger" id="topics-trigger">Topics: All</button>
+                  <div class="custom-select-options hidden">
+                    <!-- 1. Basics & Numbers -->
+                    <label class="select-option"><input type="checkbox" value="numbers" checked> Numbers & Counters (数字・助数詞)</label>
+                    <label class="select-option"><input type="checkbox" value="calendar" checked> Calendar & Dates (暦・日付)</label>
+                    <label class="select-option"><input type="checkbox" value="time" checked> Time & Hours (時間・時刻)</label>
+                    
+                    <!-- 2. Personal & Daily Essentials -->
+                    <label class="select-option"><input type="checkbox" value="body" checked> Body & Health (身体・健康)</label>
+                    <label class="select-option"><input type="checkbox" value="food" checked> Food & Dining (食べ物・食事)</label>
+                    <label class="select-option"><input type="checkbox" value="family" checked> Family & Social (家族・人)</label>
+                    
+                    <!-- 3. External Environments & Contexts -->
+                    <label class="select-option"><input type="checkbox" value="school" checked> School & Study (学校・勉強)</label>
+                    <label class="select-option"><input type="checkbox" value="travel" checked> Travel & Places (旅行・場所)</label>
+                    <label class="select-option"><input type="checkbox" value="weather" checked> Weather & Seasons (天気・季節)</label>
+                    
+                    <!-- 4. Uncategorized fallback -->
+                    <label class="select-option"><input type="checkbox" value="other" checked> General / Others (その他一般)</label>
+                  </div>
                 </div>
               </div>
             </div>

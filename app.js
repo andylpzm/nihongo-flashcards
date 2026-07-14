@@ -256,9 +256,9 @@ const combosLayout = [
 let activeHiraganaTab = 'basic';
 let activeKatakanaTab = 'basic';
 
-// Vocabulary Category & Context Filter States
-let vocabTypeFilter = 'all';
-let vocabTopicFilter = 'all';
+// Vocabulary Category & Context Filter States (Multi-select tracking arrays)
+let selectedVocabTypes = ['nouns', 'verbs', 'adjectives', 'misc'];
+let selectedVocabTopics = ['numbers', 'calendar', 'time', 'body', 'food', 'family', 'school', 'travel', 'weather', 'other'];
 
 const deckTitleMap = {
   vocabulary: "Vocabulary Deck",
@@ -318,25 +318,124 @@ function setupEventListeners() {
   filterLevelN5Btn.addEventListener('click', () => changeLevelFilter('N5'));
   filterLevelN4Btn.addEventListener('click', () => changeLevelFilter('N4'));
 
-  // Vocabulary dropdown select change listeners
-  const filterVocabTypeSelect = document.getElementById('filter-vocab-type');
-  const filterVocabTopicSelect = document.getElementById('filter-vocab-topic');
-  if (filterVocabTypeSelect) {
-    filterVocabTypeSelect.addEventListener('change', (e) => {
-      vocabTypeFilter = e.target.value;
-      currentIndex = 0;
-      applyFiltersAndShuffle();
-      renderCard();
+  // Vocabulary custom multi-select checkbox listeners
+  const typesTrigger = document.getElementById('types-trigger');
+  const topicsTrigger = document.getElementById('topics-trigger');
+  const selectTypes = document.getElementById('select-vocab-types');
+  const selectTopics = document.getElementById('select-vocab-topics');
+
+  if (typesTrigger && selectTypes) {
+    const optionsPanel = selectTypes.querySelector('.custom-select-options');
+    typesTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      typesTrigger.classList.toggle('active');
+      optionsPanel.classList.toggle('hidden');
+      // Close the other dropdown if open
+      if (topicsTrigger) {
+        topicsTrigger.classList.remove('active');
+        const otherPanel = selectTopics.querySelector('.custom-select-options');
+        if (otherPanel) otherPanel.classList.add('hidden');
+      }
+    });
+
+    const checkboxes = selectTypes.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const checked = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+        selectedVocabTypes = checked;
+        
+        // Update trigger text
+        if (checked.length === checkboxes.length) {
+          typesTrigger.textContent = 'Word Types: All';
+        } else if (checked.length === 0) {
+          typesTrigger.textContent = 'Word Types: None';
+        } else {
+          const names = checked.map(v => v.charAt(0).toUpperCase() + v.slice(1));
+          typesTrigger.textContent = 'Types: ' + names.join(', ');
+        }
+        
+        currentIndex = 0;
+        applyFiltersAndShuffle();
+        renderCard();
+      });
     });
   }
-  if (filterVocabTopicSelect) {
-    filterVocabTopicSelect.addEventListener('change', (e) => {
-      vocabTopicFilter = e.target.value;
-      currentIndex = 0;
-      applyFiltersAndShuffle();
-      renderCard();
+
+  if (topicsTrigger && selectTopics) {
+    const optionsPanel = selectTopics.querySelector('.custom-select-options');
+    topicsTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      topicsTrigger.classList.toggle('active');
+      optionsPanel.classList.toggle('hidden');
+      // Close the other dropdown if open
+      if (typesTrigger) {
+        typesTrigger.classList.remove('active');
+        const otherPanel = selectTypes.querySelector('.custom-select-options');
+        if (otherPanel) otherPanel.classList.add('hidden');
+      }
+    });
+
+    const checkboxes = selectTopics.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const checked = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+        selectedVocabTopics = checked;
+
+        // Update trigger text
+        if (checked.length === checkboxes.length) {
+          topicsTrigger.textContent = 'Topics: All';
+        } else if (checked.length === 0) {
+          topicsTrigger.textContent = 'Topics: None';
+        } else {
+          // Map short codes to display labels
+          const topicLabels = {
+            numbers: 'Numbers',
+            calendar: 'Calendar',
+            time: 'Time',
+            body: 'Body & Health',
+            food: 'Food',
+            family: 'Family',
+            school: 'School',
+            travel: 'Travel',
+            weather: 'Weather',
+            other: 'Others'
+          };
+          const names = checked.map(v => topicLabels[v] || v);
+          topicsTrigger.textContent = 'Topics: ' + names.join(', ');
+        }
+
+        currentIndex = 0;
+        applyFiltersAndShuffle();
+        renderCard();
+      });
     });
   }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (selectTypes && !selectTypes.contains(e.target)) {
+      if (typesTrigger) typesTrigger.classList.remove('active');
+      const panel = selectTypes.querySelector('.custom-select-options');
+      if (panel) panel.classList.add('hidden');
+    }
+    if (selectTopics && !selectTopics.contains(e.target)) {
+      if (topicsTrigger) topicsTrigger.classList.remove('active');
+      const panel = selectTopics.querySelector('.custom-select-options');
+      if (panel) panel.classList.add('hidden');
+    }
+  });
+
+  // Close dropdowns on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (typesTrigger) typesTrigger.classList.remove('active');
+      if (topicsTrigger) topicsTrigger.classList.remove('active');
+      const panel1 = selectTypes ? selectTypes.querySelector('.custom-select-options') : null;
+      if (panel1) panel1.classList.add('hidden');
+      const panel2 = selectTopics ? selectTopics.querySelector('.custom-select-options') : null;
+      if (panel2) panel2.classList.add('hidden');
+    }
+  });
 
   // Practice Mode toggles
   modeFlashcardBtn.addEventListener('click', () => setPracticeMode('flashcard'));
@@ -926,40 +1025,72 @@ function getWordType(card) {
 // Classify vocabulary topic context (Food, School, Family, Travel, Time & Weather)
 function getWordTopic(card) {
   if (!card) return 'other';
+  const hiragana = card.hiragana || '';
   const notes = (card.notes || '').toLowerCase();
   const english = (card.english || '').toLowerCase();
 
-  // Split english translation into clean lowercase words to avoid substring matches (e.g. expensive matching pen)
+  // Split english translation into clean lowercase words to avoid substring matches
   const words = english.replace(/[?,.!();/]/g, ' ').split(/\s+/).filter(Boolean);
 
-  // 1. Food & Dining
+  // 1. Numbers & Counters (数字・助数詞)
+  const numberKeywords = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'hundred', 'thousand', 'zero', 'half', 'number', 'numbers', 'counter', 'counters', 'times', 'floors', 'books', 'people', 'hours', 'minutes', 'days', 'months', 'years'];
+  const isNumber = numberKeywords.some(kw => {
+    if (['one', 'two', 'ten'].includes(kw)) {
+      const regex = new RegExp('\\b' + kw + '\\b');
+      return regex.test(english);
+    }
+    return words.includes(kw);
+  }) || notes.includes('counter') || english.includes('counter') || hiragana.startsWith('〜');
+  if (isNumber) {
+    return 'numbers';
+  }
+
+  // 2. Calendar & Dates (暦・日付)
+  const calendarKeywords = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'calendar', 'date', 'week', 'weeks', 'month', 'months', 'year', 'years', 'today', 'yesterday', 'tomorrow', 'tonight', 'weekly', 'monthly', 'yearly', 'relative time'];
+  if (calendarKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
+    return 'calendar';
+  }
+
+  // 3. Time & Hours (時間・時刻)
+  const timeKeywords = ['time', 'clock', 'watch', 'hour', 'hours', 'minute', 'minutes', 'second', 'seconds', 'now', 'morning', 'afternoon', 'evening', 'night', 'noon', 'pm', 'am', 'always', 'often', 'sometimes', 'usually', 'never', 'already', 'yet', 'early', 'late', 'soon'];
+  if (timeKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
+    return 'time';
+  }
+
+  // 4. Body & Health (身体・健康)
+  const bodyKeywords = ['mouth', 'eye', 'eyes', 'body', 'ear', 'ears', 'neck', 'leg', 'legs', 'foot', 'feet', 'hand', 'hands', 'arm', 'arms', 'face', 'throat', 'nose', 'hair', 'tooth', 'teeth', 'head', 'heart', 'hospital', 'doctor', 'medicine', 'ill', 'illness', 'sick', 'sickness', 'cold', 'health', 'healthy', 'hurt', 'pain'];
+  if (bodyKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
+    return 'body';
+  }
+
+  // 5. Food & Dining (食べ物・食事)
   const foodKeywords = ['food', 'eat', 'drink', 'ate', 'drinking', 'delicious', 'tasty', 'sweet', 'spicy', 'sour', 'salty', 'bitter', 'kitchen', 'restaurant', 'cafe', 'meal', 'cook', 'cooking', 'sugar', 'salt', 'lunch', 'dinner', 'breakfast', 'vegetable', 'fruit', 'apple', 'bread', 'butter', 'milk', 'water', 'tea', 'coffee', 'juice', 'beer', 'sake', 'wine', 'meat', 'beef', 'pork', 'chicken', 'fish', 'egg', 'eggs', 'rice', 'soup', 'dining', 'taste', 'hungry'];
   if (foodKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'food';
   }
 
-  // 2. School & Study
-  const schoolKeywords = ['school', 'classroom', 'desk', 'blackboard', 'notebook', 'book', 'books', 'pen', 'pens', 'pencil', 'pencils', 'paper', 'student', 'students', 'teacher', 'teachers', 'class', 'classes', 'study', 'studying', 'homework', 'problem', 'problems', 'question', 'questions', 'answer', 'answers', 'test', 'tests', 'exam', 'exams', 'examination', 'dictionary', 'dictionaries', 'read', 'reading', 'write', 'writing', 'lesson', 'lessons', 'library', 'libraries', 'teach', 'teaching', 'learn', 'learning', 'education', 'textbook'];
-  if (schoolKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
-    return 'school';
-  }
-
-  // 3. Family & Social
+  // 6. Family & Social (家族・人)
   const familyKeywords = ['family', 'father', 'mother', 'sister', 'brother', 'friend', 'friends', 'child', 'children', 'person', 'people', 'doctor', 'someone', 'anyone', 'husband', 'wife', 'parents', 'marriage', 'proposal', 'love', 'boy', 'girl', 'baby', 'uncle', 'aunt', 'grandpa', 'grandma', 'grandfather', 'grandmother', 'man', 'woman', 'men', 'women', 'son', 'daughter', 'he', 'she', 'they', 'who'];
   if (familyKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'family';
   }
 
-  // 4. Travel & Places
-  const travelKeywords = ['travel', 'trip', 'station', 'train', 'car', 'bus', 'airplane', 'hotel', 'map', 'ticket', 'tickets', 'go', 'going', 'went', 'come', 'coming', 'came', 'return', 'returning', 'returned', 'left', 'right', 'straight', 'near', 'far', 'here', 'there', 'street', 'road', 'walk', 'walking', 'walked', 'country', 'town', 'city', 'subway', 'taxi', 'bicycle', 'ship', 'airport', 'passport', 'tourist', 'visit', 'arrive', 'arrival', 'depart', 'departure'];
+  // 7. School & Study (学校・勉強)
+  const schoolKeywords = ['school', 'classroom', 'desk', 'blackboard', 'notebook', 'book', 'books', 'pen', 'pens', 'pencil', 'pencils', 'paper', 'student', 'students', 'teacher', 'teachers', 'class', 'classes', 'study', 'studying', 'homework', 'problem', 'problems', 'question', 'questions', 'answer', 'answers', 'test', 'tests', 'exam', 'exams', 'examination', 'dictionary', 'dictionaries', 'read', 'reading', 'write', 'writing', 'lesson', 'lessons', 'library', 'libraries', 'teach', 'teaching', 'learn', 'learning', 'education', 'textbook'];
+  if (schoolKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
+    return 'school';
+  }
+
+  // 8. Travel & Places (旅行・場所)
+  const travelKeywords = ['travel', 'trip', 'station', 'train', 'car', 'bus', 'airplane', 'hotel', 'map', 'ticket', 'tickets', 'go', 'going', 'went', 'come', 'coming', 'came', 'return', 'returning', 'returned', 'left', 'right', 'straight', 'near', 'far', 'here', 'there', 'street', 'road', 'walk', 'walking', 'walked', 'country', 'town', 'city', 'subway', 'taxi', 'bicycle', 'ship', 'airport', 'passport', 'tourist', 'visit', 'arrive', 'arrival', 'depart', 'departure', 'place', 'places', 'location'];
   if (travelKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
     return 'travel';
   }
 
-  // 5. Time & Weather
-  const timeKeywords = ['time', 'clock', 'watch', 'hour', 'hours', 'minute', 'minutes', 'second', 'seconds', 'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years', 'calendar', 'date', 'now', 'today', 'yesterday', 'tomorrow', 'tonight', 'morning', 'afternoon', 'evening', 'night', 'noon', 'pm', 'am', 'always', 'often', 'sometimes', 'usually', 'never', 'already', 'yet', 'date', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'spring', 'summer', 'autumn', 'fall', 'winter', 'season', 'weather', 'rain', 'rainy', 'snow', 'snowy', 'wind', 'windy', 'cloud', 'cloudy', 'sunny', 'hot', 'cold', 'warm', 'cool'];
-  if (timeKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
-    return 'time';
+  // 9. Weather & Seasons (天気・季節)
+  const weatherKeywords = ['weather', 'season', 'seasons', 'rain', 'rainy', 'snow', 'snowy', 'wind', 'windy', 'cloud', 'cloudy', 'sunny', 'shine', 'hot', 'cold', 'warm', 'cool', 'spring', 'summer', 'autumn', 'fall', 'winter', 'sky', 'typhoon'];
+  if (weatherKeywords.some(kw => words.includes(kw) || notes.includes(kw))) {
+    return 'weather';
   }
 
   return 'other';
@@ -982,15 +1113,15 @@ function applyFiltersAndShuffle() {
 
     const matchesLevel = levelFilter === 'all' || cardLevel === levelFilter;
 
-    // Check type and topic filters for Vocabulary deck
+    // Check type and topic filters for Vocabulary deck (using multi-select arrays)
     let matchesType = true;
     let matchesTopic = true;
     if (activeDeck === 'vocabulary' && !isStoryModeActive) {
       const cardType = getWordType(card);
-      matchesType = vocabTypeFilter === 'all' || cardType === vocabTypeFilter;
+      matchesType = selectedVocabTypes.includes(cardType);
 
       const cardTopic = getWordTopic(card);
-      matchesTopic = vocabTopicFilter === 'all' || cardTopic === vocabTopicFilter;
+      matchesTopic = selectedVocabTopics.includes(cardTopic);
     }
 
     if (matchesProgress && matchesLevel && matchesType && matchesTopic) {

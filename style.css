@@ -966,73 +966,167 @@ body.light-theme .btn-chart-tab.active {
   align-items: center;
 }
 
-.select-wrapper {
+/* Custom Multi-Select Dropdowns */
+.custom-select {
   position: relative;
   display: inline-block;
 }
 
-.select-wrapper select {
-  appearance: none;
-  -webkit-appearance: none;
+.custom-select-trigger {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   color: var(--text-primary);
   font-size: 0.85rem;
+  font-family: 'Outfit', sans-serif;
   font-weight: 500;
-  padding: 0.5rem 2rem 0.5rem 1rem;
+  padding: 0.5rem 2.25rem 0.5rem 1rem;
   cursor: pointer;
   outline: none;
   transition: all 0.3s ease;
+  position: relative;
+  text-align: left;
+  min-width: 140px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.select-wrapper select option {
-  background: #111;
-  color: #fff;
+body.light-theme .custom-select-trigger {
+  background: rgba(0, 0, 0, 0.03);
 }
 
-body.light-theme .select-wrapper select option {
-  background: #fff;
-  color: #333;
-}
-
-.select-wrapper select:hover,
-.select-wrapper select:focus {
+.custom-select-trigger:hover,
+.custom-select-trigger:focus {
   border-color: var(--accent-orange);
   background: rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 10px var(--accent-orange-glow);
 }
 
-body.light-theme .select-wrapper select:hover,
-body.light-theme .select-wrapper select:focus {
+body.light-theme .custom-select-trigger:hover,
+body.light-theme .custom-select-trigger:focus {
   border-color: var(--accent-cyan);
   background: rgba(0, 0, 0, 0.05);
   box-shadow: 0 0 10px var(--accent-cyan-glow);
 }
 
-body.light-theme .select-wrapper select {
-  background: rgba(0, 0, 0, 0.03);
-  color: var(--text-primary);
-}
-
-/* Custom Dropdown Arrow */
-.select-wrapper::after {
+/* Dropdown Arrow Vector */
+.custom-select-trigger::after {
   content: "";
   position: absolute;
-  top: 52%;
+  top: 50%;
   right: 0.85rem;
-  transform: translateY(-50%);
-  width: 0.4rem;
-  height: 0.4rem;
+  width: 0.35rem;
+  height: 0.35rem;
   border-right: 2px solid var(--text-secondary);
   border-bottom: 2px solid var(--text-secondary);
   transform: translateY(-70%) rotate(45deg);
   pointer-events: none;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.select-wrapper:hover::after {
+.custom-select-trigger:hover::after {
   border-color: var(--text-primary);
+}
+
+.custom-select-trigger.active::after {
+  transform: translateY(-20%) rotate(-135deg);
+  border-color: var(--text-primary);
+}
+
+/* Custom Select Options Panel overlay */
+.custom-select-options {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 0.75rem 0.5rem;
+  z-index: 1100;
+  min-width: 220px;
+  max-height: 280px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.light-theme .custom-select-options {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.custom-select-options.hidden {
+  display: none !important;
+}
+
+/* Checkbox options formatting */
+.select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.select-option:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.light-theme .select-option:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.select-option input[type="checkbox"] {
+  accent-color: var(--accent-orange);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+body.light-theme .select-option input[type="checkbox"] {
+  accent-color: var(--accent-cyan);
+}
+
+/* Dropdown Custom Scrollbar styling */
+.custom-select-options::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-select-options::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-select-options::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+body.light-theme .custom-select-options::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .kana-grid-cell {
@@ -2508,22 +2602,21 @@ body.light-theme .btn-forgotten:hover {
     gap: 0.5rem !important;
   }
 
-  .select-wrapper {
+  .custom-select {
     flex: 1 !important;
     max-width: 150px !important;
   }
 
-  .select-wrapper select {
+  .custom-select-trigger {
     width: 100% !important;
     padding: 0.4rem 1.5rem 0.4rem 0.65rem !important;
     font-size: 0.75rem !important;
     border-radius: 15px !important;
+    min-width: 100px !important;
   }
 
-  .select-wrapper::after {
+  .custom-select-trigger::after {
     right: 0.65rem !important;
-    width: 0.35rem !important;
-    height: 0.35rem !important;
   }
 
   /* Compact chart variation tabs on mobile */
