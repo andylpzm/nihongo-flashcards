@@ -318,7 +318,7 @@ function setupEventListeners() {
   filterLevelN5Btn.addEventListener('click', () => changeLevelFilter('N5'));
   filterLevelN4Btn.addEventListener('click', () => changeLevelFilter('N4'));
 
-  // Vocabulary Filter Drawer (Concept B) Event Handlers
+  // Vocabulary Filter Drawer (Concept B Refined) Event Handlers
   const btnOpenFilters = document.getElementById('btn-open-filters');
   const filterModalOverlay = document.getElementById('filter-modal-overlay');
   const btnCloseDrawer = document.getElementById('btn-close-drawer');
@@ -331,15 +331,17 @@ function setupEventListeners() {
   const openFilterDrawer = () => {
     if (!filterModalOverlay) return;
     
-    // Sync UI checkbox states with the active state arrays
-    const typeBoxes = filterModalOverlay.querySelectorAll('.types-grid input[type="checkbox"]');
-    typeBoxes.forEach(box => {
-      box.checked = selectedVocabTypes.includes(box.value);
+    // Sync chip button states with active variable arrays
+    const typeBtns = filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn');
+    typeBtns.forEach(btn => {
+      const val = btn.getAttribute('data-type');
+      btn.classList.toggle('active', selectedVocabTypes.includes(val));
     });
 
-    const topicBoxes = filterModalOverlay.querySelectorAll('.topics-grid input[type="checkbox"]');
-    topicBoxes.forEach(box => {
-      box.checked = selectedVocabTopics.includes(box.value);
+    const topicBtns = filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn');
+    topicBtns.forEach(btn => {
+      const val = btn.getAttribute('data-topic');
+      btn.classList.toggle('active', selectedVocabTopics.includes(val));
     });
 
     filterModalOverlay.classList.remove('hidden');
@@ -369,21 +371,65 @@ function setupEventListeners() {
     });
   }
 
-  // Clear all checkboxes in the drawer modal
-  if (btnDrawerClear) {
-    btnDrawerClear.addEventListener('click', () => {
-      if (!filterModalOverlay) return;
-      const checkboxes = filterModalOverlay.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(box => box.checked = false);
+  // Bind click/double-click action events to Word Type chips
+  if (filterModalOverlay) {
+    const typeBtns = filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn');
+    typeBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (e.detail === 2) {
+          // Double Click: Isolate this category
+          typeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          // Single Click: Toggle active status (enforcing at least one remains active)
+          const activeBtns = Array.from(typeBtns).filter(b => b.classList.contains('active'));
+          if (btn.classList.contains('active')) {
+            if (activeBtns.length <= 1) return; // Ignore deactivating the last active type
+            btn.classList.remove('active');
+          } else {
+            btn.classList.add('active');
+          }
+        }
+      });
+    });
+
+    // Bind click/double-click action events to Topic chips
+    const topicBtns = filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn');
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (e.detail === 2) {
+          // Double Click: Isolate this category
+          topicBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        } else {
+          // Single Click: Toggle active status
+          btn.classList.toggle('active');
+        }
+      });
     });
   }
 
-  // Select all checkboxes in the drawer modal
+  // Clear all category filters (deactivate all topics, leave nouns active for type)
+  if (btnDrawerClear) {
+    btnDrawerClear.addEventListener('click', () => {
+      if (!filterModalOverlay) return;
+      filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn').forEach(btn => {
+        const val = btn.getAttribute('data-type');
+        btn.classList.toggle('active', val === 'nouns');
+      });
+    });
+  }
+
+  // Select all category filters
   if (btnDrawerSelectAll) {
     btnDrawerSelectAll.addEventListener('click', () => {
       if (!filterModalOverlay) return;
-      const checkboxes = filterModalOverlay.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(box => box.checked = true);
+      filterModalOverlay.querySelectorAll('.filter-chip-btn').forEach(btn => {
+        btn.classList.add('active');
+      });
     });
   }
 
@@ -392,23 +438,21 @@ function setupEventListeners() {
     btnDrawerApply.addEventListener('click', () => {
       if (!filterModalOverlay) return;
 
-      const checkedTypes = Array.from(filterModalOverlay.querySelectorAll('.types-grid input[type="checkbox"]'))
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
+      const activeTypes = Array.from(filterModalOverlay.querySelectorAll('.types-grid .filter-chip-btn.active'))
+        .map(btn => btn.getAttribute('data-type'));
 
-      const checkedTopics = Array.from(filterModalOverlay.querySelectorAll('.topics-grid input[type="checkbox"]'))
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
+      const activeTopics = Array.from(filterModalOverlay.querySelectorAll('.topics-grid .filter-chip-btn.active'))
+        .map(btn => btn.getAttribute('data-topic'));
 
       // Prevent blank deck states
-      if (checkedTypes.length === 0) {
-        alert('Please select at least one Word Type to filter.');
+      if (activeTypes.length === 0) {
+        alert('Please select at least one Word Type.');
         return;
       }
 
       // Update state arrays
-      selectedVocabTypes = checkedTypes;
-      selectedVocabTopics = checkedTopics;
+      selectedVocabTypes = activeTypes;
+      selectedVocabTopics = activeTopics;
 
       currentIndex = 0;
       applyFiltersAndShuffle();

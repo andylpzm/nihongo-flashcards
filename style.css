@@ -1117,60 +1117,74 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   grid-template-columns: repeat(2, 1fr);
 }
 
-/* Checkbox item wrapper inside grids */
-.drawer-checkbox-label {
+/* Elegant Filter Chip Button styles (Concept B Refined) */
+.drawer-title-block {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.6rem 0.8rem;
-  border-radius: 12px;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+}
+
+.drawer-tip {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.filter-chip-btn {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--glass-border);
-  color: var(--text-primary);
+  border-radius: 14px;
+  color: var(--text-secondary);
   font-size: 0.8rem;
   font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  padding: 0.7rem 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   user-select: none;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-body.light-theme .drawer-checkbox-label {
-  background: rgba(0, 0, 0, 0.01);
+body.light-theme .filter-chip-btn {
+  background: rgba(0, 0, 0, 0.015);
 }
 
-.drawer-checkbox-label:hover {
+.filter-chip-btn:hover {
+  color: var(--text-primary);
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-body.light-theme .drawer-checkbox-label:hover {
-  background: rgba(0, 0, 0, 0.03);
+body.light-theme .filter-chip-btn:hover {
+  background: rgba(0, 0, 0, 0.035);
   border-color: rgba(0, 0, 0, 0.1);
 }
 
-/* Checkbox Accent Colors */
-.drawer-checkbox-label input[type="checkbox"] {
-  accent-color: var(--accent-orange);
-  width: 14px;
-  height: 14px;
-  cursor: pointer;
-  margin: 0;
+.filter-chip-btn:active {
+  transform: scale(0.97);
 }
 
-body.light-theme .drawer-checkbox-label input[type="checkbox"] {
-  accent-color: var(--accent-cyan);
+/* Elegant active filter colors */
+.filter-chip-btn.active {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, rgba(249, 115, 22, 0.85) 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 10px var(--accent-orange-glow);
 }
 
-/* Style selected items with active color highlights */
-.drawer-checkbox-label:has(input:checked) {
-  background: rgba(249, 115, 22, 0.08);
-  border-color: var(--accent-orange);
-}
-
-body.light-theme .drawer-checkbox-label:has(input:checked) {
-  background: rgba(6, 182, 212, 0.06);
-  border-color: var(--accent-cyan);
+body.light-theme .filter-chip-btn.active {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.85) 100%) !important;
+  box-shadow: 0 4px 10px var(--accent-cyan-glow);
 }
 
 /* Actions panel footer */

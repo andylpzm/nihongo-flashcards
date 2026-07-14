@@ -318,11 +318,14 @@
     <img src="forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
   </div>
 
-  <!-- Vocabulary Filter Drawer Modal (Concept B) -->
+  <!-- Vocabulary Filter Drawer Modal (Concept B Refined) -->
   <div class="modal-overlay hidden" id="filter-modal-overlay">
     <div class="filter-drawer" id="filter-drawer">
       <div class="drawer-header">
-        <h3>Filter Vocabulary</h3>
+        <div class="drawer-title-block">
+          <h3>Filter Vocabulary</h3>
+          <p class="drawer-tip">Double-tap a category to study it exclusively</p>
+        </div>
         <button class="btn-close-drawer" id="btn-close-drawer" aria-label="Close Filters">&times;</button>
       </div>
       
@@ -330,70 +333,28 @@
         <!-- Word Types section -->
         <div class="filter-section">
           <h4 class="filter-section-title">Word Types</h4>
-          <div class="filter-grid types-grid">
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-type-nouns" value="nouns" checked>
-              <span>Nouns (名詞)</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-type-verbs" value="verbs" checked>
-              <span>Verbs (動詞)</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-type-adjectives" value="adjectives" checked>
-              <span>Adjectives (形容詞)</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-type-misc" value="misc" checked>
-              <span>Miscellaneous (その他)</span>
-            </label>
+          <div class="filter-grid types-grid" id="drawer-types-grid">
+            <button class="filter-chip-btn active" data-type="nouns">Nouns (名詞)</button>
+            <button class="filter-chip-btn active" data-type="verbs">Verbs (動詞)</button>
+            <button class="filter-chip-btn active" data-type="adjectives">Adjectives (形容詞)</button>
+            <button class="filter-chip-btn active" data-type="misc">Miscellaneous (その他)</button>
           </div>
         </div>
         
         <!-- Topics section -->
         <div class="filter-section">
           <h4 class="filter-section-title">Topics</h4>
-          <div class="filter-grid topics-grid">
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-numbers" value="numbers" checked>
-              <span>Numbers & Counters</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-calendar" value="calendar" checked>
-              <span>Calendar & Dates</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-time" value="time" checked>
-              <span>Time & Hours</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-body" value="body" checked>
-              <span>Body & Health</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-food" value="food" checked>
-              <span>Food & Dining</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-family" value="family" checked>
-              <span>Family & Social</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-school" value="school" checked>
-              <span>School & Study</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-travel" value="travel" checked>
-              <span>Travel & Places</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-weather" value="weather" checked>
-              <span>Weather & Seasons</span>
-            </label>
-            <label class="drawer-checkbox-label">
-              <input type="checkbox" id="chk-topic-other" value="other" checked>
-              <span>General / Others</span>
-            </label>
+          <div class="filter-grid topics-grid" id="drawer-topics-grid">
+            <button class="filter-chip-btn active" data-topic="numbers">Numbers & Counters</button>
+            <button class="filter-chip-btn active" data-topic="calendar">Calendar & Dates</button>
+            <button class="filter-chip-btn active" data-topic="time">Time & Hours</button>
+            <button class="filter-chip-btn active" data-topic="body">Body & Health</button>
+            <button class="filter-chip-btn active" data-topic="food">Food & Dining</button>
+            <button class="filter-chip-btn active" data-topic="family">Family & Social</button>
+            <button class="filter-chip-btn active" data-topic="school">School & Study</button>
+            <button class="filter-chip-btn active" data-topic="travel">Travel & Places</button>
+            <button class="filter-chip-btn active" data-topic="weather">Weather & Seasons</button>
+            <button class="filter-chip-btn active" data-topic="other">General / Others</button>
           </div>
         </div>
       </div>
