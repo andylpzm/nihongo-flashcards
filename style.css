@@ -959,163 +959,256 @@ body.light-theme .btn-chart-tab.active {
   box-shadow: 0 4px 12px var(--accent-cyan-glow);
 }
 
-/* Styled Dropdown Filter Groups */
+/* Styled Filter Trigger Button Group */
 .dropdown-filter-group {
   display: flex;
   gap: 0.75rem;
   align-items: center;
 }
 
-/* Custom Multi-Select Dropdowns */
-.custom-select {
-  position: relative;
-  display: inline-block;
+/* Modal Overlay backdrop for Filter Drawer (Concept B) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
-.custom-select-trigger {
-  background: rgba(255, 255, 255, 0.04);
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+  display: flex !important; /* Keep display flex for animation transition consistency */
+}
+
+/* Filter Drawer Box Container */
+.filter-drawer {
+  background: rgba(18, 18, 18, 0.85);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  padding: 0.5rem 2.25rem 0.5rem 1rem;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.3s ease;
-  position: relative;
-  text-align: left;
-  min-width: 140px;
-  max-width: 180px;
-  white-space: nowrap;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 500px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  text-overflow: ellipsis;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transform: scale(1);
+  box-sizing: border-box;
 }
 
-body.light-theme .custom-select-trigger {
+body.light-theme .filter-drawer {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+}
+
+.modal-overlay.hidden .filter-drawer {
+  transform: scale(0.92);
+}
+
+/* Header style inside drawer */
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .drawer-header h3 {
+  background: linear-gradient(135deg, var(--text-primary) 0%, rgba(0, 0, 0, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-close-drawer {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.75rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.btn-close-drawer:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.light-theme .btn-close-drawer:hover {
   background: rgba(0, 0, 0, 0.03);
 }
 
-.custom-select-trigger:hover,
-.custom-select-trigger:focus {
-  border-color: var(--accent-orange);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 10px var(--accent-orange-glow);
-}
-
-body.light-theme .custom-select-trigger:hover,
-body.light-theme .custom-select-trigger:focus {
-  border-color: var(--accent-cyan);
-  background: rgba(0, 0, 0, 0.05);
-  box-shadow: 0 0 10px var(--accent-cyan-glow);
-}
-
-/* Dropdown Arrow Vector */
-.custom-select-trigger::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 0.85rem;
-  width: 0.35rem;
-  height: 0.35rem;
-  border-right: 2px solid var(--text-secondary);
-  border-bottom: 2px solid var(--text-secondary);
-  transform: translateY(-70%) rotate(45deg);
-  pointer-events: none;
-  transition: all 0.3s ease;
-}
-
-.custom-select-trigger:hover::after {
-  border-color: var(--text-primary);
-}
-
-.custom-select-trigger.active::after {
-  transform: translateY(-20%) rotate(-135deg);
-  border-color: var(--text-primary);
-}
-
-/* Custom Select Options Panel overlay */
-.custom-select-options {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 0;
-  background: rgba(18, 18, 18, 0.85);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  padding: 0.75rem 0.5rem;
-  z-index: 1100;
-  min-width: 220px;
-  max-height: 280px;
+/* Scrollable Drawer Body content */
+.drawer-body {
+  padding: 1.5rem;
   overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-height: 50vh;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 1.5rem;
 }
 
-body.light-theme .custom-select-options {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+/* Scrollbar customization for drawer body */
+.drawer-body::-webkit-scrollbar {
+  width: 5px;
 }
 
-.custom-select-options.hidden {
-  display: none !important;
+.drawer-body::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Checkbox options formatting */
-.select-option {
+.drawer-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+body.light-theme .drawer-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-section-title {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+
+.filter-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Checkbox item wrapper inside grids */
+.drawer-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 8px;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
   color: var(--text-primary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-family: 'Outfit', sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
+  box-sizing: border-box;
 }
 
-.select-option:hover {
+body.light-theme .drawer-checkbox-label {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.drawer-checkbox-label:hover {
   background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-body.light-theme .select-option:hover {
+body.light-theme .drawer-checkbox-label:hover {
   background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
-.select-option input[type="checkbox"] {
+/* Checkbox Accent Colors */
+.drawer-checkbox-label input[type="checkbox"] {
   accent-color: var(--accent-orange);
   width: 14px;
   height: 14px;
   cursor: pointer;
+  margin: 0;
 }
 
-body.light-theme .select-option input[type="checkbox"] {
+body.light-theme .drawer-checkbox-label input[type="checkbox"] {
   accent-color: var(--accent-cyan);
 }
 
-/* Dropdown Custom Scrollbar styling */
-.custom-select-options::-webkit-scrollbar {
-  width: 5px;
+/* Style selected items with active color highlights */
+.drawer-checkbox-label:has(input:checked) {
+  background: rgba(249, 115, 22, 0.08);
+  border-color: var(--accent-orange);
 }
 
-.custom-select-options::-webkit-scrollbar-track {
+body.light-theme .drawer-checkbox-label:has(input:checked) {
+  background: rgba(6, 182, 212, 0.06);
+  border-color: var(--accent-cyan);
+}
+
+/* Actions panel footer */
+.drawer-actions {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+.quick-toggles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-quick-toggle {
   background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-.custom-select-options::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
+.btn-quick-toggle:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-body.light-theme .custom-select-options::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+body.light-theme .btn-quick-toggle:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 
 @keyframes fadeInDown {
@@ -2600,23 +2693,6 @@ body.light-theme .btn-forgotten:hover {
     width: 100% !important;
     justify-content: center !important;
     gap: 0.5rem !important;
-  }
-
-  .custom-select {
-    flex: 1 !important;
-    max-width: 150px !important;
-  }
-
-  .custom-select-trigger {
-    width: 100% !important;
-    padding: 0.4rem 1.5rem 0.4rem 0.65rem !important;
-    font-size: 0.75rem !important;
-    border-radius: 15px !important;
-    min-width: 100px !important;
-  }
-
-  .custom-select-trigger::after {
-    right: 0.65rem !important;
   }
 
   /* Compact chart variation tabs on mobile */

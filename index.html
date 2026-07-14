@@ -195,42 +195,12 @@
                 <button class="btn-toggle" id="filter-level-n4">N4 Only</button>
               </div>
 
-              <!-- Vocabulary Dropdown Filters (Hidden for Hiragana/Katakana) -->
+              <!-- Vocabulary Filters Trigger (Hidden for Hiragana/Katakana) -->
               <div class="dropdown-filter-group" id="vocab-dropdown-filters">
-                <!-- Word Types Multi-Select -->
-                <div class="custom-select" id="select-vocab-types">
-                  <button class="custom-select-trigger" id="types-trigger">Word Types: All</button>
-                  <div class="custom-select-options hidden">
-                    <label class="select-option"><input type="checkbox" value="nouns" checked> Nouns (名詞)</label>
-                    <label class="select-option"><input type="checkbox" value="verbs" checked> Verbs (動詞)</label>
-                    <label class="select-option"><input type="checkbox" value="adjectives" checked> Adjectives (形容詞)</label>
-                    <label class="select-option"><input type="checkbox" value="misc" checked> Miscellaneous (その他)</label>
-                  </div>
-                </div>
-
-                <!-- Topics Multi-Select (Logically Sorted) -->
-                <div class="custom-select" id="select-vocab-topics">
-                  <button class="custom-select-trigger" id="topics-trigger">Topics: All</button>
-                  <div class="custom-select-options hidden">
-                    <!-- 1. Basics & Numbers -->
-                    <label class="select-option"><input type="checkbox" value="numbers" checked> Numbers & Counters (数字・助数詞)</label>
-                    <label class="select-option"><input type="checkbox" value="calendar" checked> Calendar & Dates (暦・日付)</label>
-                    <label class="select-option"><input type="checkbox" value="time" checked> Time & Hours (時間・時刻)</label>
-                    
-                    <!-- 2. Personal & Daily Essentials -->
-                    <label class="select-option"><input type="checkbox" value="body" checked> Body & Health (身体・健康)</label>
-                    <label class="select-option"><input type="checkbox" value="food" checked> Food & Dining (食べ物・食事)</label>
-                    <label class="select-option"><input type="checkbox" value="family" checked> Family & Social (家族・人)</label>
-                    
-                    <!-- 3. External Environments & Contexts -->
-                    <label class="select-option"><input type="checkbox" value="school" checked> School & Study (学校・勉強)</label>
-                    <label class="select-option"><input type="checkbox" value="travel" checked> Travel & Places (旅行・場所)</label>
-                    <label class="select-option"><input type="checkbox" value="weather" checked> Weather & Seasons (天気・季節)</label>
-                    
-                    <!-- 4. Uncategorized fallback -->
-                    <label class="select-option"><input type="checkbox" value="other" checked> General / Others (その他一般)</label>
-                  </div>
-                </div>
+                <button class="btn-toggle" id="btn-open-filters" title="Filter vocabulary categories">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem; vertical-align: middle;"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                  Filter Categories
+                </button>
               </div>
             </div>
             
@@ -346,6 +316,96 @@
   <!-- Forgotten Things Popup (Light Mode Only) -->
   <div class="forgotten-popup" id="forgotten-popup" aria-label="Forgotten memory" aria-hidden="true">
     <img src="forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
+  </div>
+
+  <!-- Vocabulary Filter Drawer Modal (Concept B) -->
+  <div class="modal-overlay hidden" id="filter-modal-overlay">
+    <div class="filter-drawer" id="filter-drawer">
+      <div class="drawer-header">
+        <h3>Filter Vocabulary</h3>
+        <button class="btn-close-drawer" id="btn-close-drawer" aria-label="Close Filters">&times;</button>
+      </div>
+      
+      <div class="drawer-body">
+        <!-- Word Types section -->
+        <div class="filter-section">
+          <h4 class="filter-section-title">Word Types</h4>
+          <div class="filter-grid types-grid">
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-type-nouns" value="nouns" checked>
+              <span>Nouns (名詞)</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-type-verbs" value="verbs" checked>
+              <span>Verbs (動詞)</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-type-adjectives" value="adjectives" checked>
+              <span>Adjectives (形容詞)</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-type-misc" value="misc" checked>
+              <span>Miscellaneous (その他)</span>
+            </label>
+          </div>
+        </div>
+        
+        <!-- Topics section -->
+        <div class="filter-section">
+          <h4 class="filter-section-title">Topics</h4>
+          <div class="filter-grid topics-grid">
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-numbers" value="numbers" checked>
+              <span>Numbers & Counters</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-calendar" value="calendar" checked>
+              <span>Calendar & Dates</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-time" value="time" checked>
+              <span>Time & Hours</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-body" value="body" checked>
+              <span>Body & Health</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-food" value="food" checked>
+              <span>Food & Dining</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-family" value="family" checked>
+              <span>Family & Social</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-school" value="school" checked>
+              <span>School & Study</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-travel" value="travel" checked>
+              <span>Travel & Places</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-weather" value="weather" checked>
+              <span>Weather & Seasons</span>
+            </label>
+            <label class="drawer-checkbox-label">
+              <input type="checkbox" id="chk-topic-other" value="other" checked>
+              <span>General / Others</span>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <div class="drawer-actions">
+        <div class="quick-toggles">
+          <button class="btn-quick-toggle" id="btn-drawer-clear">Clear All</button>
+          <button class="btn-quick-toggle" id="btn-drawer-select-all">Select All</button>
+        </div>
+        <button class="btn btn-primary" id="btn-drawer-apply">Apply Filters</button>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->

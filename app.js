@@ -318,122 +318,109 @@ function setupEventListeners() {
   filterLevelN5Btn.addEventListener('click', () => changeLevelFilter('N5'));
   filterLevelN4Btn.addEventListener('click', () => changeLevelFilter('N4'));
 
-  // Vocabulary custom multi-select checkbox listeners
-  const typesTrigger = document.getElementById('types-trigger');
-  const topicsTrigger = document.getElementById('topics-trigger');
-  const selectTypes = document.getElementById('select-vocab-types');
-  const selectTopics = document.getElementById('select-vocab-topics');
+  // Vocabulary Filter Drawer (Concept B) Event Handlers
+  const btnOpenFilters = document.getElementById('btn-open-filters');
+  const filterModalOverlay = document.getElementById('filter-modal-overlay');
+  const btnCloseDrawer = document.getElementById('btn-close-drawer');
+  const btnDrawerClear = document.getElementById('btn-drawer-clear');
+  const btnDrawerSelectAll = document.getElementById('btn-drawer-select-all');
+  const btnDrawerApply = document.getElementById('btn-drawer-apply');
+  const filterDrawer = document.getElementById('filter-drawer');
 
-  if (typesTrigger && selectTypes) {
-    const optionsPanel = selectTypes.querySelector('.custom-select-options');
-    typesTrigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      typesTrigger.classList.toggle('active');
-      optionsPanel.classList.toggle('hidden');
-      // Close the other dropdown if open
-      if (topicsTrigger) {
-        topicsTrigger.classList.remove('active');
-        const otherPanel = selectTopics.querySelector('.custom-select-options');
-        if (otherPanel) otherPanel.classList.add('hidden');
-      }
+  // Helper to open the drawer and sync UI state with variables
+  const openFilterDrawer = () => {
+    if (!filterModalOverlay) return;
+    
+    // Sync UI checkbox states with the active state arrays
+    const typeBoxes = filterModalOverlay.querySelectorAll('.types-grid input[type="checkbox"]');
+    typeBoxes.forEach(box => {
+      box.checked = selectedVocabTypes.includes(box.value);
     });
 
-    const checkboxes = selectTypes.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => {
-      cb.addEventListener('change', () => {
-        const checked = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
-        selectedVocabTypes = checked;
-        
-        // Update trigger text
-        if (checked.length === checkboxes.length) {
-          typesTrigger.textContent = 'Word Types: All';
-        } else if (checked.length === 0) {
-          typesTrigger.textContent = 'Word Types: None';
-        } else {
-          const names = checked.map(v => v.charAt(0).toUpperCase() + v.slice(1));
-          typesTrigger.textContent = 'Types: ' + names.join(', ');
-        }
-        
-        currentIndex = 0;
-        applyFiltersAndShuffle();
-        renderCard();
-      });
+    const topicBoxes = filterModalOverlay.querySelectorAll('.topics-grid input[type="checkbox"]');
+    topicBoxes.forEach(box => {
+      box.checked = selectedVocabTopics.includes(box.value);
+    });
+
+    filterModalOverlay.classList.remove('hidden');
+  };
+
+  // Helper to close the drawer
+  const closeFilterDrawer = () => {
+    if (filterModalOverlay) {
+      filterModalOverlay.classList.add('hidden');
+    }
+  };
+
+  if (btnOpenFilters) {
+    btnOpenFilters.addEventListener('click', openFilterDrawer);
+  }
+
+  if (btnCloseDrawer) {
+    btnCloseDrawer.addEventListener('click', closeFilterDrawer);
+  }
+
+  // Close when clicking on overlay backdrop (excluding the drawer container itself)
+  if (filterModalOverlay) {
+    filterModalOverlay.addEventListener('click', (e) => {
+      if (filterDrawer && !filterDrawer.contains(e.target)) {
+        closeFilterDrawer();
+      }
     });
   }
 
-  if (topicsTrigger && selectTopics) {
-    const optionsPanel = selectTopics.querySelector('.custom-select-options');
-    topicsTrigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      topicsTrigger.classList.toggle('active');
-      optionsPanel.classList.toggle('hidden');
-      // Close the other dropdown if open
-      if (typesTrigger) {
-        typesTrigger.classList.remove('active');
-        const otherPanel = selectTypes.querySelector('.custom-select-options');
-        if (otherPanel) otherPanel.classList.add('hidden');
-      }
-    });
-
-    const checkboxes = selectTopics.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => {
-      cb.addEventListener('change', () => {
-        const checked = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
-        selectedVocabTopics = checked;
-
-        // Update trigger text
-        if (checked.length === checkboxes.length) {
-          topicsTrigger.textContent = 'Topics: All';
-        } else if (checked.length === 0) {
-          topicsTrigger.textContent = 'Topics: None';
-        } else {
-          // Map short codes to display labels
-          const topicLabels = {
-            numbers: 'Numbers',
-            calendar: 'Calendar',
-            time: 'Time',
-            body: 'Body & Health',
-            food: 'Food',
-            family: 'Family',
-            school: 'School',
-            travel: 'Travel',
-            weather: 'Weather',
-            other: 'Others'
-          };
-          const names = checked.map(v => topicLabels[v] || v);
-          topicsTrigger.textContent = 'Topics: ' + names.join(', ');
-        }
-
-        currentIndex = 0;
-        applyFiltersAndShuffle();
-        renderCard();
-      });
+  // Clear all checkboxes in the drawer modal
+  if (btnDrawerClear) {
+    btnDrawerClear.addEventListener('click', () => {
+      if (!filterModalOverlay) return;
+      const checkboxes = filterModalOverlay.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(box => box.checked = false);
     });
   }
 
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', (e) => {
-    if (selectTypes && !selectTypes.contains(e.target)) {
-      if (typesTrigger) typesTrigger.classList.remove('active');
-      const panel = selectTypes.querySelector('.custom-select-options');
-      if (panel) panel.classList.add('hidden');
-    }
-    if (selectTopics && !selectTopics.contains(e.target)) {
-      if (topicsTrigger) topicsTrigger.classList.remove('active');
-      const panel = selectTopics.querySelector('.custom-select-options');
-      if (panel) panel.classList.add('hidden');
-    }
-  });
+  // Select all checkboxes in the drawer modal
+  if (btnDrawerSelectAll) {
+    btnDrawerSelectAll.addEventListener('click', () => {
+      if (!filterModalOverlay) return;
+      const checkboxes = filterModalOverlay.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(box => box.checked = true);
+    });
+  }
 
-  // Close dropdowns on Escape key
+  // Apply filters button logic
+  if (btnDrawerApply) {
+    btnDrawerApply.addEventListener('click', () => {
+      if (!filterModalOverlay) return;
+
+      const checkedTypes = Array.from(filterModalOverlay.querySelectorAll('.types-grid input[type="checkbox"]'))
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      const checkedTopics = Array.from(filterModalOverlay.querySelectorAll('.topics-grid input[type="checkbox"]'))
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      // Prevent blank deck states
+      if (checkedTypes.length === 0) {
+        alert('Please select at least one Word Type to filter.');
+        return;
+      }
+
+      // Update state arrays
+      selectedVocabTypes = checkedTypes;
+      selectedVocabTopics = checkedTopics;
+
+      currentIndex = 0;
+      applyFiltersAndShuffle();
+      renderCard();
+      closeFilterDrawer();
+    });
+  }
+
+  // Close drawer on Escape key
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (typesTrigger) typesTrigger.classList.remove('active');
-      if (topicsTrigger) topicsTrigger.classList.remove('active');
-      const panel1 = selectTypes ? selectTypes.querySelector('.custom-select-options') : null;
-      if (panel1) panel1.classList.add('hidden');
-      const panel2 = selectTopics ? selectTopics.querySelector('.custom-select-options') : null;
-      if (panel2) panel2.classList.add('hidden');
+    if (e.key === 'Escape' && filterModalOverlay && !filterModalOverlay.classList.contains('hidden')) {
+      closeFilterDrawer();
     }
   });
 
