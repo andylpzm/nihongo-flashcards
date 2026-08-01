@@ -1,0 +1,1678 @@
+{
+  "hiraganaAlphabet": [
+    {
+      "id": "h1",
+      "kana": "あ",
+      "romaji": "a",
+      "meanings": [
+        "a"
+      ]
+    },
+    {
+      "id": "h2",
+      "kana": "い",
+      "romaji": "i",
+      "meanings": [
+        "i"
+      ]
+    },
+    {
+      "id": "h3",
+      "kana": "う",
+      "romaji": "u",
+      "meanings": [
+        "u"
+      ]
+    },
+    {
+      "id": "h4",
+      "kana": "え",
+      "romaji": "e",
+      "meanings": [
+        "e"
+      ]
+    },
+    {
+      "id": "h5",
+      "kana": "お",
+      "romaji": "o",
+      "meanings": [
+        "o"
+      ]
+    },
+    {
+      "id": "h6",
+      "kana": "か",
+      "romaji": "ka",
+      "meanings": [
+        "ka"
+      ]
+    },
+    {
+      "id": "h7",
+      "kana": "き",
+      "romaji": "ki",
+      "meanings": [
+        "ki"
+      ]
+    },
+    {
+      "id": "h8",
+      "kana": "く",
+      "romaji": "ku",
+      "meanings": [
+        "ku"
+      ]
+    },
+    {
+      "id": "h9",
+      "kana": "け",
+      "romaji": "ke",
+      "meanings": [
+        "ke"
+      ]
+    },
+    {
+      "id": "h10",
+      "kana": "こ",
+      "romaji": "ko",
+      "meanings": [
+        "ko"
+      ]
+    },
+    {
+      "id": "h11",
+      "kana": "さ",
+      "romaji": "sa",
+      "meanings": [
+        "sa"
+      ]
+    },
+    {
+      "id": "h12",
+      "kana": "し",
+      "romaji": "shi",
+      "meanings": [
+        "shi"
+      ]
+    },
+    {
+      "id": "h13",
+      "kana": "す",
+      "romaji": "su",
+      "meanings": [
+        "su"
+      ]
+    },
+    {
+      "id": "h14",
+      "kana": "せ",
+      "romaji": "se",
+      "meanings": [
+        "se"
+      ]
+    },
+    {
+      "id": "h15",
+      "kana": "そ",
+      "romaji": "so",
+      "meanings": [
+        "so"
+      ]
+    },
+    {
+      "id": "h16",
+      "kana": "た",
+      "romaji": "ta",
+      "meanings": [
+        "ta"
+      ]
+    },
+    {
+      "id": "h17",
+      "kana": "ち",
+      "romaji": "chi",
+      "meanings": [
+        "chi"
+      ]
+    },
+    {
+      "id": "h18",
+      "kana": "つ",
+      "romaji": "tsu",
+      "meanings": [
+        "tsu"
+      ]
+    },
+    {
+      "id": "h19",
+      "kana": "て",
+      "romaji": "te",
+      "meanings": [
+        "te"
+      ]
+    },
+    {
+      "id": "h20",
+      "kana": "と",
+      "romaji": "to",
+      "meanings": [
+        "to"
+      ]
+    },
+    {
+      "id": "h21",
+      "kana": "な",
+      "romaji": "na",
+      "meanings": [
+        "na"
+      ]
+    },
+    {
+      "id": "h22",
+      "kana": "に",
+      "romaji": "ni",
+      "meanings": [
+        "ni"
+      ]
+    },
+    {
+      "id": "h23",
+      "kana": "ぬ",
+      "romaji": "nu",
+      "meanings": [
+        "nu"
+      ]
+    },
+    {
+      "id": "h24",
+      "kana": "ね",
+      "romaji": "ne",
+      "meanings": [
+        "ne"
+      ]
+    },
+    {
+      "id": "h25",
+      "kana": "の",
+      "romaji": "no",
+      "meanings": [
+        "no"
+      ]
+    },
+    {
+      "id": "h26",
+      "kana": "は",
+      "romaji": "ha",
+      "meanings": [
+        "ha"
+      ]
+    },
+    {
+      "id": "h27",
+      "kana": "ひ",
+      "romaji": "hi",
+      "meanings": [
+        "hi"
+      ]
+    },
+    {
+      "id": "h28",
+      "kana": "ふ",
+      "romaji": "fu",
+      "meanings": [
+        "fu"
+      ]
+    },
+    {
+      "id": "h29",
+      "kana": "へ",
+      "romaji": "he",
+      "meanings": [
+        "he"
+      ]
+    },
+    {
+      "id": "h30",
+      "kana": "ほ",
+      "romaji": "ho",
+      "meanings": [
+        "ho"
+      ]
+    },
+    {
+      "id": "h31",
+      "kana": "ま",
+      "romaji": "ma",
+      "meanings": [
+        "ma"
+      ]
+    },
+    {
+      "id": "h32",
+      "kana": "み",
+      "romaji": "mi",
+      "meanings": [
+        "mi"
+      ]
+    },
+    {
+      "id": "h33",
+      "kana": "む",
+      "romaji": "mu",
+      "meanings": [
+        "mu"
+      ]
+    },
+    {
+      "id": "h34",
+      "kana": "め",
+      "romaji": "me",
+      "meanings": [
+        "me"
+      ]
+    },
+    {
+      "id": "h35",
+      "kana": "も",
+      "romaji": "mo",
+      "meanings": [
+        "mo"
+      ]
+    },
+    {
+      "id": "h36",
+      "kana": "や",
+      "romaji": "ya",
+      "meanings": [
+        "ya"
+      ]
+    },
+    {
+      "id": "h37",
+      "kana": "ゆ",
+      "romaji": "yu",
+      "meanings": [
+        "yu"
+      ]
+    },
+    {
+      "id": "h38",
+      "kana": "よ",
+      "romaji": "yo",
+      "meanings": [
+        "yo"
+      ]
+    },
+    {
+      "id": "h39",
+      "kana": "ら",
+      "romaji": "ra",
+      "meanings": [
+        "ra"
+      ]
+    },
+    {
+      "id": "h40",
+      "kana": "り",
+      "romaji": "ri",
+      "meanings": [
+        "ri"
+      ]
+    },
+    {
+      "id": "h41",
+      "kana": "る",
+      "romaji": "ru",
+      "meanings": [
+        "ru"
+      ]
+    },
+    {
+      "id": "h42",
+      "kana": "れ",
+      "romaji": "re",
+      "meanings": [
+        "re"
+      ]
+    },
+    {
+      "id": "h43",
+      "kana": "ろ",
+      "romaji": "ro",
+      "meanings": [
+        "ro"
+      ]
+    },
+    {
+      "id": "h44",
+      "kana": "わ",
+      "romaji": "wa",
+      "meanings": [
+        "wa"
+      ]
+    },
+    {
+      "id": "h45",
+      "kana": "を",
+      "romaji": "wo",
+      "meanings": [
+        "wo"
+      ]
+    },
+    {
+      "id": "h46",
+      "kana": "ん",
+      "romaji": "n",
+      "meanings": [
+        "n"
+      ]
+    }
+  ],
+  "katakanaAlphabet": [
+    {
+      "id": "k1",
+      "kana": "ア",
+      "romaji": "a",
+      "meanings": [
+        "a"
+      ]
+    },
+    {
+      "id": "k2",
+      "kana": "イ",
+      "romaji": "i",
+      "meanings": [
+        "i"
+      ]
+    },
+    {
+      "id": "k3",
+      "kana": "ウ",
+      "romaji": "u",
+      "meanings": [
+        "u"
+      ]
+    },
+    {
+      "id": "k4",
+      "kana": "エ",
+      "romaji": "e",
+      "meanings": [
+        "e"
+      ]
+    },
+    {
+      "id": "k5",
+      "kana": "オ",
+      "romaji": "o",
+      "meanings": [
+        "o"
+      ]
+    },
+    {
+      "id": "k6",
+      "kana": "カ",
+      "romaji": "ka",
+      "meanings": [
+        "ka"
+      ]
+    },
+    {
+      "id": "k7",
+      "kana": "キ",
+      "romaji": "ki",
+      "meanings": [
+        "ki"
+      ]
+    },
+    {
+      "id": "k8",
+      "kana": "ク",
+      "romaji": "ku",
+      "meanings": [
+        "ku"
+      ]
+    },
+    {
+      "id": "k9",
+      "kana": "ケ",
+      "romaji": "ke",
+      "meanings": [
+        "ke"
+      ]
+    },
+    {
+      "id": "k10",
+      "kana": "コ",
+      "romaji": "ko",
+      "meanings": [
+        "ko"
+      ]
+    },
+    {
+      "id": "k11",
+      "kana": "サ",
+      "romaji": "sa",
+      "meanings": [
+        "sa"
+      ]
+    },
+    {
+      "id": "k12",
+      "kana": "シ",
+      "romaji": "shi",
+      "meanings": [
+        "shi"
+      ]
+    },
+    {
+      "id": "k13",
+      "kana": "ス",
+      "romaji": "su",
+      "meanings": [
+        "su"
+      ]
+    },
+    {
+      "id": "k14",
+      "kana": "セ",
+      "romaji": "se",
+      "meanings": [
+        "se"
+      ]
+    },
+    {
+      "id": "k15",
+      "kana": "ソ",
+      "romaji": "so",
+      "meanings": [
+        "so"
+      ]
+    },
+    {
+      "id": "k16",
+      "kana": "タ",
+      "romaji": "ta",
+      "meanings": [
+        "ta"
+      ]
+    },
+    {
+      "id": "k17",
+      "kana": "チ",
+      "romaji": "chi",
+      "meanings": [
+        "chi"
+      ]
+    },
+    {
+      "id": "k18",
+      "kana": "ツ",
+      "romaji": "tsu",
+      "meanings": [
+        "tsu"
+      ]
+    },
+    {
+      "id": "k19",
+      "kana": "テ",
+      "romaji": "te",
+      "meanings": [
+        "te"
+      ]
+    },
+    {
+      "id": "k20",
+      "kana": "ト",
+      "romaji": "to",
+      "meanings": [
+        "to"
+      ]
+    },
+    {
+      "id": "k21",
+      "kana": "ナ",
+      "romaji": "na",
+      "meanings": [
+        "na"
+      ]
+    },
+    {
+      "id": "k22",
+      "kana": "ニ",
+      "romaji": "ni",
+      "meanings": [
+        "ni"
+      ]
+    },
+    {
+      "id": "k23",
+      "kana": "ヌ",
+      "romaji": "nu",
+      "meanings": [
+        "nu"
+      ]
+    },
+    {
+      "id": "k24",
+      "kana": "ネ",
+      "romaji": "ne",
+      "meanings": [
+        "ne"
+      ]
+    },
+    {
+      "id": "k25",
+      "kana": "ノ",
+      "romaji": "no",
+      "meanings": [
+        "no"
+      ]
+    },
+    {
+      "id": "k26",
+      "kana": "ハ",
+      "romaji": "ha",
+      "meanings": [
+        "ha"
+      ]
+    },
+    {
+      "id": "k27",
+      "kana": "ヒ",
+      "romaji": "hi",
+      "meanings": [
+        "hi"
+      ]
+    },
+    {
+      "id": "k28",
+      "kana": "フ",
+      "romaji": "fu",
+      "meanings": [
+        "fu"
+      ]
+    },
+    {
+      "id": "k29",
+      "kana": "ヘ",
+      "romaji": "he",
+      "meanings": [
+        "he"
+      ]
+    },
+    {
+      "id": "k30",
+      "kana": "ホ",
+      "romaji": "ho",
+      "meanings": [
+        "ho"
+      ]
+    },
+    {
+      "id": "k31",
+      "kana": "マ",
+      "romaji": "ma",
+      "meanings": [
+        "ma"
+      ]
+    },
+    {
+      "id": "k32",
+      "kana": "ミ",
+      "romaji": "mi",
+      "meanings": [
+        "mi"
+      ]
+    },
+    {
+      "id": "k33",
+      "kana": "ム",
+      "romaji": "mu",
+      "meanings": [
+        "mu"
+      ]
+    },
+    {
+      "id": "k34",
+      "kana": "メ",
+      "romaji": "me",
+      "meanings": [
+        "me"
+      ]
+    },
+    {
+      "id": "k35",
+      "kana": "モ",
+      "romaji": "mo",
+      "meanings": [
+        "mo"
+      ]
+    },
+    {
+      "id": "k36",
+      "kana": "ヤ",
+      "romaji": "ya",
+      "meanings": [
+        "ya"
+      ]
+    },
+    {
+      "id": "k37",
+      "kana": "ユ",
+      "romaji": "yu",
+      "meanings": [
+        "yu"
+      ]
+    },
+    {
+      "id": "k38",
+      "kana": "ヨ",
+      "romaji": "yo",
+      "meanings": [
+        "yo"
+      ]
+    },
+    {
+      "id": "k39",
+      "kana": "ラ",
+      "romaji": "ra",
+      "meanings": [
+        "ra"
+      ]
+    },
+    {
+      "id": "k40",
+      "kana": "リ",
+      "romaji": "ri",
+      "meanings": [
+        "ri"
+      ]
+    },
+    {
+      "id": "k41",
+      "kana": "ル",
+      "romaji": "ru",
+      "meanings": [
+        "ru"
+      ]
+    },
+    {
+      "id": "k42",
+      "kana": "レ",
+      "romaji": "re",
+      "meanings": [
+        "re"
+      ]
+    },
+    {
+      "id": "k43",
+      "kana": "ロ",
+      "romaji": "ro",
+      "meanings": [
+        "ro"
+      ]
+    },
+    {
+      "id": "k44",
+      "kana": "ワ",
+      "romaji": "wa",
+      "meanings": [
+        "wa"
+      ]
+    },
+    {
+      "id": "k45",
+      "kana": "ヲ",
+      "romaji": "wo",
+      "meanings": [
+        "wo"
+      ]
+    },
+    {
+      "id": "k46",
+      "kana": "ン",
+      "romaji": "n",
+      "meanings": [
+        "n"
+      ]
+    }
+  ],
+  "hiraganaVoiced": [
+    {
+      "id": "hv1",
+      "kana": "が",
+      "romaji": "ga",
+      "meanings": [
+        "ga"
+      ]
+    },
+    {
+      "id": "hv2",
+      "kana": "ぎ",
+      "romaji": "gi",
+      "meanings": [
+        "gi"
+      ]
+    },
+    {
+      "id": "hv3",
+      "kana": "ぐ",
+      "romaji": "gu",
+      "meanings": [
+        "gu"
+      ]
+    },
+    {
+      "id": "hv4",
+      "kana": "げ",
+      "romaji": "ge",
+      "meanings": [
+        "ge"
+      ]
+    },
+    {
+      "id": "hv5",
+      "kana": "ご",
+      "romaji": "go",
+      "meanings": [
+        "go"
+      ]
+    },
+    {
+      "id": "hv6",
+      "kana": "ざ",
+      "romaji": "za",
+      "meanings": [
+        "za"
+      ]
+    },
+    {
+      "id": "hv7",
+      "kana": "じ",
+      "romaji": "ji",
+      "meanings": [
+        "ji"
+      ]
+    },
+    {
+      "id": "hv8",
+      "kana": "ず",
+      "romaji": "zu",
+      "meanings": [
+        "zu"
+      ]
+    },
+    {
+      "id": "hv9",
+      "kana": "ぜ",
+      "romaji": "ze",
+      "meanings": [
+        "ze"
+      ]
+    },
+    {
+      "id": "hv10",
+      "kana": "ぞ",
+      "romaji": "zo",
+      "meanings": [
+        "zo"
+      ]
+    },
+    {
+      "id": "hv11",
+      "kana": "だ",
+      "romaji": "da",
+      "meanings": [
+        "da"
+      ]
+    },
+    {
+      "id": "hv12",
+      "kana": "ぢ",
+      "romaji": "dji",
+      "meanings": [
+        "ji (dji)"
+      ]
+    },
+    {
+      "id": "hv13",
+      "kana": "づ",
+      "romaji": "dzu",
+      "meanings": [
+        "zu (dzu)"
+      ]
+    },
+    {
+      "id": "hv14",
+      "kana": "で",
+      "romaji": "de",
+      "meanings": [
+        "de"
+      ]
+    },
+    {
+      "id": "hv15",
+      "kana": "ど",
+      "romaji": "do",
+      "meanings": [
+        "do"
+      ]
+    },
+    {
+      "id": "hv16",
+      "kana": "ば",
+      "romaji": "ba",
+      "meanings": [
+        "ba"
+      ]
+    },
+    {
+      "id": "hv17",
+      "kana": "び",
+      "romaji": "bi",
+      "meanings": [
+        "bi"
+      ]
+    },
+    {
+      "id": "hv18",
+      "kana": "ぶ",
+      "romaji": "bu",
+      "meanings": [
+        "bu"
+      ]
+    },
+    {
+      "id": "hv19",
+      "kana": "べ",
+      "romaji": "be",
+      "meanings": [
+        "be"
+      ]
+    },
+    {
+      "id": "hv20",
+      "kana": "ぼ",
+      "romaji": "bo",
+      "meanings": [
+        "bo"
+      ]
+    },
+    {
+      "id": "hv21",
+      "kana": "ぱ",
+      "romaji": "pa",
+      "meanings": [
+        "pa"
+      ]
+    },
+    {
+      "id": "hv22",
+      "kana": "ぴ",
+      "romaji": "pi",
+      "meanings": [
+        "pi"
+      ]
+    },
+    {
+      "id": "hv23",
+      "kana": "ぷ",
+      "romaji": "pu",
+      "meanings": [
+        "pu"
+      ]
+    },
+    {
+      "id": "hv24",
+      "kana": "ぺ",
+      "romaji": "pe",
+      "meanings": [
+        "pe"
+      ]
+    },
+    {
+      "id": "hv25",
+      "kana": "ぽ",
+      "romaji": "po",
+      "meanings": [
+        "po"
+      ]
+    }
+  ],
+  "katakanaVoiced": [
+    {
+      "id": "kv1",
+      "kana": "ガ",
+      "romaji": "ga",
+      "meanings": [
+        "ga"
+      ]
+    },
+    {
+      "id": "kv2",
+      "kana": "ギ",
+      "romaji": "gi",
+      "meanings": [
+        "gi"
+      ]
+    },
+    {
+      "id": "kv3",
+      "kana": "グ",
+      "romaji": "gu",
+      "meanings": [
+        "gu"
+      ]
+    },
+    {
+      "id": "kv4",
+      "kana": "ゲ",
+      "romaji": "ge",
+      "meanings": [
+        "ge"
+      ]
+    },
+    {
+      "id": "kv5",
+      "kana": "ゴ",
+      "romaji": "go",
+      "meanings": [
+        "go"
+      ]
+    },
+    {
+      "id": "kv6",
+      "kana": "ザ",
+      "romaji": "za",
+      "meanings": [
+        "za"
+      ]
+    },
+    {
+      "id": "kv7",
+      "kana": "ジ",
+      "romaji": "ji",
+      "meanings": [
+        "ji"
+      ]
+    },
+    {
+      "id": "kv8",
+      "kana": "ズ",
+      "romaji": "zu",
+      "meanings": [
+        "zu"
+      ]
+    },
+    {
+      "id": "kv9",
+      "kana": "ゼ",
+      "romaji": "ze",
+      "meanings": [
+        "ze"
+      ]
+    },
+    {
+      "id": "kv10",
+      "kana": "ゾ",
+      "romaji": "zo",
+      "meanings": [
+        "zo"
+      ]
+    },
+    {
+      "id": "kv11",
+      "kana": "ダ",
+      "romaji": "da",
+      "meanings": [
+        "da"
+      ]
+    },
+    {
+      "id": "kv12",
+      "kana": "ヂ",
+      "romaji": "dji",
+      "meanings": [
+        "ji (dji)"
+      ]
+    },
+    {
+      "id": "kv13",
+      "kana": "ヅ",
+      "romaji": "dzu",
+      "meanings": [
+        "zu (dzu)"
+      ]
+    },
+    {
+      "id": "kv14",
+      "kana": "デ",
+      "romaji": "de",
+      "meanings": [
+        "de"
+      ]
+    },
+    {
+      "id": "kv15",
+      "kana": "ド",
+      "romaji": "do",
+      "meanings": [
+        "do"
+      ]
+    },
+    {
+      "id": "kv16",
+      "kana": "バ",
+      "romaji": "ba",
+      "meanings": [
+        "ba"
+      ]
+    },
+    {
+      "id": "kv17",
+      "kana": "ビ",
+      "romaji": "bi",
+      "meanings": [
+        "bi"
+      ]
+    },
+    {
+      "id": "kv18",
+      "kana": "ブ",
+      "romaji": "bu",
+      "meanings": [
+        "bu"
+      ]
+    },
+    {
+      "id": "kv19",
+      "kana": "ベ",
+      "romaji": "be",
+      "meanings": [
+        "be"
+      ]
+    },
+    {
+      "id": "kv20",
+      "kana": "ボ",
+      "romaji": "bo",
+      "meanings": [
+        "bo"
+      ]
+    },
+    {
+      "id": "kv21",
+      "kana": "パ",
+      "romaji": "pa",
+      "meanings": [
+        "pa"
+      ]
+    },
+    {
+      "id": "kv22",
+      "kana": "ピ",
+      "romaji": "pi",
+      "meanings": [
+        "pi"
+      ]
+    },
+    {
+      "id": "kv23",
+      "kana": "プ",
+      "romaji": "pu",
+      "meanings": [
+        "pu"
+      ]
+    },
+    {
+      "id": "kv24",
+      "kana": "ペ",
+      "romaji": "pe",
+      "meanings": [
+        "pe"
+      ]
+    },
+    {
+      "id": "kv25",
+      "kana": "ポ",
+      "romaji": "po",
+      "meanings": [
+        "po"
+      ]
+    }
+  ],
+  "hiraganaCombos": [
+    {
+      "id": "hc1",
+      "kana": "きゃ",
+      "romaji": "kya",
+      "meanings": [
+        "kya"
+      ]
+    },
+    {
+      "id": "hc2",
+      "kana": "きゅ",
+      "romaji": "kyu",
+      "meanings": [
+        "kyu"
+      ]
+    },
+    {
+      "id": "hc3",
+      "kana": "きょ",
+      "romaji": "kyo",
+      "meanings": [
+        "kyo"
+      ]
+    },
+    {
+      "id": "hc4",
+      "kana": "しゃ",
+      "romaji": "sha",
+      "meanings": [
+        "sha"
+      ]
+    },
+    {
+      "id": "hc5",
+      "kana": "しゅ",
+      "romaji": "shu",
+      "meanings": [
+        "shu"
+      ]
+    },
+    {
+      "id": "hc6",
+      "kana": "しょ",
+      "romaji": "sho",
+      "meanings": [
+        "sho"
+      ]
+    },
+    {
+      "id": "hc7",
+      "kana": "ちゃ",
+      "romaji": "cha",
+      "meanings": [
+        "cha"
+      ]
+    },
+    {
+      "id": "hc8",
+      "kana": "ちゅ",
+      "romaji": "chu",
+      "meanings": [
+        "chu"
+      ]
+    },
+    {
+      "id": "hc9",
+      "kana": "ちょ",
+      "romaji": "cho",
+      "meanings": [
+        "cho"
+      ]
+    },
+    {
+      "id": "hc10",
+      "kana": "にゃ",
+      "romaji": "nya",
+      "meanings": [
+        "nya"
+      ]
+    },
+    {
+      "id": "hc11",
+      "kana": "にゅ",
+      "romaji": "nyu",
+      "meanings": [
+        "nyu"
+      ]
+    },
+    {
+      "id": "hc12",
+      "kana": "にょ",
+      "romaji": "nyo",
+      "meanings": [
+        "nyo"
+      ]
+    },
+    {
+      "id": "hc13",
+      "kana": "ひゃ",
+      "romaji": "hya",
+      "meanings": [
+        "hya"
+      ]
+    },
+    {
+      "id": "hc14",
+      "kana": "ひゅ",
+      "romaji": "hyu",
+      "meanings": [
+        "hyu"
+      ]
+    },
+    {
+      "id": "hc15",
+      "kana": "ひょ",
+      "romaji": "hyo",
+      "meanings": [
+        "hyo"
+      ]
+    },
+    {
+      "id": "hc16",
+      "kana": "みゃ",
+      "romaji": "mya",
+      "meanings": [
+        "mya"
+      ]
+    },
+    {
+      "id": "hc17",
+      "kana": "みゅ",
+      "romaji": "myu",
+      "meanings": [
+        "myu"
+      ]
+    },
+    {
+      "id": "hc18",
+      "kana": "みょ",
+      "romaji": "myo",
+      "meanings": [
+        "myo"
+      ]
+    },
+    {
+      "id": "hc19",
+      "kana": "りゃ",
+      "romaji": "rya",
+      "meanings": [
+        "rya"
+      ]
+    },
+    {
+      "id": "hc20",
+      "kana": "りゅ",
+      "romaji": "ryu",
+      "meanings": [
+        "ryu"
+      ]
+    },
+    {
+      "id": "hc21",
+      "kana": "りょ",
+      "romaji": "ryo",
+      "meanings": [
+        "ryo"
+      ]
+    },
+    {
+      "id": "hc22",
+      "kana": "ぎゃ",
+      "romaji": "gya",
+      "meanings": [
+        "gya"
+      ]
+    },
+    {
+      "id": "hc23",
+      "kana": "ぎゅ",
+      "romaji": "gyu",
+      "meanings": [
+        "gyu"
+      ]
+    },
+    {
+      "id": "hc24",
+      "kana": "ぎょ",
+      "romaji": "gyo",
+      "meanings": [
+        "gyo"
+      ]
+    },
+    {
+      "id": "hc25",
+      "kana": "じゃ",
+      "romaji": "ja",
+      "meanings": [
+        "ja"
+      ]
+    },
+    {
+      "id": "hc26",
+      "kana": "じゅ",
+      "romaji": "ju",
+      "meanings": [
+        "ju"
+      ]
+    },
+    {
+      "id": "hc27",
+      "kana": "じょ",
+      "romaji": "jo",
+      "meanings": [
+        "jo"
+      ]
+    },
+    {
+      "id": "hc28",
+      "kana": "びゃ",
+      "romaji": "bya",
+      "meanings": [
+        "bya"
+      ]
+    },
+    {
+      "id": "hc29",
+      "kana": "びゅ",
+      "romaji": "byu",
+      "meanings": [
+        "byu"
+      ]
+    },
+    {
+      "id": "hc30",
+      "kana": "びょ",
+      "romaji": "byo",
+      "meanings": [
+        "byo"
+      ]
+    },
+    {
+      "id": "hc31",
+      "kana": "ぴゃ",
+      "romaji": "pya",
+      "meanings": [
+        "pya"
+      ]
+    },
+    {
+      "id": "hc32",
+      "kana": "ぴゅ",
+      "romaji": "pyu",
+      "meanings": [
+        "pyu"
+      ]
+    },
+    {
+      "id": "hc33",
+      "kana": "ぴょ",
+      "romaji": "pyo",
+      "meanings": [
+        "pyo"
+      ]
+    }
+  ],
+  "katakanaCombos": [
+    {
+      "id": "kc1",
+      "kana": "キャ",
+      "romaji": "kya",
+      "meanings": [
+        "kya"
+      ]
+    },
+    {
+      "id": "kc2",
+      "kana": "キュ",
+      "romaji": "kyu",
+      "meanings": [
+        "kyu"
+      ]
+    },
+    {
+      "id": "kc3",
+      "kana": "キョ",
+      "romaji": "kyo",
+      "meanings": [
+        "kyo"
+      ]
+    },
+    {
+      "id": "kc4",
+      "kana": "シャ",
+      "romaji": "sha",
+      "meanings": [
+        "sha"
+      ]
+    },
+    {
+      "id": "kc5",
+      "kana": "シュ",
+      "romaji": "shu",
+      "meanings": [
+        "shu"
+      ]
+    },
+    {
+      "id": "kc6",
+      "kana": "ショ",
+      "romaji": "sho",
+      "meanings": [
+        "sho"
+      ]
+    },
+    {
+      "id": "kc7",
+      "kana": "チャ",
+      "romaji": "cha",
+      "meanings": [
+        "cha"
+      ]
+    },
+    {
+      "id": "kc8",
+      "kana": "チュ",
+      "romaji": "chu",
+      "meanings": [
+        "chu"
+      ]
+    },
+    {
+      "id": "kc9",
+      "kana": "チョ",
+      "romaji": "cho",
+      "meanings": [
+        "cho"
+      ]
+    },
+    {
+      "id": "kc10",
+      "kana": "ニャ",
+      "romaji": "nya",
+      "meanings": [
+        "nya"
+      ]
+    },
+    {
+      "id": "kc11",
+      "kana": "ニュ",
+      "romaji": "nyu",
+      "meanings": [
+        "nyu"
+      ]
+    },
+    {
+      "id": "kc12",
+      "kana": "ニョ",
+      "romaji": "nyo",
+      "meanings": [
+        "nyo"
+      ]
+    },
+    {
+      "id": "kc13",
+      "kana": "ヒャ",
+      "romaji": "hya",
+      "meanings": [
+        "hya"
+      ]
+    },
+    {
+      "id": "kc14",
+      "kana": "ヒュ",
+      "romaji": "hyu",
+      "meanings": [
+        "hyu"
+      ]
+    },
+    {
+      "id": "kc15",
+      "kana": "ヒョ",
+      "romaji": "hyo",
+      "meanings": [
+        "hyo"
+      ]
+    },
+    {
+      "id": "kc16",
+      "kana": "ミャ",
+      "romaji": "mya",
+      "meanings": [
+        "mya"
+      ]
+    },
+    {
+      "id": "kc17",
+      "kana": "ミュ",
+      "romaji": "myu",
+      "meanings": [
+        "myu"
+      ]
+    },
+    {
+      "id": "kc18",
+      "kana": "ミョ",
+      "romaji": "myo",
+      "meanings": [
+        "myo"
+      ]
+    },
+    {
+      "id": "kc19",
+      "kana": "リャ",
+      "romaji": "rya",
+      "meanings": [
+        "rya"
+      ]
+    },
+    {
+      "id": "kc20",
+      "kana": "リュ",
+      "romaji": "ryu",
+      "meanings": [
+        "ryu"
+      ]
+    },
+    {
+      "id": "kc21",
+      "kana": "リョ",
+      "romaji": "ryo",
+      "meanings": [
+        "ryo"
+      ]
+    },
+    {
+      "id": "kc22",
+      "kana": "ギャ",
+      "romaji": "gya",
+      "meanings": [
+        "gya"
+      ]
+    },
+    {
+      "id": "kc23",
+      "kana": "ギュ",
+      "romaji": "gyu",
+      "meanings": [
+        "gyu"
+      ]
+    },
+    {
+      "id": "kc24",
+      "kana": "ギョ",
+      "romaji": "gyo",
+      "meanings": [
+        "gyo"
+      ]
+    },
+    {
+      "id": "kc25",
+      "kana": "ジャ",
+      "romaji": "ja",
+      "meanings": [
+        "ja"
+      ]
+    },
+    {
+      "id": "kc26",
+      "kana": "ジュ",
+      "romaji": "ju",
+      "meanings": [
+        "ju"
+      ]
+    },
+    {
+      "id": "kc27",
+      "kana": "ジョ",
+      "romaji": "jo",
+      "meanings": [
+        "jo"
+      ]
+    },
+    {
+      "id": "kc28",
+      "kana": "ビャ",
+      "romaji": "bya",
+      "meanings": [
+        "bya"
+      ]
+    },
+    {
+      "id": "kc29",
+      "kana": "ビュ",
+      "romaji": "byu",
+      "meanings": [
+        "byu"
+      ]
+    },
+    {
+      "id": "kc30",
+      "kana": "ビョ",
+      "romaji": "byo",
+      "meanings": [
+        "byo"
+      ]
+    },
+    {
+      "id": "kc31",
+      "kana": "ピャ",
+      "romaji": "pya",
+      "meanings": [
+        "pya"
+      ]
+    },
+    {
+      "id": "kc32",
+      "kana": "ピュ",
+      "romaji": "pyu",
+      "meanings": [
+        "pyu"
+      ]
+    },
+    {
+      "id": "kc33",
+      "kana": "ピョ",
+      "romaji": "pyo",
+      "meanings": [
+        "pyo"
+      ]
+    }
+  ]
+}
