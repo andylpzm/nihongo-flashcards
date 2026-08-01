@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Nihongo Cards for Chris-kun - A beautiful, interactive Japanese learning application with hiragana, katakana, and vocabulary cards.">
   <title>Nihongo Cards for Chris-kun</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="apple-touch-icon" href="https://andylpzm.github.io/nihongo-flashcards/apple-touch-icon.png?v=2">
-  <link rel="shortcut icon" href="https://andylpzm.github.io/nihongo-flashcards/apple-touch-icon.png?v=2">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+  <link rel="shortcut icon" href="apple-touch-icon.png?v=2">
 </head>
 <body>
 
@@ -312,6 +312,9 @@
 
   <!-- Immersive Sky Transition Overlay -->
   <div class="sky-transition-overlay hidden" id="sky-transition" aria-hidden="true"></div>
+
+  <!-- Toast Notification (replaces alert()) -->
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
 
   <!-- Forgotten Things Popup (Light Mode Only) -->
   <div class="forgotten-popup" id="forgotten-popup" aria-label="Forgotten memory" aria-hidden="true">

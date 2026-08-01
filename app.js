@@ -112,7 +112,6 @@ let displayOrder = cards.map((_, index) => index); // maps display positions to 
 let currentIndex = 0;
 let isFlipped = false;
 let isShuffled = true; // Enabled by default for endless shuffle study style
-let studyDirection = 'jp-to-eng'; // Fixed to Japanese-first (jp-to-eng)
 let filterMode = 'all'; // 'all', 'learning', 'mastered'
 let levelFilter = 'all'; // 'all', 'N5', 'N4'
 let practiceMode = 'flashcard'; // 'flashcard' or 'typing'
@@ -155,6 +154,23 @@ try {
     }
   }
 } catch(e) {}
+
+// Toast Notification (replaces alert())
+const toastEl = document.getElementById('toast');
+let toastTimer = null;
+function showToast(message) {
+  if (!toastEl) return;
+  clearTimeout(toastTimer);
+  toastEl.textContent = message;
+  toastEl.classList.remove('hidden');
+  // Force reflow so the transition retriggers if a toast is already active
+  void toastEl.offsetWidth;
+  toastEl.classList.add('active');
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove('active');
+    toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 250);
+  }, 3000);
+}
 
 // DOM Elements - Card Workspace
 const cardViewport = document.getElementById('card-viewport');
@@ -259,12 +275,6 @@ let activeKatakanaTab = 'basic';
 // Vocabulary Category & Context Filter States (Multi-select tracking arrays)
 let selectedVocabTypes = ['nouns', 'verbs', 'adjectives', 'misc'];
 let selectedVocabTopics = ['numbers', 'calendar', 'time', 'body', 'food', 'family', 'school', 'travel', 'weather', 'other'];
-
-const deckTitleMap = {
-  vocabulary: "Vocabulary Deck",
-  hiragana: "Hiragana Deck",
-  katakana: "Katakana Deck"
-};
 
 // Initialize Web Speech API triggers
 if ('speechSynthesis' in window) {
@@ -487,7 +497,7 @@ function setupEventListeners() {
 
       // Prevent blank deck states
       if (activeTypes.length === 0) {
-        alert('Please select at least one Word Type.');
+        showToast('Please select at least one Word Type.');
         return;
       }
 
@@ -690,10 +700,21 @@ function handleKeyboardShortcuts(e) {
   // Ignore shortcuts if the user is typing in an input
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
+  // Ignore shortcuts while a modal is open (Escape handling for filters is bound separately)
+  if (document.querySelector('.modal-overlay:not(.hidden), .story-modal:not(.hidden)')) return;
+
   switch (e.code) {
     case 'Space':
       e.preventDefault(); // Stop scrolling the page
       flipCard();
+      break;
+    case 'Enter':
+      // Only flip on Enter when the card itself is focused, to avoid double-firing
+      // a button's native click behavior when e.g. a toolbar button has focus.
+      if (e.target === cardViewport) {
+        e.preventDefault();
+        flipCard();
+      }
       break;
     case 'ArrowLeft':
       prevCard();
@@ -746,24 +767,18 @@ function loadDeck(deckName) {
     if (deckName === 'hiragana') {
       if (activeHiraganaTab === 'basic') {
         cards = [...hiraganaAlphabet];
-        deckTitleMap.hiragana = "Hiragana (Basic)";
       } else if (activeHiraganaTab === 'voiced') {
         cards = [...hiraganaVoiced];
-        deckTitleMap.hiragana = "Hiragana (Voiced)";
       } else {
         cards = [...hiraganaCombos];
-        deckTitleMap.hiragana = "Hiragana (Combos)";
       }
     } else if (deckName === 'katakana') {
       if (activeKatakanaTab === 'basic') {
         cards = [...katakanaAlphabet];
-        deckTitleMap.katakana = "Katakana (Basic)";
       } else if (activeKatakanaTab === 'voiced') {
         cards = [...katakanaVoiced];
-        deckTitleMap.katakana = "Katakana (Voiced)";
       } else {
         cards = [...katakanaCombos];
-        deckTitleMap.katakana = "Katakana (Combos)";
       }
     }
     // Hide level and category filters for non-vocabulary decks and reset filters
@@ -880,66 +895,34 @@ function renderCard() {
     level = levelMatch ? levelMatch[1] : '';
   }
 
-  // Set card contents depending on Study Direction
-  if (studyDirection === 'eng-to-jp') {
-    // FRONT: English
-    cardFront.innerHTML = `
-      <span class="card-indicator">English ${level ? `<span class="level-badge" style="margin-left: 0.65rem; padding: 0.15rem 0.45rem; font-size: 0.75rem; background: rgba(255,255,255,0.12); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); color: var(--accent-cyan); font-weight: 600;">${level}</span>` : ''}</span>
-      <div class="card-main-text">${currentCard.english}</div>
-      <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.6;">Click or Press [Space] to flip</span>
-    `;
-
-    // BACK: Japanese
-    cardBack.innerHTML = `
-      <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
-        <span class="card-indicator">Japanese</span>
-        <div style="display: flex; gap: 0.5rem;">
-          ${activeDeck === 'vocabulary' ? `
-            <button class="speak-button" id="btn-toggle-romaji" title="${showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
-              ${showRomaji ? getEyeOpenSVG() : getEyeClosedSVG()}
-            </button>
-          ` : ''}
-          <button class="speak-button" id="btn-speak" title="Listen Pronunciation [A]" aria-label="Listen Pronunciation">
-            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+  // FRONT: Japanese
+  cardFront.innerHTML = `
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
+      <span class="card-indicator">Japanese ${level ? `<span class="level-badge" style="margin-left: 0.65rem; padding: 0.15rem 0.45rem; font-size: 0.75rem; background: rgba(255,255,255,0.12); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); color: var(--accent-pink); font-weight: 600;">${level}</span>` : ''}</span>
+      <div style="display: flex; gap: 0.5rem;">
+        ${activeDeck === 'vocabulary' ? `
+          <button class="speak-button" id="btn-toggle-romaji" title="${showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
+            ${showRomaji ? getEyeOpenSVG() : getEyeClosedSVG()}
           </button>
-        </div>
+        ` : ''}
+        <button class="speak-button" id="btn-speak" title="Listen Pronunciation [A]" aria-label="Listen Pronunciation">
+          <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
       </div>
-      <div class="japanese-container">
-        <div class="hiragana-text">${currentCard.hiragana}</div>
-        ${activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
-      </div>
-      <div class="card-sub-info">${currentCard.notes}</div>
-    `;
-  } else {
-    // FRONT: Japanese
-    cardFront.innerHTML = `
-      <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
-        <span class="card-indicator">Japanese ${level ? `<span class="level-badge" style="margin-left: 0.65rem; padding: 0.15rem 0.45rem; font-size: 0.75rem; background: rgba(255,255,255,0.12); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); color: var(--accent-pink); font-weight: 600;">${level}</span>` : ''}</span>
-        <div style="display: flex; gap: 0.5rem;">
-          ${activeDeck === 'vocabulary' ? `
-            <button class="speak-button" id="btn-toggle-romaji" title="${showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
-              ${showRomaji ? getEyeOpenSVG() : getEyeClosedSVG()}
-            </button>
-          ` : ''}
-          <button class="speak-button" id="btn-speak" title="Listen Pronunciation [A]" aria-label="Listen Pronunciation">
-            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="japanese-container">
-        <div class="hiragana-text" style="font-size: 3rem; margin-top: -10px;">${currentCard.hiragana}</div>
-        ${activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
-      </div>
-      <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.6;">Click or Press [Space] to flip</span>
-    `;
+    </div>
+    <div class="japanese-container">
+      <div class="hiragana-text" style="font-size: 3rem; margin-top: -10px;">${currentCard.hiragana}</div>
+      ${activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
+    </div>
+    <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.6;">Click or Press [Space] to flip</span>
+  `;
 
-    // BACK: English
-    cardBack.innerHTML = `
-      <span class="card-indicator">English</span>
-      <div class="card-main-text">${currentCard.english}</div>
-      <div class="card-sub-info">${currentCard.notes}</div>
-    `;
-  }
+  // BACK: English
+  cardBack.innerHTML = `
+    <span class="card-indicator">English</span>
+    <div class="card-main-text">${currentCard.english}</div>
+    <div class="card-sub-info">${currentCard.notes}</div>
+  `;
 
   // Attach dynamic listener for speech icon (since cards are re-rendered)
   const speakBtn = document.getElementById('btn-speak');
@@ -1321,9 +1304,9 @@ function updateStats() {
   } else {
     // Normal Vocabulary Mode Stats
     const total = cards.length;
-    const mastered = masteredCardIds.size;
-    const remaining = total - mastered;
-    const percent = total > 0 ? (mastered / total) * 100 : 0;
+    const mastered = cards.filter(card => masteredCardIds.has(card.id)).length;
+    const remaining = Math.max(0, total - mastered);
+    const percent = total > 0 ? Math.min(100, (mastered / total) * 100) : 0;
 
     if (countTotalEl) countTotalEl.textContent = total;
     if (countLearningEl) countLearningEl.textContent = remaining;
@@ -1629,13 +1612,20 @@ function closeStoryModal() {
 const themeToggleCube = document.getElementById('theme-toggle-cube');
 let isLightTheme = false;
 
-// Initialize theme from localStorage
+// Initialize theme from localStorage, falling back to OS preference
 function initTheme() {
+  let savedTheme = null;
   try {
-    localStorage.removeItem('nihongo_theme');
+    savedTheme = localStorage.getItem('nihongo_theme');
   } catch (e) {}
-  isLightTheme = false;
-  document.body.classList.remove('light-theme');
+
+  if (savedTheme === 'light' || savedTheme === 'dark') {
+    isLightTheme = savedTheme === 'light';
+  } else {
+    isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
+  }
+
+  document.body.classList.toggle('light-theme', isLightTheme);
   syncCubeRotation();
 }
 
