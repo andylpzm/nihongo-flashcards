@@ -247,15 +247,30 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   text-align: left;
 }
 
+/* minmax(0, 1fr) rather than 1fr: the chips are `white-space: nowrap`, and a
+   bare 1fr track keeps its auto min-width, so long labels like
+   "Adjectives (形容詞)" push the grid wider than the sheet and force a
+   horizontal scrollbar. */
 .filter-grid {
   display: grid;
   gap: 0.5rem;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Progress and level are 3 short mutually-exclusive options - a 2-up grid
+   leaves an orphan on its own row. */
+.progress-grid,
+.level-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 /* Filter chip: the long-press/double-click "isolate" gesture (gestures.ts)
    is a shortcut for the always-visible .chip-isolate-btn "only" affordance
    (4.5) - neither is the only way to isolate a chip. */
+/* Labels wrap rather than run past the chip - "Miscellaneous (その他)" needs
+   more than half of a 390px sheet at this size, and nowrap made it spill.
+   Every chip is a fixed [label][optional isolate] row so the two columns
+   align regardless of which section they're in. */
 .filter-chip-btn {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);
@@ -264,20 +279,37 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   font-size: 0.8rem;
   font-family: var(--font-ui);
   font-weight: 500;
-  padding: 0.7rem 0.9rem;
-  min-height: 44px;
+  padding: 0.55rem 0.75rem;
+  min-height: 46px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  white-space: nowrap;
   user-select: none;
   -webkit-user-select: none;
   box-sizing: border-box;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 0.4rem;
-  text-align: center;
+  text-align: left;
   position: relative;
+}
+
+.chip-label {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+/* At 320px a 2-up chip leaves ~68px for the label once the isolate slot is
+   reserved, which is just under what "Adjectives" needs - tighten the
+   padding rather than let one chip wrap and drag its whole row taller. */
+@media (max-width: 359px) {
+  .filter-chip-btn {
+    padding: 0.55rem 0.55rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
 }
 
 body.light-theme .filter-chip-btn {
@@ -316,6 +348,7 @@ body.light-theme .filter-chip-btn.active {
 /* "only" isolate affordance - hover-revealed on desktop, always visible on
    touch (there is no hover state to reveal it on a touchscreen). */
 .chip-isolate-btn {
+  flex-shrink: 0;
   border: none;
   background: rgba(0, 0, 0, 0.25);
   color: inherit;
@@ -331,6 +364,8 @@ body.light-theme .filter-chip-btn.active {
 }
 
 @media (hover: hover) {
+  /* Fades rather than unmounting: the slot stays reserved so labels don't
+     reflow (and re-wrap) on hover. */
   .chip-isolate-btn {
     opacity: 0;
     transition: opacity 0.15s ease;

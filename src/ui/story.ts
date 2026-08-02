@@ -15,9 +15,6 @@ const btnCloseStoryModalFooter = document.getElementById('btn-close-story-modal-
 
 const storyModal = storyModalEl ? createModal(storyModalEl) : null;
 
-const levelFilterGroup = document.getElementById('level-filter-group');
-const vocabDropdownFilters = document.getElementById('vocab-dropdown-filters');
-
 // Story data loads lazily on first navigation to the Story section rather
 // than at boot; every entry point below awaits this (loadStory() memoizes,
 // so it's instant on every call after the first).
@@ -135,9 +132,8 @@ export async function startStoryChapter(chapterId: number, _mode: 'study' | 'rev
   state.activeDeck = 'story';
   state.cards = chapter.deck;
 
-  // Disable/hide normal JLPT level selector
-  if (levelFilterGroup) levelFilterGroup.classList.add('hidden');
-  if (vocabDropdownFilters) vocabDropdownFilters.classList.add('hidden');
+  // A chapter deck is fixed and pre-built, so the deck bar hides itself here
+  // (see updateDeckBar's isStoryModeActive branch).
 
   // Show back to story map button
   if (btnBackToStory) btnBackToStory.classList.remove('hidden');

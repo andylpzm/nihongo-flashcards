@@ -59,16 +59,23 @@ const countTotalEl = document.getElementById('count-total');
 const countStreakEl = document.getElementById('count-streak');
 
 // Filter toggles
-export const filterAllBtn = document.getElementById('filter-all')!;
-export const filterLearningBtn = document.getElementById('filter-learning')!;
-export const filterMasteredBtn = document.getElementById('filter-mastered')!;
+// Deck bar: the filtered-deck summary line that replaced the old options-row
+// pill wall. It is the only trigger for the filter sheet.
+const deckBar = document.getElementById('btn-open-filters');
+const deckBarCount = document.getElementById('deck-bar-count');
+const deckBarSummary = document.getElementById('deck-bar-summary');
+const deckBarBadge = document.getElementById('deck-bar-badge');
 
-// JLPT Level filter toggles
-export const levelFilterGroup = document.getElementById('level-filter-group');
-export const vocabDropdownFilters = document.getElementById('vocab-dropdown-filters');
-export const filterLevelAllBtn = document.getElementById('filter-level-all');
-export const filterLevelN5Btn = document.getElementById('filter-level-n5');
-export const filterLevelN4Btn = document.getElementById('filter-level-n4');
+// Filter sheet sections, shown/hidden per deck and study mode
+const filterSectionProgress = document.getElementById('filter-section-progress');
+const filterSectionLevel = document.getElementById('filter-section-level');
+const filterSectionTypes = document.getElementById('filter-section-types');
+const filterSectionTopics = document.getElementById('filter-section-topics');
+
+// Totals are read off the sheet's own chips so the "is this filter narrowed?"
+// check can't drift out of sync with the markup.
+const totalTypeChips = document.querySelectorAll('.types-grid .filter-chip-btn').length;
+const totalTopicChips = document.querySelectorAll('.topics-grid .filter-chip-btn').length;
 
 // Typing Mode elements
 const typingContainer = document.getElementById('typing-container')!;
@@ -104,8 +111,17 @@ function posToTypeBucket(pos: Pos): string {
 // Cards passing the level/type/topic filters (progress filter is Browse-mode
 // only - Study Session mode uses due/new instead of all/learning/mastered).
 function getFilteredCards(applyProgressFilter: boolean): Card[] {
+  // Level/type/topic only exist on the vocabulary deck. Kana and story cards
+  // carry no `level`, so applying a leftover N5/N4 choice to them rejects
+  // every card and empties the deck - guard the whole block, not just the
+  // type/topic half.
+  const vocabScope = state.activeDeck === 'vocabulary' && !state.isStoryModeActive;
+
   return state.cards.filter((card) => {
-    if (applyProgressFilter) {
+    // A story chapter is a fixed curriculum reviewed as a whole, and story
+    // mode hides the deck bar - so a leftover "learning" choice would empty a
+    // cleared chapter with no visible control to undo it.
+    if (applyProgressFilter && !state.isStoryModeActive) {
       const mastered = isCardMastered(card.id);
       const matchesProgress =
         state.filterMode === 'all' ||
@@ -114,10 +130,8 @@ function getFilteredCards(applyProgressFilter: boolean): Card[] {
       if (!matchesProgress) return false;
     }
 
-    const cardLevel = isVocabCard(card) ? card.level : '';
-    if (state.levelFilter !== 'all' && cardLevel !== state.levelFilter) return false;
-
-    if (state.activeDeck === 'vocabulary' && !state.isStoryModeActive && isVocabCard(card)) {
+    if (vocabScope && isVocabCard(card)) {
+      if (state.levelFilter !== 'all' && card.level !== state.levelFilter) return false;
       if (!state.selectedVocabTypes.includes(posToTypeBucket(card.pos))) return false;
       if (!card.topics.some((t) => state.selectedVocabTopics.includes(t))) return false;
     }
@@ -358,29 +372,74 @@ export function prevCard(): void {
 }
 
 // Change study filter (All, Learning, Mastered) - Browse mode
-export function changeFilter(filter: FilterMode): void {
-  state.filterMode = filter;
-  filterAllBtn.classList.toggle('active', filter === 'all');
-  filterLearningBtn.classList.toggle('active', filter === 'learning');
-  filterMasteredBtn.classList.toggle('active', filter === 'mastered');
+/** Commit every deck filter at once. The filter sheet stages its chips
+ * locally and calls this on Apply, so a multi-filter change re-renders the
+ * deck a single time instead of once per toggled control. */
+export function applyDeckFilters(patch: {
+  filterMode: FilterMode;
+  levelFilter: LevelFilter;
+  selectedVocabTypes: string[];
+  selectedVocabTopics: string[];
+}): void {
+  state.filterMode = patch.filterMode;
+  state.levelFilter = patch.levelFilter;
+  state.selectedVocabTypes = patch.selectedVocabTypes;
+  state.selectedVocabTopics = patch.selectedVocabTopics;
 
   state.currentIndex = 0;
   applyFiltersAndShuffle();
   renderCard();
   persistFilters();
+  updateDeckBar();
 }
 
-// Change JLPT level filter (All, N5, N4)
-export function changeLevelFilter(level: LevelFilter): void {
-  state.levelFilter = level;
-  filterLevelAllBtn?.classList.toggle('active', level === 'all');
-  filterLevelN5Btn?.classList.toggle('active', level === 'N5');
-  filterLevelN4Btn?.classList.toggle('active', level === 'N4');
+/** Which filter controls actually apply to what's on screen: progress is a
+ * Browse-mode concept (a session is scheduled by due date), and level/type/
+ * topic only exist on the vocabulary deck. */
+function deckFilterScope(): { progress: boolean; vocab: boolean } {
+  return {
+    progress: state.studyMode === 'browse' && !state.isStoryModeActive,
+    vocab: state.activeDeck === 'vocabulary' && !state.isStoryModeActive,
+  };
+}
 
-  state.currentIndex = 0;
-  applyFiltersAndShuffle();
-  renderCard();
-  persistFilters();
+/** Refresh the deck bar: how many cards the current filters select, a
+ * human-readable summary of which filters are narrowing them, and a badge
+ * counting the non-default ones. */
+export function updateDeckBar(): void {
+  if (!deckBar) return;
+  const scope = deckFilterScope();
+
+  // Story chapters are a fixed, pre-built deck - filtering them is meaningless.
+  deckBar.classList.toggle('hidden', state.isStoryModeActive);
+  filterSectionProgress?.classList.toggle('hidden', !scope.progress);
+  filterSectionLevel?.classList.toggle('hidden', !scope.vocab);
+  filterSectionTypes?.classList.toggle('hidden', !scope.vocab);
+  filterSectionTopics?.classList.toggle('hidden', !scope.vocab);
+  if (state.isStoryModeActive) return;
+
+  const count = getFilteredCards(scope.progress).length;
+  if (deckBarCount) deckBarCount.textContent = `${count} card${count === 1 ? '' : 's'}`;
+
+  const parts: string[] = [];
+  if (scope.progress && state.filterMode !== 'all') parts.push(state.filterMode);
+  if (scope.vocab) {
+    if (state.levelFilter !== 'all') parts.push(state.levelFilter);
+    if (state.selectedVocabTypes.length < totalTypeChips) {
+      parts.push(`${state.selectedVocabTypes.length} of ${totalTypeChips} types`);
+    }
+    if (state.selectedVocabTopics.length < totalTopicChips) {
+      parts.push(`${state.selectedVocabTopics.length} of ${totalTopicChips} topics`);
+    }
+  }
+
+  if (deckBarSummary) {
+    deckBarSummary.textContent = parts.length > 0 ? parts.join(' · ') : 'No filters';
+  }
+  if (deckBarBadge) {
+    deckBarBadge.textContent = String(parts.length);
+    deckBarBadge.classList.toggle('hidden', parts.length === 0);
+  }
 }
 
 // Update the Browse-mode list order: filtered + shuffled
@@ -521,6 +580,10 @@ export async function setStudyMode(mode: StudyMode): Promise<void> {
 
 // Update Proposal Progress
 export function updateStats(): void {
+  // Runs before the story-mode branch below, which returns early - the deck
+  // bar has to be refreshed (and hidden) on that path too.
+  updateDeckBar();
+
   if (state.isStoryModeActive && state.activeStoryChapterId !== null) {
     // Story Mode: per-chapter completion (unaffected by the global SRS header)
     const total = state.cards.length;
@@ -579,6 +642,10 @@ export function updateStats(): void {
     const percent = total > 0 ? Math.min(100, (learned / total) * 100) : 0;
     proposalBarFillEl.style.width = `${percent}%`;
   }
+
+  // The deck bar's card count depends on mastery state, so it has to refresh
+  // alongside the header rather than only when a filter changes.
+  updateDeckBar();
 }
 
 // Change practice mode (Flashcard vs Typing)
@@ -674,8 +741,6 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana')
 
   if (deckName === 'vocabulary') {
     state.cards = await loadVocab();
-    if (levelFilterGroup) levelFilterGroup.classList.remove('hidden');
-    if (vocabDropdownFilters) vocabDropdownFilters.classList.remove('hidden');
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
   } else {
     const kana = await loadKana();
@@ -696,13 +761,10 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana')
         state.cards = kana.katakanaCombos;
       }
     }
-    // Hide level and category filters for non-vocabulary decks and reset filters
-    if (levelFilterGroup) levelFilterGroup.classList.add('hidden');
-    if (vocabDropdownFilters) vocabDropdownFilters.classList.add('hidden');
+    // Level/type/topic filters don't apply to kana decks - updateDeckBar()
+    // hides those sheet sections; reset the level so a leftover N5/N4 choice
+    // can't silently empty a kana deck.
     state.levelFilter = 'all';
-    filterLevelAllBtn?.classList.add('active');
-    filterLevelN5Btn?.classList.remove('active');
-    filterLevelN4Btn?.classList.remove('active');
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
   }
 

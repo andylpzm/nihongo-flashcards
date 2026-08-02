@@ -64,8 +64,13 @@ export function createModal(overlay: HTMLElement, opts: { onClose?: () => void }
     overlay.addEventListener('keydown', onKeydown);
     overlay.addEventListener('click', onBackdropClick);
 
-    const focusable = getFocusable();
-    (focusable[0] ?? overlay).focus();
+    // Focus the dialog itself rather than its first control: focus still
+    // enters the trap, but a programmatic focus on a tabindex="-1" container
+    // doesn't match :focus-visible, so opening the sheet doesn't slap a
+    // keyboard focus ring onto the close button.
+    const target = sheet ?? overlay;
+    target.setAttribute('tabindex', '-1');
+    target.focus();
   }
 
   function close(): void {

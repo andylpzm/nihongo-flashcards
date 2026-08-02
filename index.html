@@ -73,7 +73,7 @@
        drawer for the four main sections on phones/tablets) -->
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary">
     <button class="bottom-nav-item active" id="bottom-nav-study" aria-label="Study Vocabulary" aria-current="page">
-      <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
       <span>Study</span>
     </button>
     <button class="bottom-nav-item" id="bottom-nav-kana" aria-label="Learn Kana">
@@ -101,7 +101,7 @@
       </div>
       <ul class="sidebar-menu" role="menu">
         <li class="menu-item active" id="menu-vocabulary" role="menuitem" tabindex="0">
-          <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
           Vocabulary Cards
         </li>
         <li class="menu-item" id="menu-hiragana" role="menuitem" tabindex="0">
@@ -164,8 +164,12 @@
           <!-- Study Mode Toggle + Session Status Bar -->
           <div class="session-bar">
             <div class="toggle-group" role="group" aria-label="Study Mode">
-              <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">📚 Study Session</button>
-              <button class="btn-toggle" id="mode-browse" title="Free browsing, does not affect scheduling">🔍 Browse</button>
+              <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">Study session</button>
+              <button class="btn-toggle" id="mode-browse" title="Free browsing, does not affect scheduling">Browse</button>
+            </div>
+            <div class="toggle-group" role="group" aria-label="Practice Mode">
+              <button class="btn-toggle active" id="toggle-mode-flashcard" title="Flip cards to check yourself">Flashcard</button>
+              <button class="btn-toggle" id="toggle-mode-typing" title="Type the translation">Typing</button>
             </div>
             <span class="session-info" id="session-info"></span>
             <button class="btn btn-primary hidden" id="btn-start-session">Start Today's Session</button>
@@ -221,39 +225,20 @@
               </button>
             </div>
 
-            <!-- Filters & Customization Settings -->
-            <div class="options-row">
-              <div class="options-subrow">
-                <!-- Practice Mode Toggle -->
-                <div class="toggle-group" role="group" aria-label="Practice Mode">
-                  <button class="btn-toggle active" id="toggle-mode-flashcard">Flashcard Mode</button>
-                  <button class="btn-toggle" id="toggle-mode-typing">Typing Mode</button>
-                </div>
+            <!-- Deck bar: live summary of the filtered deck + one entry point
+                 to the filter sheet (replaces the old wall of toggle pills) -->
+            <button class="deck-bar" id="btn-open-filters" aria-haspopup="dialog" aria-label="Deck filters">
+              <span class="deck-bar-text">
+                <span class="deck-bar-count" id="deck-bar-count">0 cards</span>
+                <span class="deck-bar-summary" id="deck-bar-summary">No filters</span>
+              </span>
+              <span class="deck-bar-action">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+                Filters
+                <span class="deck-bar-badge hidden" id="deck-bar-badge">0</span>
+              </span>
+            </button>
 
-                <!-- Progress Filters -->
-                <div class="toggle-group" role="group" aria-label="Card Progress Filter">
-                  <button class="btn-toggle active" id="filter-all">All Cards</button>
-                  <button class="btn-toggle" id="filter-learning">Learning</button>
-                  <button class="btn-toggle" id="filter-mastered">Mastered</button>
-                </div>
-              </div>
-
-              <!-- JLPT Level Filters (Hidden for Hiragana/Katakana) -->
-              <div class="toggle-group" role="group" aria-label="JLPT Level Filter" id="level-filter-group">
-                <button class="btn-toggle active" id="filter-level-all">All Levels</button>
-                <button class="btn-toggle" id="filter-level-n5">N5 Only</button>
-                <button class="btn-toggle" id="filter-level-n4">N4 Only</button>
-              </div>
-
-              <!-- Vocabulary Filters Trigger (Hidden for Hiragana/Katakana) -->
-              <div class="dropdown-filter-group" id="vocab-dropdown-filters">
-                <button class="btn-toggle" id="btn-open-filters" title="Filter vocabulary categories">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem; vertical-align: middle;"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
-                  Filter Categories
-                </button>
-              </div>
-            </div>
-            
             <!-- Typing Input Container (Hidden by default, shown in Typing Mode) -->
             <div class="typing-container hidden" id="typing-container">
               <input type="text" id="typing-input" placeholder="Type English translation..." autocomplete="off">
@@ -282,6 +267,10 @@
       <!-- Mode 2: Hiragana Learning Workspace -->
       <section class="section hidden" id="section-hiragana">
         <div class="kana-section">
+          <div class="kana-switch" role="group" aria-label="Syllabary">
+            <button class="btn-kana-switch active" data-kana="hiragana" lang="ja">ひらがな<span lang="en">Hiragana</span></button>
+            <button class="btn-kana-switch" data-kana="katakana" lang="ja">カタカナ<span lang="en">Katakana</span></button>
+          </div>
           <div class="kana-section-header">
             <h2>Hiragana Academy</h2>
             <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
@@ -290,8 +279,8 @@
               <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
               <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
             </div>
-            <button class="btn btn-primary" id="btn-practice-hiragana" style="margin: 1rem auto 0;">
-              🌸 Study Hiragana Flashcards
+            <button class="btn btn-primary btn-study-kana" id="btn-practice-hiragana">
+              Study Hiragana Flashcards
             </button>
           </div>
           <div class="kana-grid-container" id="hiragana-grid-container">
@@ -303,6 +292,10 @@
       <!-- Mode 3: Katakana Learning Workspace -->
       <section class="section hidden" id="section-katakana">
         <div class="kana-section">
+          <div class="kana-switch" role="group" aria-label="Syllabary">
+            <button class="btn-kana-switch" data-kana="hiragana" lang="ja">ひらがな<span lang="en">Hiragana</span></button>
+            <button class="btn-kana-switch active" data-kana="katakana" lang="ja">カタカナ<span lang="en">Katakana</span></button>
+          </div>
           <div class="kana-section-header">
             <h2>Katakana Academy</h2>
             <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
@@ -311,8 +304,8 @@
               <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
               <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
             </div>
-            <button class="btn btn-primary" id="btn-practice-katakana" style="margin: 1rem auto 0; background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.8) 100%); box-shadow: 0 4px 15px var(--accent-cyan-glow);">
-              ⚡ Study Katakana Flashcards
+            <button class="btn btn-primary btn-study-kana" id="btn-practice-katakana">
+              Study Katakana Flashcards
             </button>
           </div>
           <div class="kana-grid-container" id="katakana-grid-container">
@@ -331,6 +324,9 @@
           <div class="stats-grid" id="stats-grid">
             <!-- Programmatically populated via JS -->
           </div>
+          <!-- On mobile the sidebar (and its footer) is gone, so main.ts moves
+               the forgotten-things trigger in here -->
+          <div class="forgotten-host" id="forgotten-host"></div>
         </div>
       </section>
 
@@ -401,31 +397,52 @@
       </div>
       
       <div class="drawer-body">
+        <!-- Progress section (Browse mode only - a Study Session is scheduled
+             by due date, not by mastery state) -->
+        <div class="filter-section" id="filter-section-progress">
+          <h4 class="filter-section-title">Progress</h4>
+          <div class="filter-grid progress-grid" id="drawer-progress-grid">
+            <button class="filter-chip-btn active" data-progress="all">All cards</button>
+            <button class="filter-chip-btn" data-progress="learning">Learning</button>
+            <button class="filter-chip-btn" data-progress="mastered">Mastered</button>
+          </div>
+        </div>
+
+        <!-- JLPT Level section (vocabulary deck only) -->
+        <div class="filter-section" id="filter-section-level">
+          <h4 class="filter-section-title">JLPT Level</h4>
+          <div class="filter-grid level-grid" id="drawer-level-grid">
+            <button class="filter-chip-btn active" data-level="all">All levels</button>
+            <button class="filter-chip-btn" data-level="N5">N5</button>
+            <button class="filter-chip-btn" data-level="N4">N4</button>
+          </div>
+        </div>
+
         <!-- Word Types section -->
-        <div class="filter-section">
+        <div class="filter-section" id="filter-section-types">
           <h4 class="filter-section-title">Word Types</h4>
           <div class="filter-grid types-grid" id="drawer-types-grid">
-            <button class="filter-chip-btn active" data-type="nouns">Nouns (名詞)</button>
-            <button class="filter-chip-btn active" data-type="verbs">Verbs (動詞)</button>
-            <button class="filter-chip-btn active" data-type="adjectives">Adjectives (形容詞)</button>
-            <button class="filter-chip-btn active" data-type="misc">Miscellaneous (その他)</button>
+            <button class="filter-chip-btn active" data-type="nouns">Nouns</button>
+            <button class="filter-chip-btn active" data-type="verbs">Verbs</button>
+            <button class="filter-chip-btn active" data-type="adjectives">Adjectives</button>
+            <button class="filter-chip-btn active" data-type="misc">Other</button>
           </div>
         </div>
         
         <!-- Topics section -->
-        <div class="filter-section">
+        <div class="filter-section" id="filter-section-topics">
           <h4 class="filter-section-title">Topics</h4>
           <div class="filter-grid topics-grid" id="drawer-topics-grid">
-            <button class="filter-chip-btn active" data-topic="numbers">Numbers & Counters</button>
-            <button class="filter-chip-btn active" data-topic="calendar">Calendar & Dates</button>
-            <button class="filter-chip-btn active" data-topic="time">Time & Hours</button>
-            <button class="filter-chip-btn active" data-topic="body">Body & Health</button>
-            <button class="filter-chip-btn active" data-topic="food">Food & Dining</button>
-            <button class="filter-chip-btn active" data-topic="family">Family & Social</button>
-            <button class="filter-chip-btn active" data-topic="school">School & Study</button>
-            <button class="filter-chip-btn active" data-topic="travel">Travel & Places</button>
-            <button class="filter-chip-btn active" data-topic="weather">Weather & Seasons</button>
-            <button class="filter-chip-btn active" data-topic="other">General / Others</button>
+            <button class="filter-chip-btn active" data-topic="numbers">Numbers</button>
+            <button class="filter-chip-btn active" data-topic="calendar">Calendar</button>
+            <button class="filter-chip-btn active" data-topic="time">Time</button>
+            <button class="filter-chip-btn active" data-topic="body">Body</button>
+            <button class="filter-chip-btn active" data-topic="food">Food</button>
+            <button class="filter-chip-btn active" data-topic="family">Family</button>
+            <button class="filter-chip-btn active" data-topic="school">School</button>
+            <button class="filter-chip-btn active" data-topic="travel">Travel</button>
+            <button class="filter-chip-btn active" data-topic="weather">Weather</button>
+            <button class="filter-chip-btn active" data-topic="other">General</button>
           </div>
         </div>
       </div>

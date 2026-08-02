@@ -106,6 +106,20 @@
   opacity: 1;
 }
 
+/* Mobile home for the forgotten-things trigger (main.ts moves the button
+   here below 768px, where the sidebar footer no longer renders). */
+.forgotten-host {
+  display: none;
+}
+
+body.light-theme .forgotten-host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 260px;
+  margin: 0.5rem auto 2rem;
+}
+
 /* Forgotten-things easter egg popup */
 .forgotten-popup {
   position: fixed;

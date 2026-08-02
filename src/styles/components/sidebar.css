@@ -136,8 +136,17 @@ body.light-theme .menu-item.active#menu-story {
 
 /* Forgotten-things easter egg trigger, sidebar footer (desktop only - on
    mobile it moves into the drawer, see below) */
+/* The forgotten-things easter egg only exists in light theme (same gating as
+   misc.css's court illustrations), so its trigger stays hidden in dark. */
 .sidebar-footer {
   display: none;
+}
+
+body.light-theme .sidebar-footer {
+  display: block;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  width: 100%;
 }
 
 .btn-forgotten {
@@ -170,14 +179,14 @@ body.light-theme .btn-forgotten {
   }
 }
 
-/* Hamburger trigger + slide-in drawer, phones and tablets only. The
-   persistent desktop sidebar above is hidden and replaced by this overlay
-   drawer; on <=767px the bottom tab bar (bottom-nav.css) covers the four
-   primary sections and this drawer is kept only for secondary items. */
-.hamburger-menu {
-  display: none;
-}
-
+/* Mobile owns navigation through the bottom tab bar alone (bottom-nav.css).
+   The hamburger + slide-in drawer are fully removed below 768px rather than
+   duplicating the same destinations in two places; the Hiragana/Katakana
+   switcher inside the Kana section (kana.css) covers the one destination the
+   4-slot tab bar can't reach on its own. The forgotten-things trigger is
+   relocated into the Stats section by main.ts, since its sidebar footer
+   no longer renders here. */
+.hamburger-menu,
 .sidebar-overlay {
   display: none;
 }
@@ -187,130 +196,14 @@ body.light-theme .btn-forgotten {
     flex-direction: column;
   }
 
-  .hamburger-menu {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 44px;
-    height: 44px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 13px 10px;
-    box-sizing: border-box;
-    z-index: 1025;
-    position: fixed;
-    top: max(0.875rem, env(safe-area-inset-top));
-    left: max(0.875rem, env(safe-area-inset-left));
-  }
-
-  .hamburger-menu span {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background-color: var(--text);
-    border-radius: 99px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-  }
-
-  body.light-theme .hamburger-menu span {
-    background-color: #0f4c81;
-  }
-
-  .hamburger-menu.active span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-  }
-  .hamburger-menu.active span:nth-child(2) {
-    opacity: 0;
-  }
-  .hamburger-menu.active span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-  }
-
-  .sidebar-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    z-index: 1015;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .sidebar-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    height: 100dvh;
-    width: 260px;
-    background: var(--surface-raised);
-    padding: 5rem 1.5rem 2rem;
-    padding-left: max(1.5rem, env(safe-area-inset-left));
-    padding-right: max(1.5rem, env(safe-area-inset-right));
-    padding-bottom: max(2rem, env(safe-area-inset-bottom));
-    gap: 2rem;
-    z-index: 1020;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    box-shadow: 15px 0 45px rgba(0, 0, 0, 0.35);
-  }
-
-  body.light-theme .sidebar {
-    background: #ffffff;
-    box-shadow: 15px 0 45px rgba(2, 132, 199, 0.08);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  /* The bottom tab bar (bottom-nav.css) covers Study/Kana/Story/Stats, but
-     "Kana" only has room for one default landing section (Hiragana). The
-     drawer stays around on mobile to reach Katakana and other secondary
-     items instead of inventing a second in-page kana switcher. */
-  .sidebar-menu {
-    width: 100%;
-  }
-
-  .sidebar-menu li#menu-vocabulary,
-  .sidebar-menu li#menu-story,
-  .sidebar-menu li#menu-stats {
     display: none;
-  }
-
-  .menu-item {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* The forgotten-things easter egg is light-theme only everywhere (see
-     misc.css's court illustrations and popup, gated the same way), so its
-     sidebar trigger stays hidden on mobile dark theme too. */
-  body.light-theme .sidebar-footer {
-    display: block;
-    position: static;
-    width: 100%;
-    margin-top: auto;
   }
 
   .theme-cube-container {
     position: fixed;
-    top: 1.25rem;
-    right: 1.25rem;
+    top: max(0.875rem, env(safe-area-inset-top));
+    right: max(0.875rem, env(safe-area-inset-right));
     z-index: 1025;
   }
 }

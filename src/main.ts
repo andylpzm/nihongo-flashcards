@@ -26,12 +26,6 @@ import {
   btnGradeHard,
   btnGradeGood,
   btnGradeEasy,
-  filterAllBtn,
-  filterLearningBtn,
-  filterMasteredBtn,
-  filterLevelAllBtn,
-  filterLevelN5Btn,
-  filterLevelN4Btn,
   modeFlashcardBtn,
   modeTypingBtn,
   submitBtn,
@@ -39,8 +33,6 @@ import {
   flipCard,
   prevCard,
   nextCard,
-  changeFilter,
-  changeLevelFilter,
   setPracticeMode,
   submitAnswer,
   toggleRomajiVisibility,
@@ -147,17 +139,8 @@ function setupEventListeners(): void {
   bindGrade(btnGradeGood, Rating.Good);
   bindGrade(btnGradeEasy, Rating.Easy);
 
-  // Filter Buttons
-  filterAllBtn.addEventListener('click', () => changeFilter('all'));
-  filterLearningBtn.addEventListener('click', () => changeFilter('learning'));
-  filterMasteredBtn.addEventListener('click', () => changeFilter('mastered'));
-
-  // Level Filter Buttons
-  filterLevelAllBtn?.addEventListener('click', () => changeLevelFilter('all'));
-  filterLevelN5Btn?.addEventListener('click', () => changeLevelFilter('N5'));
-  filterLevelN4Btn?.addEventListener('click', () => changeLevelFilter('N4'));
-
-  // Vocabulary Filter Drawer (Concept B Refined)
+  // Deck filter sheet - the deck bar is its only trigger; progress, level,
+  // types and topics all live inside it now.
   setupFilterDrawer();
 
   // Practice Mode toggles
@@ -250,6 +233,16 @@ function setupEventListeners(): void {
   bottomNavButtons.story?.addEventListener('click', () => menuStory.click());
   bottomNavButtons.stats?.addEventListener('click', () => menuStats.click());
 
+  // Hiragana / Katakana switcher inside the Kana sections. The bottom tab bar
+  // has a single "Kana" slot, so this is the only route between the two on
+  // mobile - it delegates to the same handlers the sidebar uses.
+  document.querySelectorAll<HTMLElement>('.btn-kana-switch').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.kana === 'katakana') menuKatakana.click();
+      else menuHiragana.click();
+    });
+  });
+
   // Hiragana Tab Event Listeners
   const hiraganaTabBtns = document.querySelectorAll<HTMLElement>('#hiragana-tabs .btn-chart-tab');
   hiraganaTabBtns.forEach((btn) => {
@@ -260,11 +253,11 @@ function setupEventListeners(): void {
 
       // Update Practice Button Text dynamically
       if (state.activeHiraganaTab === 'basic') {
-        btnPracticeHiragana.textContent = '🌸 Study Hiragana Flashcards';
+        btnPracticeHiragana.textContent = 'Study Hiragana Flashcards';
       } else if (state.activeHiraganaTab === 'voiced') {
-        btnPracticeHiragana.textContent = '🌸 Study Voiced Hiragana';
+        btnPracticeHiragana.textContent = 'Study Voiced Hiragana';
       } else {
-        btnPracticeHiragana.textContent = '🌸 Study Combo Hiragana';
+        btnPracticeHiragana.textContent = 'Study Combo Hiragana';
       }
 
       void renderKanaGrid('hiragana');
@@ -281,16 +274,31 @@ function setupEventListeners(): void {
 
       // Update Practice Button Text dynamically
       if (state.activeKatakanaTab === 'basic') {
-        btnPracticeKatakana.textContent = '⚡ Study Katakana Flashcards';
+        btnPracticeKatakana.textContent = 'Study Katakana Flashcards';
       } else if (state.activeKatakanaTab === 'voiced') {
-        btnPracticeKatakana.textContent = '⚡ Study Voiced Katakana';
+        btnPracticeKatakana.textContent = 'Study Voiced Katakana';
       } else {
-        btnPracticeKatakana.textContent = '⚡ Study Combo Katakana';
+        btnPracticeKatakana.textContent = 'Study Combo Katakana';
       }
 
       void renderKanaGrid('katakana');
     });
   });
+
+  // The sidebar (and its footer) doesn't render on mobile any more, so the
+  // forgotten-things trigger moves into the Stats section there. Re-runs on
+  // breakpoint changes so rotating a tablet doesn't strand it in a hidden
+  // container.
+  const forgottenHost = document.getElementById('forgotten-host');
+  const sidebarFooter = document.querySelector('.sidebar-footer');
+  const mobileQuery = window.matchMedia('(max-width: 767px)');
+  const placeForgottenTrigger = () => {
+    const btn = document.getElementById('btn-forgotten-things');
+    if (!btn || !forgottenHost || !sidebarFooter) return;
+    (mobileQuery.matches ? forgottenHost : sidebarFooter).appendChild(btn);
+  };
+  placeForgottenTrigger();
+  mobileQuery.addEventListener('change', placeForgottenTrigger);
 
   // Forgotten Things Easter Egg listeners (Circular popup popup from bottom-left corner)
   const forgottenBtn = document.getElementById('btn-forgotten-things');

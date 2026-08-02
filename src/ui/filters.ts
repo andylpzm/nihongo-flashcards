@@ -1,8 +1,39 @@
 import { state } from '../state/store';
+import type { FilterMode, LevelFilter } from '../state/types';
 import { showToast } from './toast';
-import { applyFiltersAndShuffle, renderCard, persistFilters } from './card';
+import { applyDeckFilters } from './card';
 import { onLongPress } from './gestures';
 import { createModal } from './modal';
+
+/** Wrap a chip's bare text node in a span so it can flex and wrap on its own.
+ * As an anonymous flex item it can't be sized, so long labels
+ * ("Miscellaneous (その他)") overflowed the chip instead of wrapping in it. */
+function wrapChipLabel(btn: HTMLElement): void {
+  if (btn.querySelector('.chip-label')) return;
+  const label = document.createElement('span');
+  label.className = 'chip-label';
+  label.textContent = btn.textContent?.trim() ?? '';
+  btn.textContent = '';
+  btn.appendChild(label);
+}
+
+/** Single-select chip group (Progress, JLPT level). Unlike the type/topic
+ * grids these are radio-like: exactly one stays active. */
+function bindRadioGroup(container: HTMLElement | null): void {
+  if (!container) return;
+  container.querySelectorAll<HTMLElement>('.filter-chip-btn').forEach(wrapChipLabel);
+  container.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>('.filter-chip-btn');
+    if (!btn || !container.contains(btn)) return;
+    container.querySelectorAll('.filter-chip-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+}
+
+function selectedValue(container: HTMLElement | null, attr: string, fallback: string): string {
+  const active = container?.querySelector<HTMLElement>('.filter-chip-btn.active');
+  return active?.getAttribute(attr) ?? fallback;
+}
 
 function isolate(btn: HTMLElement, siblingButtons: NodeListOf<HTMLElement> | HTMLElement[]): void {
   siblingButtons.forEach((b) => b.classList.remove('active'));
@@ -33,6 +64,8 @@ function bindChipInteractions(
   typeOrTopic: 'type' | 'topic',
   siblingButtons: NodeListOf<HTMLElement>
 ): void {
+  wrapChipLabel(btn);
+
   const isolateBtn = document.createElement('span');
   isolateBtn.className = 'chip-isolate-btn';
   isolateBtn.textContent = 'only';
@@ -65,9 +98,19 @@ export function setupFilterDrawer(): void {
 
   if (!filterModalOverlay) return;
   const filterModal = createModal(filterModalOverlay);
+  const progressGrid = document.getElementById('drawer-progress-grid');
+  const levelGrid = document.getElementById('drawer-level-grid');
 
   const openFilterDrawer = () => {
-    // Sync chip button states with active variable arrays
+    // Sync every chip from committed state - the sheet stages changes locally
+    // and only writes back on Apply, so reopening must always start from truth.
+    progressGrid?.querySelectorAll<HTMLElement>('.filter-chip-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-progress') === state.filterMode);
+    });
+    levelGrid?.querySelectorAll<HTMLElement>('.filter-chip-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.getAttribute('data-level') === state.levelFilter);
+    });
+
     const typeBtns = filterModalOverlay.querySelectorAll<HTMLElement>('.types-grid .filter-chip-btn');
     typeBtns.forEach((btn) => {
       const val = btn.getAttribute('data-type');
@@ -82,6 +125,9 @@ export function setupFilterDrawer(): void {
 
     filterModal.open();
   };
+
+  bindRadioGroup(progressGrid);
+  bindRadioGroup(levelGrid);
 
   btnOpenFilters?.addEventListener('click', openFilterDrawer);
   btnCloseDrawer?.addEventListener('click', filterModal.close);
@@ -102,11 +148,13 @@ export function setupFilterDrawer(): void {
     });
   });
 
-  // Select all category filters
+  // Select all category filters. Scoped to the multi-select type/topic grids
+  // only - the progress and level grids are radio-like, and marking every
+  // chip in them active would make the "first active wins" read in
+  // selectedValue() silently snap both back to "all".
   btnDrawerSelectAll?.addEventListener('click', () => {
-    filterModalOverlay.querySelectorAll<HTMLElement>('.filter-chip-btn').forEach((btn) => {
-      btn.classList.add('active');
-    });
+    typeBtns.forEach((btn) => btn.classList.add('active'));
+    topicBtns.forEach((btn) => btn.classList.add('active'));
   });
 
   // Apply filters button logic
@@ -125,18 +173,16 @@ export function setupFilterDrawer(): void {
 
     // Prevent blank deck states
     if (activeTypes.length === 0) {
-      showToast('Please select at least one Word Type.');
+      showToast('Select at least one word type.');
       return;
     }
 
-    // Update state arrays
-    state.selectedVocabTypes = activeTypes;
-    state.selectedVocabTopics = activeTopics;
-    persistFilters();
-
-    state.currentIndex = 0;
-    applyFiltersAndShuffle();
-    renderCard();
+    applyDeckFilters({
+      filterMode: selectedValue(progressGrid, 'data-progress', 'all') as FilterMode,
+      levelFilter: selectedValue(levelGrid, 'data-level', 'all') as LevelFilter,
+      selectedVocabTypes: activeTypes,
+      selectedVocabTopics: activeTopics,
+    });
     filterModal.close();
   });
 }
