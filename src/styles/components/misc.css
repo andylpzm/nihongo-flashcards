@@ -1,0 +1,247 @@
+/* 3D theme-toggle cube */
+.theme-cube-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 300px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.cube {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(-22deg) rotateY(45deg);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .theme-cube-container:hover .cube {
+    transform: rotateX(25deg) rotateY(225deg);
+  }
+}
+
+.cube-face {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(2, 132, 199, 0.6);
+  background: rgba(14, 165, 233, 0.25);
+  box-shadow: inset 0 0 8px rgba(14, 165, 233, 0.3), 0 0 10px rgba(14, 165, 233, 0.15);
+  transition: all 0.3s ease;
+}
+
+.cube-face.front {
+  transform: rotateY(0deg) translateZ(16px);
+}
+.cube-face.back {
+  transform: rotateY(180deg) translateZ(16px);
+}
+.cube-face.right {
+  transform: rotateY(90deg) translateZ(16px);
+}
+.cube-face.left {
+  transform: rotateY(-90deg) translateZ(16px);
+}
+.cube-face.top {
+  transform: rotateX(90deg) translateZ(16px);
+}
+.cube-face.bottom {
+  transform: rotateX(-90deg) translateZ(16px);
+}
+
+@media (hover: hover) {
+  .theme-cube-container:hover .cube-face {
+    border-color: rgba(14, 165, 233, 0.9);
+    background: rgba(14, 165, 233, 0.45);
+    box-shadow: inset 0 0 12px rgba(14, 165, 233, 0.5), 0 0 20px rgba(14, 165, 233, 0.4);
+  }
+}
+
+/* Sky transition overlay, played during the light/dark theme swap */
+.sky-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99999;
+  background: radial-gradient(circle at 75% 25%, #ffffff 0%, #e0f2fe 18%, #38bdf8 52%, #0284c7 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+  will-change: opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+.sky-transition-overlay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.sky-transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sky-transition-overlay.fade-to-white::after {
+  opacity: 1;
+}
+
+/* Forgotten-things easter egg popup */
+.forgotten-popup {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 2rem;
+  width: 220px;
+  height: 220px;
+  background: #ffffff;
+  border: 2px solid rgba(2, 132, 199, 0.18);
+  box-shadow: 0 15px 40px rgba(2, 132, 199, 0.15);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  pointer-events: none;
+  transform-origin: 0% 100%;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+}
+
+.forgotten-popup.active {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.forgotten-popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .forgotten-popup {
+    bottom: calc(var(--bottom-nav-height) + 1.5rem);
+    left: 1.5rem;
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* Court illustrations - decorative, light theme only */
+.court-illustration {
+  display: none;
+}
+
+body.light-theme .court-illustration {
+  display: block;
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.light-theme .shuttlecock {
+  bottom: 2rem;
+  right: 2rem;
+  width: 130px;
+  height: 130px;
+  opacity: 0.35;
+  transform: rotate(-18deg);
+  filter: drop-shadow(0 8px 16px rgba(2, 132, 199, 0.08));
+  animation: floatShuttlecock 8s ease-in-out infinite alternate;
+}
+
+body.light-theme .basketball {
+  top: 2rem;
+  left: 280px;
+  width: 110px;
+  height: 110px;
+  opacity: 0.3;
+  transform: rotate(24deg);
+  filter: drop-shadow(0 8px 16px rgba(249, 115, 22, 0.08));
+  animation: floatBasketball 9s ease-in-out infinite alternate;
+}
+
+@keyframes floatShuttlecock {
+  0% {
+    transform: translateY(0) rotate(-18deg);
+  }
+  100% {
+    transform: translateY(-10px) rotate(-12deg);
+  }
+}
+
+@keyframes floatBasketball {
+  0% {
+    transform: translateY(0) rotate(24deg);
+  }
+  100% {
+    transform: translateY(-8px) rotate(32deg);
+  }
+}
+
+@media (max-width: 767px) {
+  body.light-theme .shuttlecock {
+    bottom: calc(var(--bottom-nav-height) + 1rem);
+    right: 1.5rem;
+    width: 60px;
+    height: 60px;
+    opacity: 0.22;
+  }
+
+  body.light-theme .basketball {
+    top: 5.5rem;
+    left: 1.5rem;
+    width: 45px;
+    height: 45px;
+    opacity: 0.22;
+  }
+}
+
+/* Tennis/badminton net background grid, light theme only */
+body.light-theme .main-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 180px;
+  transform: translateY(-50%);
+  background-image: linear-gradient(90deg, rgba(2, 132, 199, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(2, 132, 199, 0.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+  border-top: 10px solid #ffffff;
+  border-bottom: 2px solid rgba(2, 132, 199, 0.15);
+  box-shadow: 0 -1px 0 rgba(2, 132, 199, 0.12);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  body.light-theme .main-content::before {
+    height: 90px;
+  }
+}

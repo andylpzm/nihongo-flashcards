@@ -1,0 +1,369 @@
+.controls-container {
+  width: 100%;
+  max-width: var(--card-width);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  padding: 0.85rem 1.75rem;
+  border-radius: 14px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+body.light-theme .btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  color: #334155;
+}
+
+@media (hover: hover) {
+  .btn:hover:not(:disabled) {
+    border-color: var(--border-hover);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateY(-2px);
+  }
+
+  body.light-theme .btn:hover:not(:disabled) {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  }
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+body.light-theme .btn:disabled {
+  background: rgba(255, 255, 255, 0.4);
+  color: #cbd5e1;
+  border-color: rgba(2, 132, 199, 0.08);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-pink) 0%, rgba(255, 45, 85, 0.8) 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 45, 85, 0.2);
+}
+
+body.light-theme .btn-primary {
+  background: linear-gradient(135deg, #0284c7 0%, rgba(2, 132, 199, 0.85) 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #ff4d73 0%, var(--accent-pink) 100%);
+    box-shadow: 0 6px 20px rgba(255, 45, 85, 0.35);
+    transform: translateY(-2px);
+  }
+
+  body.light-theme .btn-primary:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+  }
+}
+
+#btn-back-to-story {
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  padding: 0.65rem 1.25rem;
+}
+
+.btn-nav-circle {
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+}
+
+.btn-nav-circle svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Secondary controls: practice mode, progress filter, level filter, drawer trigger */
+.options-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1rem 1.25rem;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+}
+
+body.light-theme .options-row {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(2, 132, 199, 0.15);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.04);
+}
+
+.options-subrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem 0.85rem;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+body.light-theme .btn-toggle {
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(2, 132, 199, 0.1);
+}
+
+.btn-toggle.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.light-theme .btn-toggle.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+}
+
+body.light-theme #level-filter-group .btn-toggle.active {
+  background: #0369a1;
+  border-color: #0369a1;
+}
+
+@media (hover: hover) {
+  .btn-toggle:hover:not(.active) {
+    color: #fff;
+  }
+
+  body.light-theme .btn-toggle:hover:not(.active) {
+    color: #0284c7;
+    background: rgba(2, 132, 199, 0.05);
+  }
+}
+
+.dropdown-filter-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* Study mode toggle + session status bar */
+.session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: var(--card-width);
+  margin-bottom: 0.85rem;
+}
+
+.session-info {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* SRS grade buttons (Again / Hard / Good / Easy) */
+.grade-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin: 0.5rem 0;
+}
+
+.btn-grade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.75rem 0.5rem;
+  min-height: 56px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-ui);
+}
+
+body.light-theme .btn-grade {
+  background: rgba(255, 255, 255, 0.85);
+  color: #334155;
+}
+
+.grade-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.grade-interval {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.btn-grade.again {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+.btn-grade.hard {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.btn-grade.good {
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.btn-grade.easy {
+  border-color: rgba(6, 182, 212, 0.35);
+}
+
+@media (hover: hover) {
+  .btn-grade.again:hover {
+    background: rgba(239, 68, 68, 0.12);
+  }
+  .btn-grade.hard:hover {
+    background: rgba(245, 158, 11, 0.12);
+  }
+  .btn-grade.good:hover {
+    background: rgba(16, 185, 129, 0.12);
+  }
+  .btn-grade.easy:hover {
+    background: rgba(6, 182, 212, 0.12);
+  }
+
+  body.light-theme .btn-grade.again:hover {
+    background: rgba(239, 68, 68, 0.08);
+  }
+  body.light-theme .btn-grade.hard:hover {
+    background: rgba(245, 158, 11, 0.08);
+  }
+  body.light-theme .btn-grade.good:hover {
+    background: rgba(16, 185, 129, 0.08);
+  }
+  body.light-theme .btn-grade.easy:hover {
+    background: rgba(2, 132, 199, 0.08);
+  }
+}
+
+.btn-grade.again:active {
+  background: rgba(239, 68, 68, 0.2);
+}
+.btn-grade.hard:active {
+  background: rgba(245, 158, 11, 0.2);
+}
+.btn-grade.good:active {
+  background: rgba(16, 185, 129, 0.2);
+}
+.btn-grade.easy:active {
+  background: rgba(6, 182, 212, 0.2);
+}
+
+@media (max-width: 767px) {
+  /* Sticky full-width bar above the safe area so grading stays
+     thumb-reachable regardless of scroll position, and sits above the
+     bottom tab bar rather than under it. */
+  .grade-buttons {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--bottom-nav-height);
+    z-index: 1030;
+    margin: 0;
+    padding: 0.6rem max(0.6rem, env(safe-area-inset-left)) 0.6rem max(0.6rem, env(safe-area-inset-right));
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border);
+    gap: 0.4rem;
+  }
+
+  body.light-theme .grade-buttons {
+    background: #ffffff;
+    border-top-color: rgba(2, 132, 199, 0.15);
+  }
+
+  .btn-grade {
+    min-height: 48px;
+  }
+
+  .options-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .options-subrow {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .toggle-group {
+    justify-content: center;
+  }
+
+  .btn-toggle {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.65rem;
+    min-height: 44px;
+  }
+
+  .dropdown-filter-group {
+    width: 100%;
+    justify-content: center;
+  }
+}

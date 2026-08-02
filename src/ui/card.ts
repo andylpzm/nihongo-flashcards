@@ -215,7 +215,7 @@ export function renderCard(): void {
   // FRONT: Japanese
   cardFront.innerHTML = `
     <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
-      <span class="card-indicator">Japanese ${level ? `<span class="level-badge" style="margin-left: 0.65rem; padding: 0.15rem 0.45rem; font-size: 0.75rem; background: rgba(255,255,255,0.12); border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); color: var(--accent-pink); font-weight: 600;">${level}</span>` : ''}</span>
+      <span class="card-indicator">Japanese ${level ? `<span class="level-badge">${level}</span>` : ''}</span>
       <div style="display: flex; gap: 0.5rem;">
         ${state.activeDeck === 'vocabulary' ? `
           <button class="speak-button" id="btn-toggle-romaji" title="${state.showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
@@ -228,11 +228,11 @@ export function renderCard(): void {
       </div>
     </div>
     <div class="japanese-container">
-      <div class="hiragana-text" style="font-size: 3rem; margin-top: -10px;">${currentCard.kana}</div>
+      <div class="hiragana-text" lang="ja">${currentCard.kana}</div>
       ${state.activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
       ${hint ? `<div class="romaji-text" style="opacity: 0.7;">(${hint})</div>` : ''}
     </div>
-    <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.6;">Click or Press [Space] to flip</span>
+    <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.6;">Click or Press [Space] to flip</span>
   `;
 
   // BACK: English
@@ -272,8 +272,8 @@ function renderEmptyState(): void {
 
   cardFront.innerHTML = `
     <span class="card-indicator">${message.title}</span>
-    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-secondary);">${message.title === 'Empty' ? 'No cards found in this category' : message.title}</div>
-    <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5;">${message.body}</span>
+    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-muted);">${message.title === 'Empty' ? 'No cards found in this category' : message.title}</div>
+    <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.5;">${message.body}</span>
   `;
   cardBack.innerHTML = cardFront.innerHTML;
 

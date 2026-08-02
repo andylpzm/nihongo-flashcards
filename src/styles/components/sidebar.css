@@ -1,0 +1,316 @@
+/* Desktop persistent sidebar (>=1024px, see the mobile override below for
+   <=767px, and layout.css for the app shell). B12: this used to be defined
+   twice at two separate `@media (max-width: 768px)` blocks with conflicting
+   rules, forcing ~50 !important declarations to fight the cascade. There is
+   now exactly one mobile block. */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 2.5rem 1.5rem;
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+body.light-theme .sidebar {
+  background: rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+.sidebar-brand h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .sidebar-brand h2 {
+  background: linear-gradient(135deg, #0f4c81 40%, var(--accent-pink) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-brand span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+body.light-theme .sidebar-brand span {
+  color: #ec4899;
+}
+
+.sidebar-menu {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.25rem;
+  min-height: 44px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+body.light-theme .menu-item {
+  color: #475569;
+}
+
+.menu-item svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+@media (hover: hover) {
+  .menu-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  body.light-theme .menu-item:hover {
+    background: rgba(2, 132, 199, 0.05);
+    color: #0284c7;
+  }
+}
+
+.menu-item.active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-hover);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.02);
+}
+
+body.light-theme .menu-item.active {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.3);
+  color: #0284c7;
+}
+
+.menu-item.active#menu-vocabulary {
+  border-color: rgba(255, 45, 85, 0.3);
+  box-shadow: 0 0 15px rgba(255, 45, 85, 0.05);
+}
+
+.menu-item.active#menu-hiragana {
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.05);
+}
+
+.menu-item.active#menu-katakana {
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.05);
+}
+
+.menu-item.active#menu-story {
+  border-color: rgba(236, 72, 153, 0.3);
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.05);
+}
+
+body.light-theme .menu-item.active#menu-story {
+  background: rgba(236, 72, 153, 0.06);
+  border-color: rgba(236, 72, 153, 0.25);
+  color: #ec4899;
+}
+
+/* Forgotten-things easter egg trigger, sidebar footer (desktop only - on
+   mobile it moves into the drawer, see below) */
+.sidebar-footer {
+  display: none;
+}
+
+.btn-forgotten {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 0.5rem 0.85rem;
+  min-height: 44px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+body.light-theme .btn-forgotten {
+  background: transparent;
+  border: 1px solid rgba(2, 132, 199, 0.15);
+  color: #0f4c81;
+}
+
+@media (hover: hover) {
+  body.light-theme .btn-forgotten:hover {
+    background: rgba(2, 132, 199, 0.06);
+    border-color: #0284c7;
+    color: #0284c7;
+  }
+}
+
+/* Hamburger trigger + slide-in drawer, phones and tablets only. The
+   persistent desktop sidebar above is hidden and replaced by this overlay
+   drawer; on <=767px the bottom tab bar (bottom-nav.css) covers the four
+   primary sections and this drawer is kept only for secondary items. */
+.hamburger-menu {
+  display: none;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 13px 10px;
+    box-sizing: border-box;
+    z-index: 1025;
+    position: fixed;
+    top: max(0.875rem, env(safe-area-inset-top));
+    left: max(0.875rem, env(safe-area-inset-left));
+  }
+
+  .hamburger-menu span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--text);
+    border-radius: 99px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  body.light-theme .hamburger-menu span {
+    background-color: #0f4c81;
+  }
+
+  .hamburger-menu.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .hamburger-menu.active span:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger-menu.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1015;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: 260px;
+    background: var(--surface-raised);
+    padding: 5rem 1.5rem 2rem;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    gap: 2rem;
+    z-index: 1020;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 15px 0 45px rgba(0, 0, 0, 0.35);
+  }
+
+  body.light-theme .sidebar {
+    background: #ffffff;
+    box-shadow: 15px 0 45px rgba(2, 132, 199, 0.08);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* The bottom tab bar (bottom-nav.css) covers Study/Kana/Story/Stats, but
+     "Kana" only has room for one default landing section (Hiragana). The
+     drawer stays around on mobile to reach Katakana and other secondary
+     items instead of inventing a second in-page kana switcher. */
+  .sidebar-menu {
+    width: 100%;
+  }
+
+  .sidebar-menu li#menu-vocabulary,
+  .sidebar-menu li#menu-story,
+  .sidebar-menu li#menu-stats {
+    display: none;
+  }
+
+  .menu-item {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* The forgotten-things easter egg is light-theme only everywhere (see
+     misc.css's court illustrations and popup, gated the same way), so its
+     sidebar trigger stays hidden on mobile dark theme too. */
+  body.light-theme .sidebar-footer {
+    display: block;
+    position: static;
+    width: 100%;
+    margin-top: auto;
+  }
+
+  .theme-cube-container {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 1025;
+  }
+}

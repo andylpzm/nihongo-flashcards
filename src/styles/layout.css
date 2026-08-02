@@ -1,0 +1,261 @@
+/* App shell: sidebar (desktop) + main content column. Breakpoints follow
+   the coherent set from PLAN.md 4.7:
+     <=479   small phone
+     480-767 phone
+     768-1023 tablet / landscape phone
+     >=1024  desktop, persistent sidebar */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  padding-left: max(2rem, env(safe-area-inset-left));
+  padding-right: max(2rem, env(safe-area-inset-right));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Header & proposal progress dashboard */
+header {
+  width: 100%;
+  max-width: 900px;
+  padding: 1.5rem 2rem 0.75rem;
+  text-align: center;
+}
+
+.logo-section h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+body.light-theme .logo-section h1 {
+  background: linear-gradient(135deg, #0f4c81 30%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.proposal-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 1.5rem auto 0;
+  background: linear-gradient(135deg, rgba(255, 45, 85, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 1px solid rgba(255, 45, 85, 0.2);
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(255, 45, 85, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.proposal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.65rem;
+  font-size: 0.95rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.proposal-title {
+  font-weight: 600;
+  color: var(--accent-pink);
+  text-shadow: 0 0 10px var(--accent-pink-glow);
+}
+
+.proposal-stats {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.proposal-stats strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+body.light-theme .proposal-stats strong {
+  color: #0f4c81;
+}
+
+.proposal-remaining {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  text-align: left;
+  margin-top: 0.65rem;
+}
+
+.proposal-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+body.light-theme .proposal-bar-bg {
+  background: rgba(2, 132, 199, 0.1);
+}
+
+.proposal-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-purple) 100%);
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(255, 45, 85, 0.5);
+}
+
+/* Section visibility toggles */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.section.hidden {
+  display: none !important;
+}
+
+.kana-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 1rem 0;
+}
+
+.kana-section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.kana-section-header h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .kana-section-header h2 {
+  background: linear-gradient(135deg, #0f4c81 40%, var(--accent-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.kana-section-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Keyboard shortcuts footer (desktop only - mobile has no keyboard) */
+footer {
+  padding: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.kb-shortcut {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  margin-right: 0.25rem;
+  font-family: monospace;
+  color: var(--text-muted);
+}
+
+body.light-theme .kb-shortcut {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 0 #cbd5e1;
+}
+
+@media (max-width: 767px) {
+  footer {
+    display: none;
+  }
+}
+
+/* Desktop height scroll-lock: the app shell fills the viewport and only
+   .main-content scrolls internally. Guarded by min-height so short desktop
+   windows (and phones, which never match min-width) fall back to normal
+   document scroll instead of clipping content. */
+@media (min-width: 1024px) and (min-height: 600px) {
+  body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app-layout {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .main-content {
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  header {
+    padding: 1rem 1rem 0.5rem;
+    width: 100%;
+  }
+
+  .logo-section h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .proposal-container {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .proposal-stats {
+    gap: 0.5rem;
+  }
+
+  .proposal-title {
+    font-size: 0.95rem;
+  }
+
+  /* Space for the fixed hamburger bar (top) and bottom tab bar */
+  .main-content {
+    padding: 4.5rem 1rem calc(var(--bottom-nav-height) + 1.5rem);
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: calc(var(--bottom-nav-height) + max(1rem, env(safe-area-inset-bottom)));
+  }
+}

@@ -82,12 +82,21 @@ export async function renderKanaGrid(type: 'hiragana' | 'katakana'): Promise<voi
       if (charData) {
         cell.className = 'kana-grid-cell';
         cell.innerHTML = `
-          <span class="kana-char">${charData.kana}</span>
+          <span class="kana-char" lang="ja">${charData.kana}</span>
           <span class="kana-romaji">${charData.romaji}</span>
         `;
         cell.title = `Pronounce ${charData.romaji}`;
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', `Pronounce ${charData.romaji}`);
+        cell.tabIndex = 0;
         cell.addEventListener('click', () => {
           speakJapanese(charData.kana);
+        });
+        cell.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            speakJapanese(charData.kana);
+          }
         });
       } else {
         cell.className = 'kana-grid-cell empty';

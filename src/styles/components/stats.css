@@ -1,0 +1,60 @@
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.stat-tile {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.stat-tile-full {
+  grid-column: 1 / -1;
+}
+
+.stat-tile h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+}
+
+.stat-tile .stat-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.reviews-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+  margin-top: 0.5rem;
+}
+
+.reviews-chart-bar {
+  flex: 1;
+  min-height: 2px;
+  background: var(--accent-cyan);
+  border-radius: 3px 3px 0 0;
+  opacity: 0.85;
+}
+
+.topic-lapse-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.topic-lapse-row:last-child {
+  border-bottom: none;
+}

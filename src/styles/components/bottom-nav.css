@@ -1,0 +1,58 @@
+/* Fixed bottom tab bar, phones and tablets only (see sidebar.css for why
+   the hamburger drawer no longer carries primary navigation on mobile). */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--bottom-nav-height);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--surface-raised);
+    border-top: 1px solid var(--border);
+    z-index: 1010;
+  }
+
+  body.light-theme .bottom-nav {
+    background: #ffffff;
+    border-top-color: rgba(2, 132, 199, 0.15);
+  }
+
+  /* The sticky grade bar (controls.css) sits above the tab bar while a
+     session card is flipped - it already reserves `bottom-nav-height` of
+     space via its own `bottom` offset. */
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .bottom-nav-item svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+  }
+
+  .bottom-nav-item.active {
+    color: var(--accent-pink);
+  }
+
+  body.light-theme .bottom-nav-item.active {
+    color: #0284c7;
+  }
+}

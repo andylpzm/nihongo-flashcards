@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
   <link rel="shortcut icon" href="/apple-touch-icon.png?v=2">
 </head>
@@ -68,6 +69,27 @@
   <!-- Mobile Sidebar Overlay Backdrop -->
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
+  <!-- Mobile Bottom Tab Bar (primary navigation, replaces the hamburger
+       drawer for the four main sections on phones/tablets) -->
+  <nav class="bottom-nav" id="bottom-nav" aria-label="Primary">
+    <button class="bottom-nav-item active" id="bottom-nav-study" aria-label="Study Vocabulary" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+      <span>Study</span>
+    </button>
+    <button class="bottom-nav-item" id="bottom-nav-kana" aria-label="Learn Kana">
+      <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">あ</text></svg>
+      <span>Kana</span>
+    </button>
+    <button class="bottom-nav-item" id="bottom-nav-story" aria-label="Story Mode">
+      <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span>Story</span>
+    </button>
+    <button class="bottom-nav-item" id="bottom-nav-stats" aria-label="Stats">
+      <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+      <span>Stats</span>
+    </button>
+  </nav>
+
   <!-- Main Layout wrapper -->
   <div class="app-layout">
     
@@ -83,11 +105,11 @@
           Vocabulary Cards
         </li>
         <li class="menu-item" id="menu-hiragana" role="menuitem" tabindex="0">
-          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-family="'Noto Sans JP', sans-serif" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">あ</text></svg>
+          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">あ</text></svg>
           Learn Hiragana
         </li>
         <li class="menu-item" id="menu-katakana" role="menuitem" tabindex="0">
-          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-family="'Noto Sans JP', sans-serif" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none">ア</text></svg>
+          <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">ア</text></svg>
           Learn Katakana
         </li>
         <li class="menu-item" id="menu-story" role="menuitem" tabindex="0">
@@ -151,7 +173,7 @@
           </div>
 
           <!-- 3D Flippable Card Viewport -->
-          <div class="card-viewport" id="card-viewport" role="button" tabindex="0" aria-label="Flashcard. Click to flip.">
+          <div class="card-viewport" id="card-viewport" role="button" tabindex="0" aria-label="Flashcard. Click to flip." aria-live="polite">
             <div class="flashcard">
               <!-- Front Face -->
               <div class="card-face card-front" id="card-front">
@@ -336,13 +358,14 @@
   </div>
 
   <!-- Story Dialogue Modal Overlay -->
-  <div class="story-modal hidden" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-modal-title">
-    <div class="story-modal-content">
+  <div class="modal-overlay hidden" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-modal-title">
+    <div class="modal-sheet story-modal-content">
+      <div class="modal-drag-handle"></div>
       <div class="story-modal-header">
         <h3 id="story-modal-title">Story Dialogue</h3>
         <button class="btn-close" id="btn-close-story-modal" aria-label="Close story">&times;</button>
       </div>
-      <div class="story-dialogue-body" id="story-dialogue-body">
+      <div class="story-dialogue-body" id="story-dialogue-body" aria-live="polite">
         <!-- Dialog items injected dynamically -->
       </div>
       <div class="story-modal-footer">
@@ -359,16 +382,20 @@
 
   <!-- Forgotten Things Popup (Light Mode Only) -->
   <div class="forgotten-popup" id="forgotten-popup" aria-label="Forgotten memory" aria-hidden="true">
-    <img src="/forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
+    <picture>
+      <source srcset="/forgotten_things.webp" type="image/webp">
+      <img src="/forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
+    </picture>
   </div>
 
   <!-- Vocabulary Filter Drawer Modal (Concept B Refined) -->
-  <div class="modal-overlay hidden" id="filter-modal-overlay">
-    <div class="filter-drawer" id="filter-drawer">
+  <div class="modal-overlay hidden" id="filter-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="filter-drawer-title">
+    <div class="modal-sheet filter-drawer" id="filter-drawer">
+      <div class="modal-drag-handle"></div>
       <div class="drawer-header">
         <div class="drawer-title-block">
-          <h3>Filter Vocabulary</h3>
-          <p class="drawer-tip">Tap to toggle. Double-click or long-press to isolate.</p>
+          <h3 id="filter-drawer-title">Filter Vocabulary</h3>
+          <p class="drawer-tip">Tap to toggle, or use the "only" button to isolate.</p>
         </div>
         <button class="btn-close-drawer" id="btn-close-drawer" aria-label="Close Filters">&times;</button>
       </div>

@@ -1,0 +1,383 @@
+/* Shared modal shell (src/ui/modal.ts) used by both the story dialogue and
+   the filter drawer. `.modal-overlay` is the backdrop; `.modal-sheet` is
+   the box - centered dialog on desktop, bottom sheet with a drag handle on
+   mobile. Content-specific classes (.story-modal-content, .filter-drawer)
+   only add their own internal layout / max-width on top of this shell. */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-sheet {
+  background: rgba(18, 18, 18, 0.9);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  width: 90%;
+  max-width: 500px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+  transform: scale(1);
+  box-sizing: border-box;
+}
+
+body.light-theme .modal-sheet {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+}
+
+.modal-overlay.hidden .modal-sheet {
+  transform: scale(0.92);
+}
+
+.modal-drag-handle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* Bottom sheet: full-width, anchored to the bottom edge, slides up/down
+     instead of scaling, with a visible drag-to-dismiss handle. */
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-sheet {
+    width: 100%;
+    max-width: none;
+    max-height: 85vh;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateY(0);
+  }
+
+  .modal-overlay.hidden .modal-sheet {
+    transform: translateY(100%);
+  }
+
+  .modal-drag-handle {
+    display: block;
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-hover);
+    margin: 0.6rem auto 0;
+    flex-shrink: 0;
+  }
+}
+
+/* Story dialogue content */
+.story-modal-content {
+  padding: 1.75rem;
+  gap: 1.5rem;
+  box-sizing: border-box;
+}
+
+.story-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.75rem;
+}
+
+.story-modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+body.light-theme .story-modal-header h3 {
+  color: #0f4c81;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.75rem;
+  cursor: pointer;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+}
+
+@media (hover: hover) {
+  .btn-close:hover {
+    color: #fff;
+  }
+}
+
+.story-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+/* Filter drawer content */
+.filter-drawer {
+  box-sizing: border-box;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.drawer-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .drawer-header h3 {
+  background: linear-gradient(135deg, var(--text) 0%, rgba(0, 0, 0, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.drawer-tip {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.btn-close-drawer {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.75rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+@media (hover: hover) {
+  .btn-close-drawer:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  body.light-theme .btn-close-drawer:hover {
+    background: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.drawer-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.drawer-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.drawer-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.drawer-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+body.light-theme .drawer-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filter-section-title {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+
+.filter-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Filter chip: the long-press/double-click "isolate" gesture (gestures.ts)
+   is a shortcut for the always-visible .chip-isolate-btn "only" affordance
+   (4.5) - neither is the only way to isolate a chip. */
+.filter-chip-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  padding: 0.7rem 0.9rem;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+  position: relative;
+}
+
+body.light-theme .filter-chip-btn {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+@media (hover: hover) {
+  .filter-chip-btn:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  body.light-theme .filter-chip-btn:hover {
+    background: rgba(0, 0, 0, 0.035);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.filter-chip-btn:active {
+  transform: scale(0.97);
+}
+
+.filter-chip-btn.active {
+  background: linear-gradient(135deg, var(--accent-orange) 0%, rgba(249, 115, 22, 0.85) 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px var(--accent-orange-glow);
+}
+
+body.light-theme .filter-chip-btn.active {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.85) 100%);
+  box-shadow: 0 4px 10px var(--accent-cyan-glow);
+}
+
+/* "only" isolate affordance - hover-revealed on desktop, always visible on
+   touch (there is no hover state to reveal it on a touchscreen). */
+.chip-isolate-btn {
+  border: none;
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+  line-height: 1.4;
+  cursor: pointer;
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .chip-isolate-btn {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .filter-chip-btn:hover .chip-isolate-btn,
+  .filter-chip-btn:focus-visible .chip-isolate-btn {
+    opacity: 1;
+  }
+}
+
+.drawer-actions {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+.quick-toggles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-quick-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  min-height: 44px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+@media (hover: hover) {
+  .btn-quick-toggle:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  body.light-theme .btn-quick-toggle:hover {
+    background: rgba(0, 0, 0, 0.02);
+  }
+}

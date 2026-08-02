@@ -5,12 +5,15 @@ import { state } from '../state/store';
 import { ensureReviewsLoaded, isCardMastered } from '../state/reviews';
 import { switchSection, btnBackToStory } from './nav';
 import { setStudyMode } from './card';
+import { createModal } from './modal';
 
 const storyRoadmap = document.getElementById('story-roadmap');
-const storyModal = document.getElementById('story-modal');
+const storyModalEl = document.getElementById('story-modal');
 const storyDialogueBody = document.getElementById('story-dialogue-body');
 const btnCloseStoryModal = document.getElementById('btn-close-story-modal');
 const btnCloseStoryModalFooter = document.getElementById('btn-close-story-modal-footer');
+
+const storyModal = storyModalEl ? createModal(storyModalEl) : null;
 
 const levelFilterGroup = document.getElementById('level-filter-group');
 const vocabDropdownFilters = document.getElementById('vocab-dropdown-filters');
@@ -179,7 +182,7 @@ export async function showStoryDialogue(chapterId: number): Promise<void> {
     storyDialogueBody.appendChild(bubbleRow);
   });
 
-  storyModal.classList.remove('hidden');
+  storyModal.open();
 
   // Auto-scroll to bottom of conversation
   setTimeout(() => {
@@ -189,9 +192,7 @@ export async function showStoryDialogue(chapterId: number): Promise<void> {
 
 // Close dialogue modal popup
 export function closeStoryModal(): void {
-  if (storyModal) {
-    storyModal.classList.add('hidden');
-  }
+  storyModal?.close();
 }
 
 if (btnCloseStoryModal) btnCloseStoryModal.addEventListener('click', closeStoryModal);

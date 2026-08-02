@@ -1,4 +1,16 @@
-import './styles/main.css';
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/layout.css';
+import './styles/components/card.css';
+import './styles/components/controls.css';
+import './styles/components/sidebar.css';
+import './styles/components/bottom-nav.css';
+import './styles/components/modal.css';
+import './styles/components/kana.css';
+import './styles/components/story.css';
+import './styles/components/stats.css';
+import './styles/components/misc.css';
+import './styles/themes.css';
 
 import { FeedbackAudio } from './audio/feedback';
 import { state } from './state/store';
@@ -58,9 +70,34 @@ import { renderStatsView } from './ui/statsView';
 import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
 import { runMigrationIfNeeded } from './srs/migration';
+import { onSwipe } from './ui/gestures';
 
 const btnPracticeHiragana = document.getElementById('btn-practice-hiragana')!;
 const btnPracticeKatakana = document.getElementById('btn-practice-katakana')!;
+
+// Bottom tab bar (mobile only, see styles/components/bottom-nav.css) covers
+// Study/Kana/Story/Stats. It mirrors the equivalent sidebar menu item's
+// active state - "Kana" highlights whenever either kana section is open,
+// since it only has room to link to one of them (Hiragana).
+const bottomNavButtons = {
+  study: document.getElementById('bottom-nav-study'),
+  kana: document.getElementById('bottom-nav-kana'),
+  story: document.getElementById('bottom-nav-story'),
+  stats: document.getElementById('bottom-nav-stats'),
+};
+
+function syncBottomNav(active: keyof typeof bottomNavButtons | null): void {
+  for (const [key, btn] of Object.entries(bottomNavButtons)) {
+    if (!btn) continue;
+    const isActive = key === active;
+    btn.classList.toggle('active', isActive);
+    if (isActive) {
+      btn.setAttribute('aria-current', 'page');
+    } else {
+      btn.removeAttribute('aria-current');
+    }
+  }
+}
 
 // Initialize Application
 async function init(): Promise<void> {
@@ -143,6 +180,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('vocabulary');
+    syncBottomNav('study');
     void loadDeck('vocabulary');
   });
 
@@ -150,6 +188,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('hiragana');
+    syncBottomNav('kana');
     void renderKanaGrid('hiragana');
   });
 
@@ -157,6 +196,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('katakana');
+    syncBottomNav('kana');
     void renderKanaGrid('katakana');
   });
 
@@ -164,6 +204,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('story');
+    syncBottomNav('story');
     void renderStoryRoadmap();
     updateStats();
   });
@@ -172,6 +213,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('stats');
+    syncBottomNav('stats');
     void renderStatsView();
   });
 
@@ -180,6 +222,7 @@ function setupEventListeners(): void {
     state.isStoryModeActive = false;
     btnBackToStory?.classList.add('hidden');
     switchSection('story');
+    syncBottomNav('story');
     void renderStoryRoadmap();
     updateStats();
   });
@@ -190,6 +233,7 @@ function setupEventListeners(): void {
     btnBackToStory?.classList.add('hidden');
     void loadDeck('hiragana');
     switchSection('vocabulary', 'hiragana');
+    syncBottomNav('study');
   });
 
   btnPracticeKatakana.addEventListener('click', () => {
@@ -197,7 +241,14 @@ function setupEventListeners(): void {
     btnBackToStory?.classList.add('hidden');
     void loadDeck('katakana');
     switchSection('vocabulary', 'katakana');
+    syncBottomNav('study');
   });
+
+  // Bottom Tab Bar triggers (mobile) - mirror the equivalent sidebar item
+  bottomNavButtons.study?.addEventListener('click', () => menuVocabulary.click());
+  bottomNavButtons.kana?.addEventListener('click', () => menuHiragana.click());
+  bottomNavButtons.story?.addEventListener('click', () => menuStory.click());
+  bottomNavButtons.stats?.addEventListener('click', () => menuStats.click());
 
   // Hiragana Tab Event Listeners
   const hiraganaTabBtns = document.querySelectorAll<HTMLElement>('#hiragana-tabs .btn-chart-tab');
@@ -304,6 +355,32 @@ function setupEventListeners(): void {
     });
   }
 
+  // Swipe navigation on the card (Browse mode only - nextCard/prevCard
+  // already no-op in Study Session mode, where grading advances instead).
+  onSwipe(cardViewport, {
+    onDragMove: (dx) => {
+      cardViewport.style.transform = `translateX(${dx}px)`;
+      cardViewport.style.opacity = String(1 - Math.min(Math.abs(dx) / 300, 0.5));
+    },
+    onDragEnd: () => {
+      cardViewport.style.transform = '';
+      cardViewport.style.opacity = '';
+    },
+    onSwipeLeft: () => nextCard(),
+    onSwipeRight: () => prevCard(),
+  });
+
+  // Keyboard activation for custom-role elements that don't get it for free
+  // (native <button>/<a> map Enter/Space to click automatically; a
+  // role="menuitem"/"button" on an arbitrary element does not).
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const target = e.target as HTMLElement;
+    if (!target.matches('.menu-item[role="menuitem"], #theme-toggle-cube')) return;
+    e.preventDefault();
+    target.click();
+  });
+
   // Keyboard Shortcuts
   document.addEventListener('keydown', handleKeyboardShortcuts);
 }
@@ -314,8 +391,8 @@ function handleKeyboardShortcuts(e: KeyboardEvent): void {
   const target = e.target as HTMLElement;
   if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
-  // Ignore shortcuts while a modal is open (Escape handling for filters is bound separately)
-  if (document.querySelector('.modal-overlay:not(.hidden), .story-modal:not(.hidden)')) return;
+  // Ignore shortcuts while a modal is open (Escape handling is owned by modal.ts)
+  if (document.querySelector('.modal-overlay:not(.hidden)')) return;
 
   // In Study Session mode, once the card is flipped, the grade buttons are
   // reachable and Space grades Good instead of re-flipping (grading always

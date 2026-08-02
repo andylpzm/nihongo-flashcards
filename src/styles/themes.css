@@ -1,0 +1,47 @@
+/* Light theme: re-values the semantic tokens from tokens.css. Every
+   component reads only these tokens (--surface, --text, --border, accent
+   colors, ...), so this block is the only place theme colors are chosen -
+   components never need their own !important override to win against dark
+   mode's rule order. */
+body.light-theme {
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --text: #0f172a;
+  --text-muted: #475569;
+
+  --glass: rgba(255, 255, 255, 0.82);
+  --border: rgba(2, 132, 199, 0.12);
+  --border-hover: rgba(2, 132, 199, 0.24);
+
+  --accent-pink: #ec4899;
+  --accent-pink-glow: rgba(236, 72, 153, 0.15);
+  --accent-cyan: #0284c7;
+  --accent-cyan-glow: rgba(2, 132, 199, 0.2);
+  --accent-orange: #0284c7;
+  --accent-orange-glow: rgba(2, 132, 199, 0.2);
+
+  --shadow-color: rgba(2, 132, 199, 0.15);
+
+  position: relative;
+}
+
+body.light-theme .glow-orb {
+  opacity: 0.24;
+  filter: blur(100px);
+}
+
+body.light-theme .orb-pink {
+  background: #f97316;
+  width: 450px;
+  height: 450px;
+  top: 5%;
+  right: 5%;
+}
+
+body.light-theme .orb-cyan {
+  background: #38bdf8;
+  width: 500px;
+  height: 500px;
+  bottom: 10%;
+  left: 5%;
+}

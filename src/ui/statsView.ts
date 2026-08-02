@@ -54,7 +54,7 @@ export async function renderStatsView(): Promise<void> {
             `<div class="topic-lapse-row"><span>${TOPIC_LABELS[t.topic] ?? t.topic}</span><span>${t.lapses} lapse${t.lapses === 1 ? '' : 's'}</span></div>`
         )
         .join('')
-    : `<p style="color: var(--text-secondary); font-size: 0.9rem;">No lapses yet - nice work!</p>`;
+    : `<p style="color: var(--text-muted); font-size: 0.9rem;">No lapses yet - nice work!</p>`;
 
   statsGrid.innerHTML = `
     <div class="stat-tile">
