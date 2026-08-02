@@ -2,8 +2,9 @@ import type { StoryChapter } from '../data/types';
 import { loadStory } from '../data/loader';
 import { FeedbackAudio } from '../audio/feedback';
 import { state } from '../state/store';
+import { ensureReviewsLoaded, isCardMastered } from '../state/reviews';
 import { switchSection, btnBackToStory } from './nav';
-import { applyFiltersAndShuffle, renderCard, updateStats } from './card';
+import { setStudyMode } from './card';
 
 const storyRoadmap = document.getElementById('story-roadmap');
 const storyModal = document.getElementById('story-modal');
@@ -29,6 +30,7 @@ async function ensureChaptersLoaded(): Promise<StoryChapter[]> {
 export async function renderStoryRoadmap(): Promise<void> {
   if (!storyRoadmap) return;
   const chapters = await ensureChaptersLoaded();
+  await ensureReviewsLoaded();
   storyRoadmap.innerHTML = '';
 
   chapters.forEach((chapter) => {
@@ -38,7 +40,7 @@ export async function renderStoryRoadmap(): Promise<void> {
 
     // Calculate progress inside chapter deck
     const totalCards = chapter.deck.length;
-    const masteredCount = chapter.deck.filter((card) => state.storyMasteredIds.has(card.id)).length;
+    const masteredCount = chapter.deck.filter((card) => isCardMastered(card.id)).length;
     const percent = Math.round((masteredCount / totalCards) * 100);
 
     const node = document.createElement('div');
@@ -137,12 +139,9 @@ export async function startStoryChapter(chapterId: number, _mode: 'study' | 'rev
   // Show back to story map button
   if (btnBackToStory) btnBackToStory.classList.remove('hidden');
 
-  // Reload the study deck
-  applyFiltersAndShuffle();
-  state.currentIndex = 0;
-
-  updateStats();
-  renderCard();
+  // Story chapters use their own sequential chapter-gate pacing rather than
+  // the SRS daily queue, so always study them in Browse mode.
+  await setStudyMode('browse');
   switchSection('vocabulary', 'story');
 }
 

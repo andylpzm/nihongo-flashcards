@@ -1,10 +1,5 @@
 import type { AppState } from './types';
-import {
-  loadMasteredIds,
-  loadStoryMasteredIds,
-  loadStoryUnlockedChapter,
-  loadFilters,
-} from './persistence';
+import { loadStoryUnlockedChapter, loadFilters } from './persistence';
 
 const DEFAULT_VOCAB_TYPES = ['nouns', 'verbs', 'adjectives', 'misc'];
 const DEFAULT_VOCAB_TOPICS = [
@@ -29,7 +24,6 @@ export const state: AppState = {
   displayOrder: [],
   currentIndex: 0,
   isFlipped: false,
-  isShuffled: true, // Enabled by default for endless shuffle study style
   filterMode: savedFilters.filterMode ?? 'all',
   levelFilter: savedFilters.levelFilter ?? 'all',
   practiceMode: 'flashcard',
@@ -37,12 +31,9 @@ export const state: AppState = {
   showRomaji: true,
   activeDeck: 'vocabulary',
 
-  masteredCardIds: loadMasteredIds(),
-
   isStoryModeActive: false,
   activeStoryChapterId: null,
   storyUnlockedChapter: loadStoryUnlockedChapter(),
-  storyMasteredIds: loadStoryMasteredIds(),
 
   activeHiraganaTab: 'basic',
   activeKatakanaTab: 'basic',
@@ -51,6 +42,8 @@ export const state: AppState = {
   selectedVocabTopics: savedFilters.selectedVocabTopics ?? DEFAULT_VOCAB_TOPICS,
 
   isLightTheme: false,
+
+  studyMode: 'session',
 };
 
 // Lightweight pub/sub, available for modules that want to react to state

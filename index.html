@@ -94,6 +94,10 @@
           <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           💍 Story Mode
         </li>
+        <li class="menu-item" id="menu-stats" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+          Stats
+        </li>
       </ul>
       <div class="sidebar-footer">
         <button class="btn-forgotten" id="btn-forgotten-things">forgotten things</button>
@@ -114,14 +118,16 @@
           <div class="proposal-header">
             <span class="proposal-title">💍 Proposal Progress</span>
             <div class="proposal-stats">
-              <span>Total: <strong id="count-total">10</strong></span>
-              <span style="margin-left: 1rem;">Learning: <strong id="count-learning">10</strong></span>
+              <span>Due: <strong id="count-due">0</strong></span>
+              <span style="margin-left: 1rem;">New: <strong id="count-new">0</strong></span>
+              <span style="margin-left: 1rem;">Learned: <strong id="count-learned">0</strong>/<strong id="count-total">0</strong></span>
+              <span style="margin-left: 1rem;">🔥 <strong id="count-streak">0</strong></span>
             </div>
           </div>
           <div class="proposal-bar-bg" style="margin-bottom: 0.65rem;">
             <div class="proposal-bar-fill" id="proposal-bar-fill"></div>
           </div>
-          <div class="proposal-remaining" id="proposal-remaining">10 words left to master before proposing to Chiyo-chan</div>
+          <div class="proposal-remaining" id="proposal-remaining">Loading...</div>
         </div>
       </header>
 
@@ -132,6 +138,17 @@
           <button class="btn hidden" id="btn-back-to-story">
             ← Return to Story Roadmap
           </button>
+
+          <!-- Study Mode Toggle + Session Status Bar -->
+          <div class="session-bar">
+            <div class="toggle-group" role="group" aria-label="Study Mode">
+              <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">📚 Study Session</button>
+              <button class="btn-toggle" id="mode-browse" title="Free browsing, does not affect scheduling">🔍 Browse</button>
+            </div>
+            <span class="session-info" id="session-info"></span>
+            <button class="btn btn-primary hidden" id="btn-start-session">Start Today's Session</button>
+            <button class="btn btn-primary hidden" id="btn-session-end-action">Back to Deck</button>
+          </div>
 
           <!-- 3D Flippable Card Viewport -->
           <div class="card-viewport" id="card-viewport" role="button" tabindex="0" aria-label="Flashcard. Click to flip.">
@@ -149,20 +166,32 @@
 
           <!-- Controls Panel -->
           <div class="controls-container">
-            <!-- Mastered Status Toggle Button -->
-            <div class="status-buttons">
-              <button class="btn-status mastered" id="btn-mastered" title="Mark card as Mastered [M]">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5h-2v-2h2v2zm0-4h-2v-5h2v5z"/></svg>
-                Mark Mastered [M]
+            <!-- SRS Grade Buttons (Study Session mode, shown once the card is flipped) -->
+            <div class="grade-buttons hidden" id="grade-buttons">
+              <button class="btn-grade again" id="btn-grade-again" title="Again [1]">
+                <span class="grade-label">Again</span>
+                <span class="grade-interval" id="interval-again"></span>
+              </button>
+              <button class="btn-grade hard" id="btn-grade-hard" title="Hard [2]">
+                <span class="grade-label">Hard</span>
+                <span class="grade-interval" id="interval-hard"></span>
+              </button>
+              <button class="btn-grade good" id="btn-grade-good" title="Good [3 / Space]">
+                <span class="grade-label">Good</span>
+                <span class="grade-interval" id="interval-good"></span>
+              </button>
+              <button class="btn-grade easy" id="btn-grade-easy" title="Easy [4]">
+                <span class="grade-label">Easy</span>
+                <span class="grade-interval" id="interval-easy"></span>
               </button>
             </div>
 
-            <!-- Navigation & Action Buttons -->
-            <div class="nav-buttons">
+            <!-- Navigation & Action Buttons (Browse mode only) -->
+            <div class="nav-buttons" id="nav-buttons">
               <button class="btn btn-nav-circle" id="btn-prev" title="Previous card [Left Arrow]" aria-label="Previous card">
                 <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
               </button>
-              
+
 
 
               <button class="btn btn-nav-circle" id="btn-next" title="Next card [Right Arrow]" aria-label="Next card">
@@ -265,6 +294,19 @@
             </button>
           </div>
           <div class="kana-grid-container" id="katakana-grid-container">
+            <!-- Programmatically populated via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Mode 4: Study Stats Dashboard -->
+      <section class="section hidden" id="section-stats">
+        <div class="kana-section" style="max-width: 800px; width: 100%;">
+          <div class="kana-section-header">
+            <h2>Study Stats</h2>
+            <p>How review sessions have been going.</p>
+          </div>
+          <div class="stats-grid" id="stats-grid">
             <!-- Programmatically populated via JS -->
           </div>
         </div>

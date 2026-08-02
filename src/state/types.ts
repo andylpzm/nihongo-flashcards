@@ -8,13 +8,16 @@ export type LevelFilter = 'all' | 'N5' | 'N4';
 export type PracticeMode = 'flashcard' | 'typing';
 export type ActiveDeck = 'vocabulary' | 'hiragana' | 'katakana' | 'story';
 export type KanaTab = 'basic' | 'voiced' | 'combos';
+/** 'session' = SRS-scheduled review queue. 'browse' = free navigation over
+ * the filtered deck, same as the old flashcard behavior; does not record
+ * reviews or affect scheduling. */
+export type StudyMode = 'session' | 'browse';
 
 export interface AppState {
   cards: Card[];
   displayOrder: number[];
   currentIndex: number;
   isFlipped: boolean;
-  isShuffled: boolean;
   filterMode: FilterMode;
   levelFilter: LevelFilter;
   practiceMode: PracticeMode;
@@ -22,12 +25,9 @@ export interface AppState {
   showRomaji: boolean;
   activeDeck: ActiveDeck;
 
-  masteredCardIds: Set<CardId>;
-
   isStoryModeActive: boolean;
   activeStoryChapterId: number | null;
   storyUnlockedChapter: number;
-  storyMasteredIds: Set<CardId>;
 
   activeHiraganaTab: KanaTab;
   activeKatakanaTab: KanaTab;
@@ -36,4 +36,6 @@ export interface AppState {
   selectedVocabTopics: string[];
 
   isLightTheme: boolean;
+
+  studyMode: StudyMode;
 }

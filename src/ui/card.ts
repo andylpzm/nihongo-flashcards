@@ -4,13 +4,19 @@ import type { Pos } from '../data/types';
 import { FeedbackAudio } from '../audio/feedback';
 import { speakJapanese } from '../audio/tts';
 import { state } from '../state/store';
-import type { Card, CardId, FilterMode, LevelFilter } from '../state/types';
+import type { Card, FilterMode, LevelFilter, StudyMode } from '../state/types';
+import { saveFilters, saveStoryUnlockedChapter } from '../state/persistence';
 import {
-  saveMasteredIds,
-  saveStoryMasteredIds,
-  saveStoryUnlockedChapter,
-  saveFilters,
-} from '../state/persistence';
+  ensureReviewsLoaded,
+  getReviewsSnapshot,
+  recordGrade,
+  isCardMastered,
+  getRemainingNewBudget,
+} from '../state/reviews';
+import { Rating, newFsrsCard, previewIntervals, formatInterval } from '../srs/scheduler';
+import { buildQueue, StudySession, defaultSessionSettings, type QueueItem } from '../srs/queue';
+import type { Grade } from '../srs/types';
+import { computeStreak, countLearned, countDueToday, countNewAvailable } from '../srs/stats';
 import { btnBackToStory } from './nav';
 import { showStoryDialogue } from './story';
 
@@ -21,13 +27,36 @@ const cardBack = document.getElementById('card-back')!;
 
 export const prevBtn = document.getElementById('btn-prev') as HTMLButtonElement;
 export const nextBtn = document.getElementById('btn-next') as HTMLButtonElement;
-export const masteredToggleBtn = document.getElementById('btn-mastered')!;
+const navButtons = document.getElementById('nav-buttons')!;
+
+// Study Mode + Session Bar
+export const modeSessionBtn = document.getElementById('mode-session')!;
+export const modeBrowseBtn = document.getElementById('mode-browse')!;
+const sessionInfoEl = document.getElementById('session-info')!;
+export const btnStartSession = document.getElementById('btn-start-session')!;
+export const btnSessionEndAction = document.getElementById('btn-session-end-action')!;
+
+// Grade Buttons
+const gradeButtonsEl = document.getElementById('grade-buttons')!;
+export const btnGradeAgain = document.getElementById('btn-grade-again')!;
+export const btnGradeHard = document.getElementById('btn-grade-hard')!;
+export const btnGradeGood = document.getElementById('btn-grade-good')!;
+export const btnGradeEasy = document.getElementById('btn-grade-easy')!;
+const intervalEls: Record<Grade, HTMLElement> = {
+  [Rating.Again]: document.getElementById('interval-again')!,
+  [Rating.Hard]: document.getElementById('interval-hard')!,
+  [Rating.Good]: document.getElementById('interval-good')!,
+  [Rating.Easy]: document.getElementById('interval-easy')!,
+};
 
 // Proposal Progress Counters
 const proposalRemainingEl = document.getElementById('proposal-remaining');
 const proposalBarFillEl = document.getElementById('proposal-bar-fill') as HTMLElement | null;
+const countDueEl = document.getElementById('count-due');
+const countNewEl = document.getElementById('count-new');
+const countLearnedEl = document.getElementById('count-learned');
 const countTotalEl = document.getElementById('count-total');
-const countLearningEl = document.getElementById('count-learning');
+const countStreakEl = document.getElementById('count-streak');
 
 // Filter toggles
 export const filterAllBtn = document.getElementById('filter-all')!;
@@ -44,10 +73,14 @@ export const filterLevelN4Btn = document.getElementById('filter-level-n4');
 // Typing Mode elements
 const typingContainer = document.getElementById('typing-container')!;
 export const typingInput = document.getElementById('typing-input') as HTMLInputElement;
-export const submitBtn = document.getElementById('btn-submit-answer')!;
+export const submitBtn = document.getElementById('btn-submit-answer') as HTMLButtonElement;
 const feedbackText = document.getElementById('feedback-text')!;
 export const modeFlashcardBtn = document.getElementById('toggle-mode-flashcard')!;
 export const modeTypingBtn = document.getElementById('toggle-mode-typing')!;
+
+// Active study session (Study Session mode only) - null when not running one.
+let activeSession: StudySession | null = null;
+let cardShownAt = Date.now();
 
 export function persistFilters(): void {
   saveFilters({
@@ -68,8 +101,47 @@ function posToTypeBucket(pos: Pos): string {
   return 'misc'; // adverb, expression, counter, other
 }
 
-// Get the Active Card Object based on current display index
+// Cards passing the level/type/topic filters (progress filter is Browse-mode
+// only - Study Session mode uses due/new instead of all/learning/mastered).
+function getFilteredCards(applyProgressFilter: boolean): Card[] {
+  return state.cards.filter((card) => {
+    if (applyProgressFilter) {
+      const mastered = isCardMastered(card.id);
+      const matchesProgress =
+        state.filterMode === 'all' ||
+        (state.filterMode === 'learning' && !mastered) ||
+        (state.filterMode === 'mastered' && mastered);
+      if (!matchesProgress) return false;
+    }
+
+    const cardLevel = isVocabCard(card) ? card.level : '';
+    if (state.levelFilter !== 'all' && cardLevel !== state.levelFilter) return false;
+
+    if (state.activeDeck === 'vocabulary' && !state.isStoryModeActive && isVocabCard(card)) {
+      if (!state.selectedVocabTypes.includes(posToTypeBucket(card.pos))) return false;
+      if (!card.topics.some((t) => state.selectedVocabTopics.includes(t))) return false;
+    }
+
+    return true;
+  });
+}
+
+// Today's effective session settings: newPerDay is reduced by however many
+// new cards have already been introduced today, across any earlier session
+// (not just capped within a single queue build).
+function getTodaySessionSettings(): typeof defaultSessionSettings {
+  return {
+    ...defaultSessionSettings,
+    newPerDay: getRemainingNewBudget(defaultSessionSettings.newPerDay),
+  };
+}
+
+// Get the Active Card Object: from the running session's queue in Study
+// Session mode, or from the shuffled displayOrder in Browse mode.
 export function getActiveCard(): Card | null {
+  if (state.studyMode === 'session') {
+    return activeSession?.current?.card ?? null;
+  }
   if (state.displayOrder.length === 0) return null;
   const originalIndex = state.displayOrder[state.currentIndex];
   if (originalIndex === undefined) return null;
@@ -99,16 +171,19 @@ function getCardSubInfo(card: Card): string {
 // Render UI for Card
 export function renderCard(): void {
   const currentCard = getActiveCard();
+  cardShownAt = Date.now();
 
   // Reset Flipped Class and answer glow classes
   cardViewport.classList.remove('flipped', 'correct-answer', 'incorrect-answer');
   state.isFlipped = false;
   state.hasSubmittedAnswer = false;
+  hideGradeButtons();
 
   if (state.practiceMode === 'typing') {
     typingInput.value = '';
     typingInput.className = '';
     submitBtn.textContent = 'Check';
+    submitBtn.disabled = false;
     feedbackText.className = 'feedback-text';
     feedbackText.textContent = '';
     setTimeout(() => {
@@ -116,7 +191,8 @@ export function renderCard(): void {
     }, 50);
   }
 
-  // Handle empty state (e.g. no cards in filter)
+  // Handle empty state (e.g. no cards in filter, or an active session with
+  // nothing left to show - see endSession()).
   if (!currentCard) {
     renderEmptyState();
     return;
@@ -184,72 +260,104 @@ export function renderCard(): void {
     });
   }
 
-  // Update mastered button state on card
-  updateMasteredButtonState(currentCard.id);
-
-  // Always enable navigation buttons if there are cards in active deck
-  const total = state.displayOrder.length;
-  prevBtn.disabled = total === 0;
-  nextBtn.disabled = total === 0;
+  updateNavAndModeVisibility();
 }
 
-// Render empty state if filter contains 0 cards
+// Render empty state (no cards in filter, or a Study Session with nothing due)
 function renderEmptyState(): void {
+  const message =
+    state.studyMode === 'session' && !activeSession
+      ? { title: 'All caught up!', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
+      : { title: 'Empty', body: 'No cards found in this category. Try changing your filter settings below.' };
+
   cardFront.innerHTML = `
-    <span class="card-indicator">Empty</span>
-    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-secondary);">No cards found in this category</div>
-    <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5;">Try changing your filter settings below</span>
+    <span class="card-indicator">${message.title}</span>
+    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-secondary);">${message.title === 'Empty' ? 'No cards found in this category' : message.title}</div>
+    <span style="font-size: 0.85rem; color: var(--text-secondary); opacity: 0.5;">${message.body}</span>
   `;
   cardBack.innerHTML = cardFront.innerHTML;
 
+  hideGradeButtons();
   prevBtn.disabled = true;
   nextBtn.disabled = true;
 }
 
+function updateNavAndModeVisibility(): void {
+  const inSession = state.studyMode === 'session' && !!activeSession && !activeSession.isComplete;
+  navButtons.classList.toggle('hidden', state.studyMode === 'session');
+  if (state.studyMode === 'browse') {
+    const total = state.displayOrder.length;
+    prevBtn.disabled = total === 0;
+    nextBtn.disabled = total === 0;
+  }
+  void inSession;
+}
+
 // Flip Card 3D Toggle
 export function flipCard(silent = false): void {
-  if (state.displayOrder.length === 0) return;
+  const hasCard = state.studyMode === 'session' ? !!activeSession?.current : state.displayOrder.length > 0;
+  if (!hasCard) return;
   state.isFlipped = !state.isFlipped;
   cardViewport.classList.toggle('flipped', state.isFlipped);
   if (silent !== true) {
     FeedbackAudio.playFlip();
   }
+
+  if (state.isFlipped && state.studyMode === 'session' && activeSession?.current) {
+    showGradeButtons(activeSession.current);
+  } else {
+    hideGradeButtons();
+  }
 }
 
-// Next Card (loops endlessly and reshuffles on wrap-around if shuffle is enabled)
+function showGradeButtons(item: QueueItem): void {
+  const now = new Date();
+  // A brand-new card (no review record yet) previews against a fresh FSRS card.
+  const baseFsrsCard = item.review?.card ?? newFsrsCard(now);
+  const preview = previewIntervals(baseFsrsCard, now);
+
+  for (const [gradeStr, recordItem] of Object.entries(preview)) {
+    const grade = Number(gradeStr) as Grade;
+    const el = intervalEls[grade];
+    if (el) el.textContent = formatInterval(recordItem.card.due, now);
+  }
+
+  gradeButtonsEl.classList.remove('hidden');
+}
+
+function hideGradeButtons(): void {
+  gradeButtonsEl.classList.add('hidden');
+}
+
+// Next Card (Browse mode only)
 export function nextCard(): void {
+  if (state.studyMode !== 'browse') return;
   const total = state.displayOrder.length;
   if (total === 0) return;
 
   if (state.currentIndex < total - 1) {
     state.currentIndex++;
   } else {
-    // Wrap around to start
     state.currentIndex = 0;
-
-    // If in shuffle mode, reshuffle the remaining deck on completion so sequence varies
-    if (state.isShuffled) {
-      applyFiltersAndShuffle();
-    }
   }
   renderCard();
 }
 
-// Previous Card (loops endlessly)
+// Previous Card (Browse mode only, loops endlessly)
 export function prevCard(): void {
+  if (state.studyMode !== 'browse') return;
   const total = state.displayOrder.length;
   if (total === 0) return;
 
   if (state.currentIndex > 0) {
     state.currentIndex--;
   } else {
-    // Wrap around to end
     state.currentIndex = total - 1;
   }
   renderCard();
 }
 
-// Change study filter (All, Learning, Mastered)
+// Change study filter (All, Learning, Mastered) - Browse mode
 export function changeFilter(filter: FilterMode): void {
   state.filterMode = filter;
   filterAllBtn.classList.toggle('active', filter === 'all');
@@ -275,135 +383,163 @@ export function changeLevelFilter(level: LevelFilter): void {
   persistFilters();
 }
 
-// Update the list layout order according to filter and shuffle state
+// Update the Browse-mode list order: filtered + shuffled
 export function applyFiltersAndShuffle(): void {
-  // Filter index list
-  const activeIndices: number[] = [];
-  state.cards.forEach((card, index) => {
-    const isMastered = state.isStoryModeActive
-      ? state.storyMasteredIds.has(card.id)
-      : state.masteredCardIds.has(card.id);
+  const filtered = getFilteredCards(true);
+  const activeIndices = filtered.map((card) => state.cards.indexOf(card));
 
-    const matchesProgress =
-      state.filterMode === 'all' ||
-      (state.filterMode === 'learning' && !isMastered) ||
-      (state.filterMode === 'mastered' && isMastered);
-
-    const cardLevel = isVocabCard(card) ? card.level : '';
-    const matchesLevel = state.levelFilter === 'all' || cardLevel === state.levelFilter;
-
-    // Check type and topic filters for Vocabulary deck (using multi-select arrays)
-    let matchesType = true;
-    let matchesTopic = true;
-    if (state.activeDeck === 'vocabulary' && !state.isStoryModeActive && isVocabCard(card)) {
-      matchesType = state.selectedVocabTypes.includes(posToTypeBucket(card.pos));
-      matchesTopic = card.topics.some((t) => state.selectedVocabTopics.includes(t));
-    }
-
-    if (matchesProgress && matchesLevel && matchesType && matchesTopic) {
-      activeIndices.push(index);
-    }
-  });
-
-  // Shuffle if needed
-  if (state.isShuffled) {
-    // Fisher-Yates Shuffle
-    for (let i = activeIndices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [activeIndices[i], activeIndices[j]] = [activeIndices[j]!, activeIndices[i]!];
-    }
+  // Fisher-Yates Shuffle
+  for (let i = activeIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [activeIndices[i], activeIndices[j]] = [activeIndices[j]!, activeIndices[i]!];
   }
 
   state.displayOrder = activeIndices;
 }
 
-// Toggle Mastered Card Status
-export function toggleMastered(): void {
-  const currentCard = getActiveCard();
-  if (!currentCard) return;
+// ==================== STUDY SESSION LIFECYCLE ====================
 
-  const cardId = currentCard.id;
-  let newlyMastered = false;
+export async function startSession(): Promise<void> {
+  await ensureReviewsLoaded();
+  const candidates = getFilteredCards(false);
+  const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
 
-  if (state.isStoryModeActive) {
-    if (state.storyMasteredIds.has(cardId)) {
-      state.storyMasteredIds.delete(cardId);
-    } else {
-      state.storyMasteredIds.add(cardId);
-      newlyMastered = true;
-    }
-    saveStoryMasteredIds(state.storyMasteredIds);
-  } else {
-    if (state.masteredCardIds.has(cardId)) {
-      state.masteredCardIds.delete(cardId);
-    } else {
-      state.masteredCardIds.add(cardId);
-      newlyMastered = true;
-    }
-    saveMasteredIds(state.masteredCardIds);
+  if (queue.length === 0) {
+    activeSession = null;
+    btnStartSession.classList.add('hidden');
+    updateSessionInfo();
+    renderCard();
+    return;
   }
 
-  if (newlyMastered) {
+  activeSession = new StudySession(queue);
+  btnStartSession.classList.add('hidden');
+  btnSessionEndAction.classList.add('hidden');
+  updateSessionInfo();
+  renderCard();
+}
+
+function updateSessionInfo(): void {
+  if (state.studyMode !== 'session') {
+    sessionInfoEl.textContent = '';
+    return;
+  }
+  if (activeSession && !activeSession.isComplete) {
+    const { reviewed, total } = activeSession.progress;
+    sessionInfoEl.textContent = `Card ${reviewed + 1} / ${total}`;
+  } else {
+    sessionInfoEl.textContent = '';
+  }
+}
+
+export async function gradeCurrentCard(grade: Grade): Promise<void> {
+  // Defense in depth: the grade buttons are CSS-hidden until the card is
+  // flipped, but that alone doesn't stop a click handler from firing on a
+  // hidden element, so guard the actual grading path too - grading must
+  // never be reachable while the answer is still hidden.
+  if (state.studyMode !== 'session' || !state.isFlipped || !activeSession || !activeSession.current) {
+    return;
+  }
+
+  const item = activeSession.current;
+  const elapsedMs = Date.now() - cardShownAt;
+  await recordGrade(item.card, grade, new Date(), elapsedMs);
+
+  if (grade === Rating.Good || grade === Rating.Easy) {
     FeedbackAudio.playCorrect();
   }
 
+  activeSession.advance(grade);
   updateStats();
-  updateMasteredButtonState(cardId);
 
-  // If we are filtering, the list of cards has changed, so we need to refresh active list
-  if (state.filterMode !== 'all') {
-    applyFiltersAndShuffle();
-
-    // Ensure index remains in bounds
-    if (state.currentIndex >= state.displayOrder.length) {
-      state.currentIndex = Math.max(0, state.displayOrder.length - 1);
-    }
+  if (activeSession.isComplete) {
+    endSession();
+  } else {
+    updateSessionInfo();
     renderCard();
   }
 }
 
-// Update Mastered Button style active state
-function updateMasteredButtonState(cardId: CardId): void {
-  const isMastered = state.isStoryModeActive
-    ? state.storyMasteredIds.has(cardId)
-    : state.masteredCardIds.has(cardId);
-  if (isMastered) {
-    masteredToggleBtn.classList.add('active');
-    masteredToggleBtn.innerHTML = `
-      <svg viewBox="0 0 24 24" style="fill: #10b981;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-      Mastered [M]
-    `;
-  } else {
-    masteredToggleBtn.classList.remove('active');
-    masteredToggleBtn.innerHTML = `
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15.5h-2v-2h2v2zm0-4h-2v-5h2v5z"/></svg>
-      Mark Mastered [M]
-    `;
-  }
+function endSession(): void {
+  if (!activeSession) return;
+  const { reviewed, correct } = activeSession.progress;
+  const accuracy = reviewed > 0 ? Math.round((correct / reviewed) * 100) : 0;
+  const elapsedSec = Math.round(activeSession.elapsedMs / 1000);
+  const minutes = Math.floor(elapsedSec / 60);
+  const seconds = elapsedSec % 60;
+
+  cardFront.innerHTML = `
+    <span class="card-indicator">Session Complete! 🎉</span>
+    <div class="card-main-text" style="font-size: 1.6rem;">${reviewed} card${reviewed === 1 ? '' : 's'} reviewed</div>
+    <div class="card-sub-info">${accuracy}% accuracy · ${minutes}m ${seconds}s</div>
+  `;
+  cardBack.innerHTML = cardFront.innerHTML;
+
+  hideGradeButtons();
+  prevBtn.disabled = true;
+  nextBtn.disabled = true;
+  sessionInfoEl.textContent = '';
+  btnSessionEndAction.classList.remove('hidden');
+  btnStartSession.classList.add('hidden');
+
+  activeSession = null;
+  updateStats();
 }
+
+// Called by the "Back to Deck" button after a session ends, or to bail out
+// of an empty-queue state back to a neutral view.
+export function acknowledgeSessionEnd(): void {
+  btnSessionEndAction.classList.add('hidden');
+  updateStats();
+  renderCard();
+}
+
+export async function setStudyMode(mode: StudyMode): Promise<void> {
+  state.studyMode = mode;
+  modeSessionBtn.classList.toggle('active', mode === 'session');
+  modeBrowseBtn.classList.toggle('active', mode === 'browse');
+  activeSession = null;
+  btnSessionEndAction.classList.add('hidden');
+
+  if (mode === 'browse') {
+    btnStartSession.classList.add('hidden');
+    state.currentIndex = 0;
+    applyFiltersAndShuffle();
+    renderCard();
+  } else {
+    await ensureReviewsLoaded();
+    const candidates = getFilteredCards(false);
+    const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
+    btnStartSession.classList.toggle('hidden', queue.length === 0);
+    renderCard();
+  }
+  updateSessionInfo();
+  updateStats();
+}
+
+// ==================== PROGRESS HEADER ====================
 
 // Update Proposal Progress
 export function updateStats(): void {
   if (state.isStoryModeActive && state.activeStoryChapterId !== null) {
-    // Story Mode Stats
+    // Story Mode: per-chapter completion (unaffected by the global SRS header)
     const total = state.cards.length;
-    const mastered = state.cards.filter((card) => state.storyMasteredIds.has(card.id)).length;
+    const mastered = state.cards.filter((card) => isCardMastered(card.id)).length;
     const remaining = total - mastered;
     const percent = total > 0 ? (mastered / total) * 100 : 0;
 
     if (countTotalEl) countTotalEl.textContent = String(total);
-    if (countLearningEl) countLearningEl.textContent = String(remaining);
+    if (countLearnedEl) countLearnedEl.textContent = String(mastered);
+    if (countDueEl) countDueEl.textContent = '-';
+    if (countNewEl) countNewEl.textContent = '-';
 
     if (proposalRemainingEl) {
       if (remaining === 0) {
         proposalRemainingEl.innerHTML = `<strong>Chapter Cleared! Ready to read the Dialogue with Chiyo-chan! 💍❤️</strong>`;
 
-        // Auto-unlock next chapter if this is the active progress chapter
         if (state.activeStoryChapterId === state.storyUnlockedChapter) {
           state.storyUnlockedChapter = state.activeStoryChapterId + 1;
           saveStoryUnlockedChapter(state.storyUnlockedChapter);
-
-          // Trigger dialogue modal automatically
           void showStoryDialogue(state.activeStoryChapterId);
         }
       } else {
@@ -414,27 +550,34 @@ export function updateStats(): void {
     if (proposalBarFillEl) {
       proposalBarFillEl.style.width = `${percent}%`;
     }
-  } else {
-    // Normal Vocabulary Mode Stats
-    const total = state.cards.length;
-    const mastered = state.cards.filter((card) => state.masteredCardIds.has(card.id)).length;
-    const remaining = Math.max(0, total - mastered);
-    const percent = total > 0 ? Math.min(100, (mastered / total) * 100) : 0;
+    return;
+  }
 
-    if (countTotalEl) countTotalEl.textContent = String(total);
-    if (countLearningEl) countLearningEl.textContent = String(remaining);
+  // Normal deck stats: real SRS numbers instead of a boolean "mastered" set.
+  const reviews = getReviewsSnapshot();
+  const total = state.cards.length;
+  const due = countDueToday(Array.from(reviews.values()));
+  const fresh = countNewAvailable(state.cards, Array.from(reviews.values()));
+  const learned = countLearned(Array.from(reviews.values()).filter((r) => state.cards.some((c) => c.id === r.cardId)));
+  const streak = computeStreak(Array.from(reviews.values()));
 
-    if (proposalRemainingEl) {
-      if (remaining === 0) {
-        proposalRemainingEl.innerHTML = `<strong>Ready to propose! Go get her, Chris-kun! 💍❤️</strong>`;
-      } else {
-        proposalRemainingEl.innerHTML = `<strong>${remaining}</strong> vocabulary word${remaining > 1 ? 's' : ''} left to master before proposing to Chiyo-chan`;
-      }
+  if (countTotalEl) countTotalEl.textContent = String(total);
+  if (countDueEl) countDueEl.textContent = String(due);
+  if (countNewEl) countNewEl.textContent = String(fresh);
+  if (countLearnedEl) countLearnedEl.textContent = String(learned);
+  if (countStreakEl) countStreakEl.textContent = String(streak);
+
+  if (proposalRemainingEl) {
+    if (due === 0 && fresh === 0) {
+      proposalRemainingEl.innerHTML = `<strong>All caught up! Ready to propose, Chris-kun? 💍❤️</strong>`;
+    } else {
+      proposalRemainingEl.innerHTML = `<strong>${due}</strong> due, <strong>${fresh}</strong> new — study today before proposing to Chiyo-chan!`;
     }
+  }
 
-    if (proposalBarFillEl) {
-      proposalBarFillEl.style.width = `${percent}%`;
-    }
+  if (proposalBarFillEl) {
+    const percent = total > 0 ? Math.min(100, (learned / total) * 100) : 0;
+    proposalBarFillEl.style.width = `${percent}%`;
   }
 }
 
@@ -496,8 +639,13 @@ export function submitAnswer(): void {
       flipCard(true); // silent flip to prevent sound overlap
     }
 
-    submitBtn.textContent = 'Next Card';
-  } else {
+    if (state.studyMode === 'session') {
+      submitBtn.textContent = 'Grade below ↓';
+      submitBtn.disabled = true;
+    } else {
+      submitBtn.textContent = 'Next Card';
+    }
+  } else if (state.studyMode === 'browse') {
     // If already checked, click on submit acts as "Next Card" navigation
     nextCard();
   }
@@ -521,6 +669,8 @@ export function toggleRomajiVisibility(): void {
 // Load a specific Deck (Vocabulary, Hiragana, Katakana) into active study scope
 export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana'): Promise<void> {
   state.activeDeck = deckName;
+  activeSession = null;
+  btnSessionEndAction.classList.add('hidden');
 
   if (deckName === 'vocabulary') {
     state.cards = await loadVocab();
@@ -556,8 +706,16 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana')
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
   }
 
-  applyFiltersAndShuffle();
-  state.currentIndex = 0;
+  await ensureReviewsLoaded();
+
+  if (state.studyMode === 'browse') {
+    state.currentIndex = 0;
+    applyFiltersAndShuffle();
+  } else {
+    const candidates = getFilteredCards(false);
+    const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
+    btnStartSession.classList.toggle('hidden', queue.length === 0);
+  }
 
   updateStats();
   renderCard();

@@ -6,7 +6,14 @@ import {
   cardViewport,
   prevBtn,
   nextBtn,
-  masteredToggleBtn,
+  modeSessionBtn,
+  modeBrowseBtn,
+  btnStartSession,
+  btnSessionEndAction,
+  btnGradeAgain,
+  btnGradeHard,
+  btnGradeGood,
+  btnGradeEasy,
   filterAllBtn,
   filterLearningBtn,
   filterMasteredBtn,
@@ -20,16 +27,21 @@ import {
   flipCard,
   prevCard,
   nextCard,
-  toggleMastered,
   changeFilter,
   changeLevelFilter,
   setPracticeMode,
   submitAnswer,
   toggleRomajiVisibility,
   loadDeck,
+  startSession,
+  gradeCurrentCard,
+  setStudyMode,
+  acknowledgeSessionEnd,
   updateStats,
   getActiveCard,
 } from './ui/card';
+import { Rating } from './srs/scheduler';
+import type { Grade } from './srs/types';
 import { renderKanaGrid } from './ui/kana';
 import { setupFilterDrawer } from './ui/filters';
 import {
@@ -37,12 +49,15 @@ import {
   menuHiragana,
   menuKatakana,
   menuStory,
+  menuStats,
   btnBackToStory,
   switchSection,
 } from './ui/nav';
 import { renderStoryRoadmap } from './ui/story';
+import { renderStatsView } from './ui/statsView';
 import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
+import { runMigrationIfNeeded } from './srs/migration';
 
 const btnPracticeHiragana = document.getElementById('btn-practice-hiragana')!;
 const btnPracticeKatakana = document.getElementById('btn-practice-katakana')!;
@@ -50,6 +65,10 @@ const btnPracticeKatakana = document.getElementById('btn-practice-katakana')!;
 // Initialize Application
 async function init(): Promise<void> {
   setupEventListeners();
+  // One-time migration from the old boolean "mastered" localStorage sets to
+  // real FSRS review records - must finish before the deck loads so the
+  // progress header and session queue reflect migrated state immediately.
+  await runMigrationIfNeeded();
   // Boots straight into the vocabulary deck; kana grids and story chapters
   // load lazily on first navigation to their sections (see below).
   await loadDeck('vocabulary');
@@ -70,12 +89,26 @@ function setupEventListeners(): void {
     nextCard();
   });
 
-  // Mastered status toggle
-  masteredToggleBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation(); // Avoid flipping the card when clicking the button on back face
-    toggleMastered();
-  });
+  // Study Mode toggle (Study Session vs Browse)
+  modeSessionBtn.addEventListener('click', () => void setStudyMode('session'));
+  modeBrowseBtn.addEventListener('click', () => void setStudyMode('browse'));
+
+  // Session lifecycle
+  btnStartSession.addEventListener('click', () => void startSession());
+  btnSessionEndAction.addEventListener('click', () => acknowledgeSessionEnd());
+
+  // SRS Grade buttons
+  const bindGrade = (btn: HTMLElement, grade: Grade) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Avoid flipping the card when clicking a button on the back face
+      void gradeCurrentCard(grade);
+    });
+  };
+  bindGrade(btnGradeAgain, Rating.Again);
+  bindGrade(btnGradeHard, Rating.Hard);
+  bindGrade(btnGradeGood, Rating.Good);
+  bindGrade(btnGradeEasy, Rating.Easy);
 
   // Filter Buttons
   filterAllBtn.addEventListener('click', () => changeFilter('all'));
@@ -133,6 +166,13 @@ function setupEventListeners(): void {
     switchSection('story');
     void renderStoryRoadmap();
     updateStats();
+  });
+
+  menuStats.addEventListener('click', () => {
+    state.isStoryModeActive = false;
+    btnBackToStory?.classList.add('hidden');
+    switchSection('stats');
+    void renderStatsView();
   });
 
   // Return to Roadmap button inside Card view
@@ -277,27 +317,45 @@ function handleKeyboardShortcuts(e: KeyboardEvent): void {
   // Ignore shortcuts while a modal is open (Escape handling for filters is bound separately)
   if (document.querySelector('.modal-overlay:not(.hidden), .story-modal:not(.hidden)')) return;
 
+  // In Study Session mode, once the card is flipped, the grade buttons are
+  // reachable and Space grades Good instead of re-flipping (grading always
+  // requires the answer to already be visible - see flipCard()).
+  const gradingReachable = state.studyMode === 'session' && state.isFlipped;
+
   switch (e.code) {
     case 'Space':
       e.preventDefault(); // Stop scrolling the page
-      flipCard();
+      if (gradingReachable) {
+        void gradeCurrentCard(Rating.Good);
+      } else {
+        flipCard();
+      }
       break;
     case 'Enter':
       // Only flip on Enter when the card itself is focused, to avoid double-firing
       // a button's native click behavior when e.g. a toolbar button has focus.
-      if (e.target === cardViewport) {
+      if (e.target === cardViewport && !gradingReachable) {
         e.preventDefault();
         flipCard();
       }
+      break;
+    case 'Digit1':
+      if (gradingReachable) void gradeCurrentCard(Rating.Again);
+      break;
+    case 'Digit2':
+      if (gradingReachable) void gradeCurrentCard(Rating.Hard);
+      break;
+    case 'Digit3':
+      if (gradingReachable) void gradeCurrentCard(Rating.Good);
+      break;
+    case 'Digit4':
+      if (gradingReachable) void gradeCurrentCard(Rating.Easy);
       break;
     case 'ArrowLeft':
       prevCard();
       break;
     case 'ArrowRight':
       nextCard();
-      break;
-    case 'KeyM':
-      toggleMastered();
       break;
     case 'KeyV':
     case 'KeyA': {

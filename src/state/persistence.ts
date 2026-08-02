@@ -107,3 +107,34 @@ export function saveFilters(filters: PersistedFilters): void {
     // ignore
   }
 }
+
+export interface DailyNewProgress {
+  date: string; // YYYY-MM-DD
+  count: number;
+}
+
+/** How many brand-new cards have been introduced today, for enforcing the
+ * newPerDay session budget across multiple sessions in the same calendar
+ * day (not just within a single queue build). */
+export function loadDailyNewProgress(): DailyNewProgress {
+  try {
+    const saved = localStorage.getItem('nihongo_daily_new_progress');
+    if (saved) {
+      const parsed = JSON.parse(saved) as Partial<DailyNewProgress>;
+      if (typeof parsed.date === 'string' && typeof parsed.count === 'number') {
+        return { date: parsed.date, count: parsed.count };
+      }
+    }
+  } catch {
+    // ignore, fall back to a fresh count
+  }
+  return { date: '', count: 0 };
+}
+
+export function saveDailyNewProgress(progress: DailyNewProgress): void {
+  try {
+    localStorage.setItem('nihongo_daily_new_progress', JSON.stringify(progress));
+  } catch {
+    // ignore
+  }
+}
