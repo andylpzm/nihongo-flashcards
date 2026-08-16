@@ -1,6 +1,17 @@
 .DS_Store
-*.md
 node_modules/
 dist/
 *.tsbuildinfo
 .claude/
+
+# Planning and working notes (PLAN.md, EXECUTION_NOTES.md, handover plans,
+# generated reports). Kept on disk, never committed.
+*.md
+
+# Throwaway scripts used to poke at data or the scheduler while debugging.
+# The real vitest suite lives in src/**/*.test.ts and IS committed - do not
+# add *.test.* here.
+tmp-*
+scratch/
+scripts/out/
+*.local.*
