@@ -21,6 +21,7 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
   let startY = 0;
   let active = false;
   let horizontal = false;
+  let captured = false;
   let suppressNextClick = false;
 
   const onClick = (e: MouseEvent) => {
@@ -37,7 +38,12 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
     startY = e.clientY;
     active = true;
     horizontal = false;
-    el.setPointerCapture(e.pointerId);
+    captured = false;
+    // Deliberately NOT capturing here. A captured pointer dispatches its click
+    // to the capturing element rather than the real hit-test target, so
+    // capturing on pointerdown stole every click on a control inside the card
+    // (the romaji eye and the speak button) and flipped the card instead.
+    // Capture is taken in onPointerMove, once this is actually a drag.
   };
 
   const onPointerMove = (e: PointerEvent) => {
@@ -54,6 +60,11 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
         active = false;
         return;
       }
+      // Now it's a real horizontal drag: take the pointer so the gesture keeps
+      // tracking outside the element. A plain tap never reaches this branch,
+      // so its click still lands on whatever was actually pressed.
+      el.setPointerCapture(e.pointerId);
+      captured = true;
     }
     handlers.onDragMove?.(dx);
   };
@@ -62,6 +73,10 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
     if (!active) return;
     active = false;
     const dx = e.clientX - startX;
+    if (captured) {
+      el.releasePointerCapture(e.pointerId);
+      captured = false;
+    }
     const committed = horizontal && Math.abs(dx) > threshold;
     if (committed) {
       suppressNextClick = true;
