@@ -149,8 +149,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ひく",
-    "hint": "pull"
+    "homophoneGroup": "ひく"
   },
   {
     "id": 12,
@@ -289,7 +288,7 @@
       "other"
     ],
     "homophoneGroup": "はし",
-    "hint": "chopsticks"
+    "kanji": "箸"
   },
   {
     "id": 22,
@@ -346,8 +345,7 @@
     "topics": [
       "weather"
     ],
-    "homophoneGroup": "あつい",
-    "hint": "hot (weather)"
+    "homophoneGroup": "あつい"
   },
   {
     "id": 26,
@@ -376,8 +374,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "とる",
-    "hint": "take"
+    "homophoneGroup": "とる"
   },
   {
     "id": 28,
@@ -406,8 +403,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "しめる",
-    "hint": "close"
+    "homophoneGroup": "しめる"
   },
   {
     "id": 30,
@@ -838,8 +834,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あつい",
-    "hint": "thick"
+    "homophoneGroup": "あつい"
   },
   {
     "id": 61,
@@ -938,8 +933,7 @@
     "topics": [
       "weather"
     ],
-    "homophoneGroup": "あめ",
-    "hint": "rain"
+    "homophoneGroup": "あめ"
   },
   {
     "id": 68,
@@ -968,8 +962,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "はやい",
-    "hint": "fast"
+    "homophoneGroup": "はやい"
   },
   {
     "id": 70,
@@ -1067,8 +1060,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "いる",
-    "hint": "need"
+    "homophoneGroup": "いる"
   },
   {
     "id": 77,
@@ -1353,8 +1345,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "へん",
-    "hint": "area"
+    "homophoneGroup": "へん"
   },
   {
     "id": 98,
@@ -1480,8 +1471,7 @@
     "topics": [
       "body"
     ],
-    "homophoneGroup": "かぜ",
-    "hint": "a cold (illness)"
+    "homophoneGroup": "かぜ"
   },
   {
     "id": 107,
@@ -1593,7 +1583,7 @@
       "other"
     ],
     "homophoneGroup": "なる",
-    "hint": "become"
+    "kanji": "成る"
   },
   {
     "id": 115,
@@ -1635,8 +1625,7 @@
     "topics": [
       "weather"
     ],
-    "homophoneGroup": "かぜ",
-    "hint": "wind"
+    "homophoneGroup": "かぜ"
   },
   {
     "id": 118,
@@ -1898,8 +1887,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "とる",
-    "hint": "take a photo"
+    "homophoneGroup": "とる"
   },
   {
     "id": 137,
@@ -2356,8 +2344,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "かえる",
-    "hint": "go home"
+    "homophoneGroup": "かえる"
   },
   {
     "id": 170,
@@ -2480,9 +2467,7 @@
     "pos": "verb",
     "topics": [
       "other"
-    ],
-    "homophoneGroup": "あげる",
-    "hint": "give (to others)"
+    ]
   },
   {
     "id": 179,
@@ -2714,7 +2699,7 @@
       "other"
     ],
     "homophoneGroup": "つける",
-    "hint": "turn on"
+    "kanji": "付ける"
   },
   {
     "id": 196,
@@ -3184,8 +3169,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "と",
-    "hint": "door"
+    "homophoneGroup": "と"
   },
   {
     "id": 230,
@@ -3393,8 +3377,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "すむ",
-    "hint": "live in"
+    "homophoneGroup": "すむ"
   },
   {
     "id": 245,
@@ -3409,7 +3392,7 @@
       "other"
     ],
     "homophoneGroup": "かける",
-    "hint": "phone call"
+    "kanji": "掛ける"
   },
   {
     "id": 246,
@@ -3519,8 +3502,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あう",
-    "hint": "meet"
+    "homophoneGroup": "あう"
   },
   {
     "id": 254,
@@ -3563,8 +3545,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "きる",
-    "hint": "wear (upper body)"
+    "homophoneGroup": "きる"
   },
   {
     "id": 257,
@@ -3674,8 +3655,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "とまる",
-    "hint": "come to a halt"
+    "homophoneGroup": "とまる"
   },
   {
     "id": 265,
@@ -3690,8 +3670,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "つく",
-    "hint": "arrive"
+    "homophoneGroup": "つく"
   },
   {
     "id": 266,
@@ -3804,8 +3783,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "き",
-    "hint": "tree"
+    "homophoneGroup": "き"
   },
   {
     "id": 274,
@@ -4026,8 +4004,7 @@
     "topics": [
       "body"
     ],
-    "homophoneGroup": "は",
-    "hint": "tooth"
+    "homophoneGroup": "は"
   },
   {
     "id": 290,
@@ -4070,8 +4047,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ふく",
-    "hint": "blow"
+    "homophoneGroup": "ふく"
   },
   {
     "id": 293,
@@ -4267,8 +4243,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "やさしい",
-    "hint": "easy"
+    "homophoneGroup": "やさしい"
   },
   {
     "id": 307,
@@ -4824,8 +4799,7 @@
     "topics": [
       "numbers"
     ],
-    "homophoneGroup": "せん",
-    "hint": "thousand"
+    "homophoneGroup": "せん"
   },
   {
     "id": 347,
@@ -5035,8 +5009,7 @@
     "topics": [
       "time"
     ],
-    "homophoneGroup": "よる",
-    "hint": "night"
+    "homophoneGroup": "よる"
   },
   {
     "id": 362,
@@ -5104,8 +5077,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なく",
-    "hint": "animal cry"
+    "homophoneGroup": "なく"
   },
   {
     "id": 367,
@@ -5368,8 +5340,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "おりる",
-    "hint": "get off (vehicle)"
+    "homophoneGroup": "おりる"
   },
   {
     "id": 386,
@@ -5671,8 +5642,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あく",
-    "hint": "open (door)"
+    "homophoneGroup": "あく"
   },
   {
     "id": 408,
@@ -5917,8 +5887,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "はし",
-    "hint": "bridge"
+    "homophoneGroup": "はし"
   },
   {
     "id": 426,
@@ -6207,8 +6176,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "きる",
-    "hint": "cut"
+    "homophoneGroup": "きる"
   },
   {
     "id": 447,
@@ -6550,8 +6518,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "はな",
-    "hint": "flower"
+    "homophoneGroup": "はな"
   },
   {
     "id": 472,
@@ -6580,8 +6547,7 @@
     "topics": [
       "numbers"
     ],
-    "homophoneGroup": "いる",
-    "hint": "to be/have (living things)"
+    "homophoneGroup": "いる"
   },
   {
     "id": 474,
@@ -6664,8 +6630,7 @@
     "topics": [
       "weather"
     ],
-    "homophoneGroup": "はる",
-    "hint": "spring (season)"
+    "homophoneGroup": "はる"
   },
   {
     "id": 480,
@@ -6953,8 +6918,7 @@
     "topics": [
       "time"
     ],
-    "homophoneGroup": "はやい",
-    "hint": "early"
+    "homophoneGroup": "はやい"
   },
   {
     "id": 501,
@@ -7095,8 +7059,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ひく",
-    "hint": "play instrument"
+    "homophoneGroup": "ひく"
   },
   {
     "id": 511,
@@ -7456,8 +7419,7 @@
     "topics": [
       "school"
     ],
-    "homophoneGroup": "かみ",
-    "hint": "paper"
+    "homophoneGroup": "かみ"
   },
   {
     "id": 537,
@@ -7771,8 +7733,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ふく",
-    "hint": "clothes"
+    "homophoneGroup": "ふく"
   },
   {
     "id": 560,
@@ -8379,8 +8340,7 @@
     "topics": [
       "body"
     ],
-    "homophoneGroup": "はな",
-    "hint": "nose"
+    "homophoneGroup": "はな"
   },
   {
     "id": 604,
@@ -8436,8 +8396,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "おく",
-    "hint": "put"
+    "homophoneGroup": "おく"
   },
   {
     "id": 608,
@@ -8750,8 +8709,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あめ",
-    "hint": "candy"
+    "homophoneGroup": "あめ"
   },
   {
     "id": 631,
@@ -8931,8 +8889,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "しめる",
-    "hint": "tie"
+    "homophoneGroup": "しめる"
   },
   {
     "id": 644,
@@ -8947,8 +8904,7 @@
     "topics": [
       "weather"
     ],
-    "homophoneGroup": "あつい",
-    "hint": "hot (to touch)"
+    "homophoneGroup": "あつい"
   },
   {
     "id": 645,
@@ -9129,8 +9085,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "はる",
-    "hint": "stick, paste"
+    "homophoneGroup": "はる"
   },
   {
     "id": 658,
@@ -9351,8 +9306,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "つく",
-    "hint": "be attached"
+    "homophoneGroup": "つく"
   },
   {
     "id": 674,
@@ -9393,8 +9347,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "たずねる",
-    "hint": "visit"
+    "homophoneGroup": "たずねる"
   },
   {
     "id": 677,
@@ -9437,8 +9390,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "すむ",
-    "hint": "finish"
+    "homophoneGroup": "すむ"
   },
   {
     "id": 680,
@@ -9535,8 +9487,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なおる",
-    "hint": "be fixed"
+    "homophoneGroup": "なおる"
   },
   {
     "id": 687,
@@ -9703,8 +9654,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "かえる",
-    "hint": "change"
+    "homophoneGroup": "かえる"
   },
   {
     "id": 699,
@@ -9900,8 +9850,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "かける",
-    "hint": "hang up"
+    "homophoneGroup": "かける"
   },
   {
     "id": 713,
@@ -10136,7 +10085,7 @@
       "other"
     ],
     "homophoneGroup": "くれる",
-    "hint": "give (to me)"
+    "kanji": "呉れる"
   },
   {
     "id": 730,
@@ -10301,8 +10250,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "へん",
-    "hint": "strange"
+    "homophoneGroup": "へん"
   },
   {
     "id": 742,
@@ -10385,8 +10333,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あう",
-    "hint": "match"
+    "homophoneGroup": "あう"
   },
   {
     "id": 748,
@@ -10583,8 +10530,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "は",
-    "hint": "leaf"
+    "homophoneGroup": "は"
   },
   {
     "id": 762,
@@ -10654,8 +10600,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "よる",
-    "hint": "drop by, visit"
+    "homophoneGroup": "よる"
   },
   {
     "id": 767,
@@ -10698,8 +10643,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "やさしい",
-    "hint": "kind"
+    "homophoneGroup": "やさしい"
   },
   {
     "id": 770,
@@ -11763,8 +11707,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "とまる",
-    "hint": "lodge, stay"
+    "homophoneGroup": "とまる"
   },
   {
     "id": 847,
@@ -13580,8 +13523,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "たてる",
-    "hint": "build"
+    "homophoneGroup": "たてる"
   },
   {
     "id": 979,
@@ -13803,8 +13745,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "たてる",
-    "hint": "stand up"
+    "homophoneGroup": "たてる"
   },
   {
     "id": 995,
@@ -14311,8 +14252,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ひ",
-    "hint": "day, sun"
+    "homophoneGroup": "ひ"
   },
   {
     "id": 1032,
@@ -14852,8 +14792,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なおる",
-    "hint": "be cured"
+    "homophoneGroup": "なおる"
   },
   {
     "id": 1071,
@@ -14949,8 +14888,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あげる",
-    "hint": "give"
+    "kanji": "上げる"
   },
   {
     "id": 1078,
@@ -15131,8 +15069,7 @@
     "topics": [
       "travel"
     ],
-    "homophoneGroup": "くれる",
-    "hint": "grow dark"
+    "homophoneGroup": "くれる"
   },
   {
     "id": 1091,
@@ -15339,8 +15276,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なくなる",
-    "hint": "die"
+    "homophoneGroup": "なくなる"
   },
   {
     "id": 1106,
@@ -15355,8 +15291,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "たずねる",
-    "hint": "ask"
+    "homophoneGroup": "たずねる"
   },
   {
     "id": 1107,
@@ -15371,8 +15306,7 @@
     "topics": [
       "body"
     ],
-    "homophoneGroup": "かみ",
-    "hint": "hair"
+    "homophoneGroup": "かみ"
   },
   {
     "id": 1108,
@@ -15415,8 +15349,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なる",
-    "hint": "ring, sound"
+    "homophoneGroup": "なる"
   },
   {
     "id": 1111,
@@ -15445,8 +15378,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "と",
-    "hint": "metropolitan"
+    "homophoneGroup": "と"
   },
   {
     "id": 1113,
@@ -15503,8 +15435,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なく",
-    "hint": "weep"
+    "homophoneGroup": "なく"
   },
   {
     "id": 1117,
@@ -15853,8 +15784,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "おりる",
-    "hint": "get off, come down"
+    "homophoneGroup": "おりる"
   },
   {
     "id": 1142,
@@ -16444,8 +16374,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "き",
-    "hint": "spirit, mood"
+    "homophoneGroup": "き"
   },
   {
     "id": 1185,
@@ -16790,8 +16719,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "あく",
-    "hint": "become vacant"
+    "homophoneGroup": "あく"
   },
   {
     "id": 1210,
@@ -17053,8 +16981,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "せん",
-    "hint": "line"
+    "homophoneGroup": "せん"
   },
   {
     "id": 1229,
@@ -17289,8 +17216,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "なくなる",
-    "hint": "disappear, run out"
+    "homophoneGroup": "なくなる"
   },
   {
     "id": 1246,
@@ -17332,8 +17258,7 @@
     "topics": [
       "numbers"
     ],
-    "homophoneGroup": "おく",
-    "hint": "hundred million"
+    "homophoneGroup": "おく"
   },
   {
     "id": 1249,
@@ -17403,8 +17328,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "ひ",
-    "hint": "fire"
+    "homophoneGroup": "ひ"
   },
   {
     "id": 1254,
@@ -17475,8 +17399,7 @@
     "topics": [
       "other"
     ],
-    "homophoneGroup": "つける",
-    "hint": "soak, pickle"
+    "homophoneGroup": "つける"
   },
   {
     "id": 1259,

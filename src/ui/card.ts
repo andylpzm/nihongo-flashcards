@@ -9,14 +9,20 @@ import { saveFilters, saveStoryUnlockedChapter } from '../state/persistence';
 import {
   ensureReviewsLoaded,
   getReviewsSnapshot,
+  getReview,
   recordGrade,
   isCardMastered,
-  getRemainingNewBudget,
 } from '../state/reviews';
-import { Rating, newFsrsCard, previewIntervals, formatInterval } from '../srs/scheduler';
-import { buildQueue, StudySession, defaultSessionSettings, type QueueItem } from '../srs/queue';
+import { Rating, newFsrsCard, previewIntervals } from '../srs/scheduler';
+import type { RecordLogItem } from 'ts-fsrs';
+import { buildQueue, type QueueItem, type QueueBuildResult } from '../srs/queue';
+import { StudySession } from '../srs/session';
+import { loadSettings, saveSettings, SESSION_SIZES, LEARN_AHEAD_MINUTES, type StudySettings } from '../srs/settings';
+import { saveActiveSession, loadActiveSession, clearActiveSession } from '../srs/sessionStore';
+import { renderSessionBar, clearSessionBar, type SessionBarState } from './sessionBar';
 import type { Grade } from '../srs/types';
-import { computeStreak, countLearned, countDueToday, countNewAvailable } from '../srs/stats';
+import { computeStreak } from '../srs/stats';
+import { isKnown, toggleKnown, countKnownIn } from '../state/known';
 import { btnBackToStory } from './nav';
 import { showStoryDialogue } from './story';
 
@@ -32,9 +38,9 @@ const navButtons = document.getElementById('nav-buttons')!;
 // Study Mode + Session Bar
 export const modeSessionBtn = document.getElementById('mode-session')!;
 export const modeBrowseBtn = document.getElementById('mode-browse')!;
-const sessionInfoEl = document.getElementById('session-info')!;
-export const btnStartSession = document.getElementById('btn-start-session')!;
-export const btnSessionEndAction = document.getElementById('btn-session-end-action')!;
+export const btnStartSession = document.getElementById('btn-start-session') as HTMLButtonElement;
+export const btnEndSession = document.getElementById('btn-end-session') as HTMLButtonElement;
+const sessionLengthGroup = document.getElementById('session-length-group');
 
 // Grade Buttons
 const gradeButtonsEl = document.getElementById('grade-buttons')!;
@@ -42,21 +48,14 @@ export const btnGradeAgain = document.getElementById('btn-grade-again')!;
 export const btnGradeHard = document.getElementById('btn-grade-hard')!;
 export const btnGradeGood = document.getElementById('btn-grade-good')!;
 export const btnGradeEasy = document.getElementById('btn-grade-easy')!;
-const intervalEls: Record<Grade, HTMLElement> = {
-  [Rating.Again]: document.getElementById('interval-again')!,
-  [Rating.Hard]: document.getElementById('interval-hard')!,
-  [Rating.Good]: document.getElementById('interval-good')!,
-  [Rating.Easy]: document.getElementById('interval-easy')!,
-};
-
 // Proposal Progress Counters
 const proposalRemainingEl = document.getElementById('proposal-remaining');
 const proposalBarFillEl = document.getElementById('proposal-bar-fill') as HTMLElement | null;
-const countDueEl = document.getElementById('count-due');
-const countNewEl = document.getElementById('count-new');
 const countLearnedEl = document.getElementById('count-learned');
 const countTotalEl = document.getElementById('count-total');
 const countStreakEl = document.getElementById('count-streak');
+export const btnMarkKnown = document.getElementById('btn-mark-known') as HTMLButtonElement | null;
+const markKnownLabel = document.getElementById('mark-known-label');
 
 // Filter toggles
 // Deck bar: the filtered-deck summary line that replaced the old options-row
@@ -77,17 +76,30 @@ const filterSectionTopics = document.getElementById('filter-section-topics');
 const totalTypeChips = document.querySelectorAll('.types-grid .filter-chip-btn').length;
 const totalTopicChips = document.querySelectorAll('.topics-grid .filter-chip-btn').length;
 
-// Typing Mode elements
-const typingContainer = document.getElementById('typing-container')!;
-export const typingInput = document.getElementById('typing-input') as HTMLInputElement;
-export const submitBtn = document.getElementById('btn-submit-answer') as HTMLButtonElement;
-const feedbackText = document.getElementById('feedback-text')!;
-export const modeFlashcardBtn = document.getElementById('toggle-mode-flashcard')!;
-export const modeTypingBtn = document.getElementById('toggle-mode-typing')!;
 
 // Active study session (Study Session mode only) - null when not running one.
 let activeSession: StudySession | null = null;
 let cardShownAt = Date.now();
+
+// Most recent queue-build result for the active deck/filters, kept for the
+// idle session-bar states and for renderEmptyState() (D3): the card face
+// must never claim "All caught up!" while unlearned cards remain.
+let lastBuild: QueueBuildResult | null = null;
+
+// Set once a session finishes (naturally or via "End session"); cleared the
+// next time the user does something that supersedes it (starts a session,
+// switches mode/deck, or the idle bar determines nothing is left to start
+// another with).
+let sessionComplete: { answers: number; elapsedMs: number; endedEarly: boolean } | null = null;
+
+// The preview computed when the card was flipped (D5/D10/D11): grading
+// commits exactly this object rather than rescheduling, so the interval a
+// button advertises is guaranteed to be the interval written to IndexedDB.
+let pendingPreview: Record<Grade, RecordLogItem> | null = null;
+
+function todayKey(now: Date): string {
+  return now.toISOString().slice(0, 10);
+}
 
 export function persistFilters(): void {
   saveFilters({
@@ -121,8 +133,11 @@ function getFilteredCards(applyProgressFilter: boolean): Card[] {
     // A story chapter is a fixed curriculum reviewed as a whole, and story
     // mode hides the deck bar - so a leftover "learning" choice would empty a
     // cleared chapter with no visible control to undo it.
+    // Browse-only. "Learned" here is the user's own mark (state/known.ts),
+    // not FSRS mastery - which is why marking a word cannot alter a session:
+    // session queues are built with applyProgressFilter = false.
     if (applyProgressFilter && !state.isStoryModeActive) {
-      const mastered = isCardMastered(card.id);
+      const mastered = isKnown(card.id);
       const matchesProgress =
         state.filterMode === 'all' ||
         (state.filterMode === 'learning' && !mastered) ||
@@ -140,14 +155,10 @@ function getFilteredCards(applyProgressFilter: boolean): Card[] {
   });
 }
 
-// Today's effective session settings: newPerDay is reduced by however many
-// new cards have already been introduced today, across any earlier session
-// (not just capped within a single queue build).
-function getTodaySessionSettings(): typeof defaultSessionSettings {
-  return {
-    ...defaultSessionSettings,
-    newPerDay: getRemainingNewBudget(defaultSessionSettings.newPerDay),
-  };
+// Build the queue for a sitting. Session length is the only limit - there are
+// no daily budgets, which used to shrink a session below the chosen preset.
+function buildTodayQueueResult(candidates: Card[], settings: StudySettings, now: Date = new Date()): QueueBuildResult {
+  return buildQueue(candidates, getReviewsSnapshot(), SESSION_SIZES[settings.sessionLength], now);
 }
 
 // Get the Active Card Object: from the running session's queue in Study
@@ -188,25 +199,12 @@ export function renderCard(): void {
   cardShownAt = Date.now();
 
   // Reset Flipped Class and answer glow classes
-  cardViewport.classList.remove('flipped', 'correct-answer', 'incorrect-answer');
+  cardViewport.classList.remove('flipped');
   state.isFlipped = false;
-  state.hasSubmittedAnswer = false;
   hideGradeButtons();
 
-  if (state.practiceMode === 'typing') {
-    typingInput.value = '';
-    typingInput.className = '';
-    submitBtn.textContent = 'Check';
-    submitBtn.disabled = false;
-    feedbackText.className = 'feedback-text';
-    feedbackText.textContent = '';
-    setTimeout(() => {
-      typingInput.focus();
-    }, 50);
-  }
 
-  // Handle empty state (e.g. no cards in filter, or an active session with
-  // nothing left to show - see endSession()).
+  // Handle empty state (e.g. no cards in filter, or an idle Study Session).
   if (!currentCard) {
     renderEmptyState();
     return;
@@ -220,10 +218,14 @@ export function renderCard(): void {
     level = currentCard.level;
   }
 
-  // Homophone disambiguation hint, e.g. "あつい (hot weather)"
-  const hint =
-    isVocabCard(currentCard) && currentCard.homophoneGroup && currentCard.hint
-      ? currentCard.hint
+  // Homophones (あつい = hot / thick) need something on the front to say which
+  // sense is being asked, or you can't fairly grade yourself. That used to be
+  // an English hint in parentheses - which for 58 of 81 cards simply *was* the
+  // answer ("はし (chopsticks)"). The kanji disambiguates without leaking the
+  // English, and is the distinguishing feature worth learning anyway.
+  const disambiguator =
+    isVocabCard(currentCard) && currentCard.homophoneGroup && currentCard.kanji
+      ? currentCard.kanji
       : '';
 
   // FRONT: Japanese
@@ -244,7 +246,7 @@ export function renderCard(): void {
     <div class="japanese-container">
       <div class="hiragana-text" lang="ja">${currentCard.kana}</div>
       ${state.activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
-      ${hint ? `<div class="romaji-text" style="opacity: 0.7;">(${hint})</div>` : ''}
+      ${disambiguator ? `<div class="card-disambiguator" lang="ja">${disambiguator}</div>` : ''}
     </div>
     <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.6;">Click or Press [Space] to flip</span>
   `;
@@ -275,18 +277,32 @@ export function renderCard(): void {
   }
 
   updateNavAndModeVisibility();
+  syncMarkKnownButton();
 }
 
-// Render empty state (no cards in filter, or a Study Session with nothing due)
+// Render empty state (no cards in filter, or an idle/exhausted Study Session)
 function renderEmptyState(): void {
+  // Never claim "all caught up" while unlearned cards remain in the deck (D3).
+  // Idle-with-work-available also has to be told apart from idle-with-nothing
+  // - otherwise the card face contradicts the session bar's own "Ready to
+  // study" + visible Start button (a gap the plan's original two-message
+  // sketch didn't account for: it assumed this branch is only reached when
+  // truly idle, but it's also reached before the user has pressed Start).
   const message =
-    state.studyMode === 'session' && !activeSession
-      ? { title: 'All caught up!', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
-      : { title: 'Empty', body: 'No cards found in this category. Try changing your filter settings below.' };
+    state.studyMode === 'session'
+      ? lastBuild && lastBuild.items.length > 0
+        ? { title: 'Ready when you are', body: 'Press "Start session" below to begin.' }
+        : lastBuild && lastBuild.newHeldBack > 0
+          ? {
+              title: 'Nothing scheduled right now',
+              body: `${lastBuild.newHeldBack} cards are still unlearned — raise your daily limit in Settings, or press "Learn more".`,
+            }
+          : { title: 'All caught up!', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
+      : { title: 'Empty', body: 'No cards match this filter. Try changing your filters.' };
 
   cardFront.innerHTML = `
     <span class="card-indicator">${message.title}</span>
-    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-muted);">${message.title === 'Empty' ? 'No cards found in this category' : message.title}</div>
+    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-muted);">${message.title}</div>
     <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.5;">${message.body}</span>
   `;
   cardBack.innerHTML = cardFront.innerHTML;
@@ -296,15 +312,51 @@ function renderEmptyState(): void {
   nextBtn.disabled = true;
 }
 
+/** Browse-only "Mark as learned" toggle. Lives inside .nav-buttons, which is
+ * hidden in Study Session mode, so it can never be reached mid-session. */
+function syncMarkKnownButton(): void {
+  if (!btnMarkKnown || !markKnownLabel) return;
+  const card = getActiveCard();
+  if (!card || state.studyMode !== 'browse') {
+    btnMarkKnown.disabled = true;
+    btnMarkKnown.setAttribute('aria-pressed', 'false');
+    markKnownLabel.textContent = 'Mark as learned';
+    btnMarkKnown.classList.remove('is-known');
+    return;
+  }
+  const known = isKnown(card.id);
+  btnMarkKnown.disabled = false;
+  btnMarkKnown.setAttribute('aria-pressed', String(known));
+  btnMarkKnown.classList.toggle('is-known', known);
+  markKnownLabel.textContent = known ? '\u2713 Learned' : 'Mark as learned';
+}
+
+/** Toggle the current Browse card's learned mark. Updates the counter and, if
+ * the progress filter is narrowing the deck, drops the card out of view. */
+export function toggleCurrentCardKnown(): void {
+  if (state.studyMode !== 'browse') return;
+  const card = getActiveCard();
+  if (!card) return;
+  toggleKnown(card.id);
+  syncMarkKnownButton();
+  updateStats();
+
+  // With "Not learned" or "Learned" selected the card no longer belongs in the
+  // current view, so rebuild the browse order and show the next one.
+  if (state.filterMode !== 'all') {
+    applyFiltersAndShuffle();
+    if (state.currentIndex >= state.displayOrder.length) state.currentIndex = 0;
+    renderCard();
+  }
+}
+
 function updateNavAndModeVisibility(): void {
-  const inSession = state.studyMode === 'session' && !!activeSession && !activeSession.isComplete;
   navButtons.classList.toggle('hidden', state.studyMode === 'session');
   if (state.studyMode === 'browse') {
     const total = state.displayOrder.length;
     prevBtn.disabled = total === 0;
     nextBtn.disabled = total === 0;
   }
-  void inSession;
 }
 
 // Flip Card 3D Toggle
@@ -326,21 +378,24 @@ export function flipCard(silent = false): void {
 
 function showGradeButtons(item: QueueItem): void {
   const now = new Date();
-  // A brand-new card (no review record yet) previews against a fresh FSRS card.
-  const baseFsrsCard = item.review?.card ?? newFsrsCard(now);
-  const preview = previewIntervals(baseFsrsCard, now);
+  // Look the record up live. Reading a snapshot captured at queue-build time
+  // is what made a re-queued card preview as though it were brand new (D5).
+  const base = getReview(item.card.id)?.card ?? newFsrsCard(now);
+  pendingPreview = previewIntervals(base, now);
 
-  for (const [gradeStr, recordItem] of Object.entries(preview)) {
-    const grade = Number(gradeStr) as Grade;
-    const el = intervalEls[grade];
-    if (el) el.textContent = formatInterval(recordItem.card.due, now);
-  }
-
+  // No interval labels. They described an internal loop the user never
+  // experiences: on a new card, Forgot/Hard/Normal all schedule minutes out
+  // but the learn-ahead window pulls the card straight back into the sitting,
+  // so "10m" actually meant "about 10 seconds". The one remaining honest
+  // label (Easy) visibly jittered between 6d and 10d because FSRS fuzz
+  // scatters due dates. When the work comes back is reported once, truthfully,
+  // in the end-of-session summary instead.
   gradeButtonsEl.classList.remove('hidden');
 }
 
 function hideGradeButtons(): void {
   gradeButtonsEl.classList.add('hidden');
+  pendingPreview = null;
 }
 
 // Next Card (Browse mode only)
@@ -388,9 +443,10 @@ export function applyDeckFilters(patch: {
 
   state.currentIndex = 0;
   applyFiltersAndShuffle();
-  renderCard();
   persistFilters();
   updateDeckBar();
+  refreshSessionBar();
+  renderCard();
 }
 
 /** Which filter controls actually apply to what's on screen: progress is a
@@ -458,37 +514,76 @@ export function applyFiltersAndShuffle(): void {
 
 // ==================== STUDY SESSION LIFECYCLE ====================
 
+/** Try to restore an in-flight session for `deckName` from localStorage
+ * (Step 4 / D9). Only resumes when the persisted date is today and the deck
+ * matches - a stale or cross-deck session is discarded instead. */
+function tryResumeSession(deckName: string): boolean {
+  const persisted = loadActiveSession();
+  if (!persisted) return false;
+
+  const today = todayKey(new Date());
+  if (persisted.date !== today || persisted.deck !== deckName) {
+    clearActiveSession();
+    return false;
+  }
+
+  const cardsById = new Map(state.cards.map((c) => [c.id, c] as const));
+  const items: QueueItem[] = [];
+  for (const id of persisted.remainingCardIds) {
+    const card = cardsById.get(id);
+    if (card) items.push({ card, isNew: !getReview(id) });
+  }
+
+  if (items.length === 0) {
+    clearActiveSession();
+    return false;
+  }
+
+  activeSession = new StudySession(items, LEARN_AHEAD_MINUTES * 60_000, new Date(), {
+    totalCards: persisted.totalCards,
+    graduatedCount: Math.max(0, persisted.totalCards - persisted.remainingCardIds.length),
+    answers: persisted.answers,
+    correct: persisted.correct,
+    startedAt: persisted.startedAt,
+  });
+  sessionComplete = null;
+  return true;
+}
+
+function persistActiveSession(): void {
+  if (!activeSession) return;
+  const p = activeSession.progress;
+  saveActiveSession({
+    date: todayKey(new Date()),
+    deck: state.activeDeck,
+    remainingCardIds: activeSession.remainingCardIds,
+    totalCards: p.total,
+    startedAt: Date.now() - activeSession.elapsedMs,
+    answers: p.answers,
+    correct: p.correct,
+  });
+}
+
 export async function startSession(): Promise<void> {
   await ensureReviewsLoaded();
+  sessionComplete = null;
+  const settings = loadSettings();
   const candidates = getFilteredCards(false);
-  const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
+  const build = buildTodayQueueResult(candidates, settings);
+  lastBuild = build;
 
-  if (queue.length === 0) {
+  if (build.items.length === 0) {
     activeSession = null;
-    btnStartSession.classList.add('hidden');
-    updateSessionInfo();
+    clearActiveSession();
+    refreshSessionBar();
     renderCard();
     return;
   }
 
-  activeSession = new StudySession(queue);
-  btnStartSession.classList.add('hidden');
-  btnSessionEndAction.classList.add('hidden');
-  updateSessionInfo();
+  activeSession = new StudySession(build.items, LEARN_AHEAD_MINUTES * 60_000, new Date());
+  persistActiveSession();
+  refreshSessionBar();
   renderCard();
-}
-
-function updateSessionInfo(): void {
-  if (state.studyMode !== 'session') {
-    sessionInfoEl.textContent = '';
-    return;
-  }
-  if (activeSession && !activeSession.isComplete) {
-    const { reviewed, total } = activeSession.progress;
-    sessionInfoEl.textContent = `Card ${reviewed + 1} / ${total}`;
-  } else {
-    sessionInfoEl.textContent = '';
-  }
 }
 
 export async function gradeCurrentCard(grade: Grade): Promise<void> {
@@ -496,83 +591,239 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
   // flipped, but that alone doesn't stop a click handler from firing on a
   // hidden element, so guard the actual grading path too - grading must
   // never be reachable while the answer is still hidden.
-  if (state.studyMode !== 'session' || !state.isFlipped || !activeSession || !activeSession.current) {
+  if (state.studyMode !== 'session' || !state.isFlipped || !activeSession?.current) {
     return;
   }
+  const chosen = pendingPreview?.[grade];
+  if (!chosen) return; // preview must exist - the buttons are only reachable when flipped
 
   const item = activeSession.current;
   const elapsedMs = Date.now() - cardShownAt;
-  await recordGrade(item.card, grade, new Date(), elapsedMs);
+  await recordGrade(item.card, grade, chosen.card, new Date(), elapsedMs);
 
-  if (grade === Rating.Good || grade === Rating.Easy) {
+  // Every grade gets audio confirmation. The three "I recalled it" grades share
+  // one tone - they differ in scheduling, not in whether you got it - while
+  // Forgot gets its own miss cue. Previously Hard was silent alongside Forgot,
+  // which implied Hard was a failure rather than a successful recall.
+  if (grade === Rating.Again) {
+    FeedbackAudio.playMiss();
+  } else {
     FeedbackAudio.playCorrect();
   }
 
-  activeSession.advance(grade);
+  activeSession.advance(grade, chosen.card, new Date());
+  pendingPreview = null;
   updateStats();
 
   if (activeSession.isComplete) {
-    endSession();
+    finishSession(false);
   } else {
-    updateSessionInfo();
+    persistActiveSession();
+    refreshSessionBar();
     renderCard();
   }
 }
 
-function endSession(): void {
+/** @param endedEarly true when the user pressed "End session" rather than
+ * working the queue down to empty. The two are different events and must
+ * not both be reported as "complete". */
+function finishSession(endedEarly: boolean): void {
   if (!activeSession) return;
-  const { reviewed, correct } = activeSession.progress;
-  const accuracy = reviewed > 0 ? Math.round((correct / reviewed) * 100) : 0;
-  const elapsedSec = Math.round(activeSession.elapsedMs / 1000);
+  const p = activeSession.progress;
+  const elapsedMs = activeSession.elapsedMs;
+  const elapsedSec = Math.round(elapsedMs / 1000);
   const minutes = Math.floor(elapsedSec / 60);
   const seconds = elapsedSec % 60;
 
-  cardFront.innerHTML = `
-    <span class="card-indicator">Session Complete! 🎉</span>
-    <div class="card-main-text" style="font-size: 1.6rem;">${reviewed} card${reviewed === 1 ? '' : 's'} reviewed</div>
-    <div class="card-sub-info">${accuracy}% accuracy · ${minutes}m ${seconds}s</div>
-  `;
-  cardBack.innerHTML = cardFront.innerHTML;
+  activeSession = null;
+  clearActiveSession();
+
+  // Nothing was graded, so there is no sitting to report on. Showing
+  // "Session complete! 0 cards learned · 0 answers · 0% correct" for a
+  // session the user opened and immediately left reads as a failure notice
+  // and a 0% score - go quietly back to idle instead.
+  if (p.answers === 0) {
+    sessionComplete = null;
+    hideGradeButtons();
+    updateStats();
+    refreshSessionBar();
+    renderCard();
+    return;
+  }
+
+  sessionComplete = { answers: p.answers, elapsedMs, endedEarly };
 
   hideGradeButtons();
   prevBtn.disabled = true;
   nextBtn.disabled = true;
-  sessionInfoEl.textContent = '';
-  btnSessionEndAction.classList.remove('hidden');
-  btnStartSession.classList.add('hidden');
 
-  activeSession = null;
   updateStats();
+  // Rebuild first so lastBuild.nextDueAt reflects the reviews just written -
+  // "when do these come back?" is the one thing worth reporting.
+  refreshSessionBar();
+
+  // "Learned" means graduated out of the learning steps. Ending a sitting
+  // early usually leaves everything mid-step, so reporting "0 cards learned"
+  // next to a real answer count reads as though the work didn't count - lead
+  // with what the user actually did instead.
+  const headline =
+    p.done > 0
+      ? `${p.done} card${p.done === 1 ? '' : 's'} learned`
+      : `${p.answers} card${p.answers === 1 ? '' : 's'} reviewed`;
+  const title = endedEarly ? 'Session ended' : 'Session complete! 🎉';
+
+  // No accuracy figure: grades are self-reported, nothing is marked right or
+  // wrong, and the old percentage counted Hard as an error - so pressing Hard
+  // honestly lowered your "score" despite being a successful recall.
+  const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+  const back = lastBuild?.nextDueAt ? ` · back ${formatWhen(lastBuild.nextDueAt)}` : '';
+
+  cardFront.innerHTML = `
+    <span class="card-indicator">${title}</span>
+    <div class="card-main-text" style="font-size: 1.6rem;">${headline}</div>
+    <div class="card-sub-info">${timeStr}${back}</div>
+  `;
+  cardBack.innerHTML = cardFront.innerHTML;
 }
 
-// Called by the "Back to Deck" button after a session ends, or to bail out
-// of an empty-queue state back to a neutral view.
-export function acknowledgeSessionEnd(): void {
-  btnSessionEndAction.classList.add('hidden');
-  updateStats();
-  renderCard();
+/** "in 2 days" / "in 3 hours" - for telling the user when work returns. */
+function formatWhen(at: Date): string {
+  const ms = at.getTime() - Date.now();
+  if (ms <= 0) return 'now';
+  const mins = Math.round(ms / 60000);
+  if (mins < 60) return `in ${mins} min`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `in ${hours} hour${hours === 1 ? '' : 's'}`;
+  const days = Math.round(hours / 24);
+  return `in ${days} day${days === 1 ? '' : 's'}`;
+}
+
+/** "End session" - always available while a session is active, ends it
+ * early (remaining cards are simply not graded this sitting; nothing is
+ * lost, they stay due/new for next time). */
+export function endSessionEarly(): void {
+  if (!activeSession) return;
+  finishSession(true);
+}
+
+// ==================== SESSION BAR ====================
+
+function computeIdleSessionBarState(build: QueueBuildResult): SessionBarState {
+  if (build.items.length > 0) {
+    return { kind: 'available', dueCount: build.dueCount, newCount: build.newCount };
+  }
+  if (build.nextDueAt) {
+    return { kind: 'waiting', nextDueAt: build.nextDueAt };
+  }
+  return { kind: 'deck-empty' };
+}
+
+function syncSessionLengthPicker(settings: StudySettings): void {
+  sessionLengthGroup?.querySelectorAll<HTMLElement>('.btn-toggle').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.length === settings.sessionLength);
+  });
+}
+
+/** The single place that decides what the session bar shows. Called after
+ * every session-lifecycle transition so no path can leave it in the D2 dead
+ * end (every button hidden with no active session). */
+function refreshSessionBar(): void {
+  // Focus mode: one class drives every rule in styles/components/focus.css.
+  // Stamped here because this is the single function that already knows
+  // whether a session is running - adding per-element `hidden` toggles
+  // elsewhere is exactly how the old session bar drifted into its
+  // all-buttons-hidden dead end.
+  const inSession = state.studyMode === 'session' && activeSession !== null && !activeSession.isComplete;
+  document.body.classList.toggle('session-active', inSession);
+  // Proposal Progress is a Browse-mode concept; this gates it in CSS.
+  document.body.classList.toggle('mode-browse', state.studyMode === 'browse');
+
+  if (state.studyMode !== 'session') {
+    clearSessionBar();
+    return;
+  }
+
+  if (activeSession && !activeSession.isComplete) {
+    const p = activeSession.progress;
+    renderSessionBar(
+      { kind: 'active', remaining: p.remaining, total: p.total, answers: p.answers, learned: p.done },
+      () => {}
+    );
+    return;
+  }
+
+  const settings = loadSettings();
+  syncSessionLengthPicker(settings);
+  const candidates = getFilteredCards(false);
+  const build = buildTodayQueueResult(candidates, settings);
+  lastBuild = build;
+
+  if (sessionComplete && build.items.length > 0) {
+    renderSessionBar(
+      {
+        kind: 'complete',
+        answers: sessionComplete.answers,
+        elapsedMs: sessionComplete.elapsedMs,
+        endedEarly: sessionComplete.endedEarly,
+        canStartAnother: true,
+      },
+      () => {}
+    );
+    return;
+  }
+  // Either no session just finished, or one did but nothing is left to start
+  // another with - fall through to the ordinary idle state (countdown /
+  // waiting / deck-empty) instead of a dead-end "complete" screen.
+  sessionComplete = null;
+  renderSessionBar(computeIdleSessionBarState(build), () => {
+    refreshSessionBar();
+    renderCard();
+  });
+}
+
+sessionLengthGroup?.querySelectorAll<HTMLElement>('.btn-toggle').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const length = btn.dataset.length;
+    if (length !== 'short' && length !== 'medium' && length !== 'long') return;
+    const settings = loadSettings();
+    settings.sessionLength = length;
+    saveSettings(settings);
+    // Picking a length is a statement about the *next* sitting, so retire the
+    // previous session's summary - otherwise the bar keeps reporting the old
+    // result and the choice appears to do nothing.
+    sessionComplete = null;
+    refreshSessionBar();
+    renderCard();
+  });
+});
+
+/** Called by the settings sheet after Save (Step 7). */
+export function onSettingsApplied(): void {
+  refreshSessionBar();
 }
 
 export async function setStudyMode(mode: StudyMode): Promise<void> {
   state.studyMode = mode;
   modeSessionBtn.classList.toggle('active', mode === 'session');
   modeBrowseBtn.classList.toggle('active', mode === 'browse');
-  activeSession = null;
-  btnSessionEndAction.classList.add('hidden');
 
   if (mode === 'browse') {
-    btnStartSession.classList.add('hidden');
+    activeSession = null;
+    sessionComplete = null;
     state.currentIndex = 0;
     applyFiltersAndShuffle();
+    refreshSessionBar();
     renderCard();
   } else {
+    sessionComplete = null;
     await ensureReviewsLoaded();
-    const candidates = getFilteredCards(false);
-    const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
-    btnStartSession.classList.toggle('hidden', queue.length === 0);
+    if (!activeSession) tryResumeSession(state.activeDeck);
+    // refreshSessionBar() computes lastBuild, which renderCard()'s empty
+    // state depends on (D3) - it must run first or the card face falls back
+    // to a stale/null build and can misreport "All caught up!".
+    refreshSessionBar();
     renderCard();
   }
-  updateSessionInfo();
   updateStats();
 }
 
@@ -593,8 +844,6 @@ export function updateStats(): void {
 
     if (countTotalEl) countTotalEl.textContent = String(total);
     if (countLearnedEl) countLearnedEl.textContent = String(mastered);
-    if (countDueEl) countDueEl.textContent = '-';
-    if (countNewEl) countNewEl.textContent = '-';
 
     if (proposalRemainingEl) {
       if (remaining === 0) {
@@ -616,31 +865,29 @@ export function updateStats(): void {
     return;
   }
 
-  // Normal deck stats: real SRS numbers instead of a boolean "mastered" set.
-  const reviews = getReviewsSnapshot();
+  // Proposal Progress is a Browse-mode journey counter driven by the words
+  // you hand-mark as learned. It deliberately does NOT read FSRS state: the
+  // old version showed "Learned 0/1294" for weeks, because FSRS only counts a
+  // card learned at 21 days of stability, so the bar never moved. Marking a
+  // word here has no effect on scheduling (see state/known.ts).
   const total = state.cards.length;
-  const due = countDueToday(Array.from(reviews.values()));
-  const fresh = countNewAvailable(state.cards, Array.from(reviews.values()));
-  const learned = countLearned(Array.from(reviews.values()).filter((r) => state.cards.some((c) => c.id === r.cardId)));
-  const streak = computeStreak(Array.from(reviews.values()));
+  const known = countKnownIn(state.cards.map((c) => c.id));
+  const streak = computeStreak(Array.from(getReviewsSnapshot().values()));
 
   if (countTotalEl) countTotalEl.textContent = String(total);
-  if (countDueEl) countDueEl.textContent = String(due);
-  if (countNewEl) countNewEl.textContent = String(fresh);
-  if (countLearnedEl) countLearnedEl.textContent = String(learned);
+  if (countLearnedEl) countLearnedEl.textContent = String(known);
   if (countStreakEl) countStreakEl.textContent = String(streak);
 
   if (proposalRemainingEl) {
-    if (due === 0 && fresh === 0) {
-      proposalRemainingEl.innerHTML = `<strong>All caught up! Ready to propose, Chris-kun? 💍❤️</strong>`;
-    } else {
-      proposalRemainingEl.innerHTML = `<strong>${due}</strong> due, <strong>${fresh}</strong> new — study today before proposing to Chiyo-chan!`;
-    }
+    const left = total - known;
+    proposalRemainingEl.innerHTML =
+      left === 0
+        ? `<strong>Every word learned! Ready to propose, Chris-kun? 💍❤️</strong>`
+        : `<strong>${left}</strong> word${left === 1 ? '' : 's'} still to learn before proposing to Chiyo-chan!`;
   }
 
   if (proposalBarFillEl) {
-    const percent = total > 0 ? Math.min(100, (learned / total) * 100) : 0;
-    proposalBarFillEl.style.width = `${percent}%`;
+    proposalBarFillEl.style.width = `${total > 0 ? Math.min(100, (known / total) * 100) : 0}%`;
   }
 
   // The deck bar's card count depends on mastery state, so it has to refresh
@@ -648,75 +895,10 @@ export function updateStats(): void {
   updateDeckBar();
 }
 
-// Change practice mode (Flashcard vs Typing)
-export function setPracticeMode(mode: 'flashcard' | 'typing'): void {
-  state.practiceMode = mode;
-  modeFlashcardBtn.classList.toggle('active', mode === 'flashcard');
-  modeTypingBtn.classList.toggle('active', mode === 'typing');
-
-  if (mode === 'typing') {
-    typingContainer.classList.remove('hidden');
-  } else {
-    typingContainer.classList.add('hidden');
-  }
-
-  // Refresh card to apply mode states
-  renderCard();
-}
 
 // Compare user input to any of the card's accepted meanings
-function isAnswerCorrect(userAnswer: string, meanings: string[]): boolean {
-  // Normalize strings by converting to lowercase and stripping punctuation/extra whitespace
-  const clean = (str: string) =>
-    str
-      .toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, '')
-      .trim()
-      .replace(/\s+/g, ' ');
-  const cleanUser = clean(userAnswer);
-
-  return meanings.map(clean).includes(cleanUser);
-}
 
 // Submit answer checked logic
-export function submitAnswer(): void {
-  const currentCard = getActiveCard();
-  if (!currentCard) return;
-
-  if (!state.hasSubmittedAnswer) {
-    const userAns = typingInput.value;
-    const correct = isAnswerCorrect(userAns, currentCard.meanings);
-    state.hasSubmittedAnswer = true;
-
-    if (correct) {
-      typingInput.classList.add('correct');
-      feedbackText.className = 'feedback-text feedback-correct';
-      feedbackText.innerHTML = `Correct! 🎉`;
-      cardViewport.classList.add('correct-answer');
-      FeedbackAudio.playCorrect();
-    } else {
-      typingInput.classList.add('incorrect');
-      feedbackText.className = 'feedback-text feedback-incorrect';
-      feedbackText.innerHTML = `Incorrect. Correct answer: <strong>${currentCard.meanings.join(' / ')}</strong>`;
-      cardViewport.classList.add('incorrect-answer');
-    }
-
-    // Automatically flip card to reveal English back face
-    if (!state.isFlipped) {
-      flipCard(true); // silent flip to prevent sound overlap
-    }
-
-    if (state.studyMode === 'session') {
-      submitBtn.textContent = 'Grade below ↓';
-      submitBtn.disabled = true;
-    } else {
-      submitBtn.textContent = 'Next Card';
-    }
-  } else if (state.studyMode === 'browse') {
-    // If already checked, click on submit acts as "Next Card" navigation
-    nextCard();
-  }
-}
 
 // Toggle Romaji Visibility State
 export function toggleRomajiVisibility(): void {
@@ -737,7 +919,7 @@ export function toggleRomajiVisibility(): void {
 export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana'): Promise<void> {
   state.activeDeck = deckName;
   activeSession = null;
-  btnSessionEndAction.classList.add('hidden');
+  sessionComplete = null;
 
   if (deckName === 'vocabulary') {
     state.cards = await loadVocab();
@@ -774,11 +956,12 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana')
     state.currentIndex = 0;
     applyFiltersAndShuffle();
   } else {
-    const candidates = getFilteredCards(false);
-    const queue = buildQueue(candidates, getReviewsSnapshot(), getTodaySessionSettings(), new Date());
-    btnStartSession.classList.toggle('hidden', queue.length === 0);
+    tryResumeSession(deckName);
   }
 
   updateStats();
+  // refreshSessionBar() computes lastBuild, which renderCard()'s empty state
+  // depends on (D3) - it must run first, see the same note in setStudyMode().
+  refreshSessionBar();
   renderCard();
 }

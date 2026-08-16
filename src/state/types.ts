@@ -5,7 +5,6 @@ export type { Card };
 
 export type FilterMode = 'all' | 'learning' | 'mastered';
 export type LevelFilter = 'all' | 'N5' | 'N4';
-export type PracticeMode = 'flashcard' | 'typing';
 export type ActiveDeck = 'vocabulary' | 'hiragana' | 'katakana' | 'story';
 export type KanaTab = 'basic' | 'voiced' | 'combos';
 /** 'session' = SRS-scheduled review queue. 'browse' = free navigation over
@@ -20,8 +19,6 @@ export interface AppState {
   isFlipped: boolean;
   filterMode: FilterMode;
   levelFilter: LevelFilter;
-  practiceMode: PracticeMode;
-  hasSubmittedAnswer: boolean;
   showRomaji: boolean;
   activeDeck: ActiveDeck;
 

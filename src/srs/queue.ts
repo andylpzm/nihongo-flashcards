@@ -1,120 +1,69 @@
-import { Rating } from './scheduler';
-import type { Grade, ReviewRecord } from './types';
+import type { ReviewRecord } from './types';
 import type { Card, CardId } from '../state/types';
 
-export interface SessionSettings {
-  newPerDay: number;
-  maxReviewsPerDay: number;
-}
 
-export const defaultSessionSettings: SessionSettings = {
-  newPerDay: 10,
-  maxReviewsPerDay: 100,
-};
-
+/** A card in the queue. Deliberately carries no ReviewRecord: the record changes
+ * every time the card is graded, and a re-queued item must preview intervals from
+ * the *current* record, not the one captured when the queue was built. Look it up
+ * with getReview(item.card.id) at the point of use. */
 export interface QueueItem {
   card: Card;
-  review: ReviewRecord | null; // null = never studied (a "new" card)
+  /** True if the card had never been reviewed when the session started. */
+  isNew: boolean;
 }
 
-/**
- * Build today's study queue from a set of already-filtered candidate cards
- * (level/topic/pos/deck filters must be applied before calling this).
- *
- * queue = due reviews (sorted by due date, oldest first) + up to newPerDay
- * new cards. Cards with a review record whose due date is still in the
- * future are simply not part of today's queue.
- */
+export interface QueueBuildResult {
+  items: QueueItem[];
+  /** Cards already due right now, before the daily review cap is applied. */
+  dueCount: number;
+  /** New cards actually admitted, after the daily new-card budget. */
+  newCount: number;
+  /** New cards in the deck that exist but weren't admitted today. */
+  newHeldBack: number;
+  /** Earliest future due time among candidates, or null if none are scheduled. */
+  nextDueAt: Date | null;
+}
+
 export function buildQueue(
   candidateCards: Card[],
   reviewsByCardId: Map<CardId, ReviewRecord>,
-  settings: SessionSettings = defaultSessionSettings,
+  /** Distinct cards allowed in this sitting - SESSION_SIZES[sessionLength].
+   * This is the only limit; there are deliberately no daily caps, which used
+   * to silently shrink a session below the length the user picked. */
+  sessionSize: number,
   now: Date = new Date()
-): QueueItem[] {
-  const due: QueueItem[] = [];
+): QueueBuildResult {
+  const due: { item: QueueItem; dueAt: number }[] = [];
   const fresh: QueueItem[] = [];
+  let nextDueAt: number | null = null;
 
   for (const card of candidateCards) {
-    const review = reviewsByCardId.get(card.id) ?? null;
+    const review = reviewsByCardId.get(card.id);
     if (!review) {
-      fresh.push({ card, review: null });
-    } else if (review.card.due.getTime() <= now.getTime()) {
-      due.push({ card, review });
+      fresh.push({ card, isNew: true });
+      continue;
+    }
+    const dueAt = review.card.due.getTime();
+    if (dueAt <= now.getTime()) {
+      due.push({ item: { card, isNew: false }, dueAt });
+    } else if (nextDueAt === null || dueAt < nextDueAt) {
+      nextDueAt = dueAt;
     }
   }
 
-  due.sort((a, b) => a.review!.card.due.getTime() - b.review!.card.due.getTime());
+  due.sort((a, b) => a.dueAt - b.dueAt);
 
-  const limitedDue = due.slice(0, Math.max(0, settings.maxReviewsPerDay));
-  const limitedNew = fresh.slice(0, Math.max(0, settings.newPerDay));
+  // Due reviews get first claim on the sitting, then new cards top it up. This
+  // ordering matters: reviews are already scheduled work, new cards are optional.
+  const admittedDue = due.slice(0, Math.max(0, sessionSize)).map((d) => d.item);
+  const roomLeft = Math.max(0, sessionSize - admittedDue.length);
+  const admittedNew = fresh.slice(0, roomLeft);
 
-  return [...limitedDue, ...limitedNew];
-}
-
-export interface SessionProgress {
-  reviewed: number;
-  total: number;
-  correct: number;
-}
-
-/**
- * Runtime state for an active study session. Wraps a queue built by
- * buildQueue() and handles re-inserting Again-graded cards later in the
- * same session, per the plan's "relearning step ~10 min, or end-of-session
- * if fewer than 5 cards remain" rule (approximated positionally, since a
- * session has no real wall-clock wait).
- */
-export class StudySession {
-  private items: QueueItem[];
-  private index = 0;
-  private reviewedCount = 0;
-  private correctCount = 0;
-  private readonly startedAt: number;
-
-  constructor(items: QueueItem[], now: Date = new Date()) {
-    this.items = items;
-    this.startedAt = now.getTime();
-  }
-
-  get current(): QueueItem | null {
-    return this.items[this.index] ?? null;
-  }
-
-  get isComplete(): boolean {
-    return this.index >= this.items.length;
-  }
-
-  get progress(): SessionProgress {
-    return {
-      reviewed: this.reviewedCount,
-      total: this.items.length,
-      correct: this.correctCount,
-    };
-  }
-
-  get elapsedMs(): number {
-    return Date.now() - this.startedAt;
-  }
-
-  /** Record the grade given to the current card and advance the session. */
-  advance(grade: Grade): void {
-    const current = this.items[this.index];
-    if (!current) return;
-
-    this.reviewedCount++;
-    if (grade === Rating.Good || grade === Rating.Easy) {
-      this.correctCount++;
-    }
-
-    this.index++;
-
-    if (grade === Rating.Again) {
-      const remaining = this.items.length - this.index;
-      const reinsertAt =
-        remaining < 5
-          ? this.items.length // push to the very end
-          : this.index + Math.min(remaining, 10); // ~10 cards later
-      this.items.splice(reinsertAt, 0, current);
-    }
-  }
+  return {
+    items: [...admittedDue, ...admittedNew],
+    dueCount: due.length,
+    newCount: admittedNew.length,
+    newHeldBack: fresh.length - admittedNew.length,
+    nextDueAt: nextDueAt === null ? null : new Date(nextDueAt),
+  };
 }

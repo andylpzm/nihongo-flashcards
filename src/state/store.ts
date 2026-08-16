@@ -26,8 +26,6 @@ export const state: AppState = {
   isFlipped: false,
   filterMode: savedFilters.filterMode ?? 'all',
   levelFilter: savedFilters.levelFilter ?? 'all',
-  practiceMode: 'flashcard',
-  hasSubmittedAnswer: false,
   showRomaji: true,
   activeDeck: 'vocabulary',
 

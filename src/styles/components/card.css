@@ -96,17 +96,6 @@ body.light-theme .card-face {
   }
 }
 
-/* Red/green glow when checking a typed answer */
-.card-viewport.correct-answer .card-back {
-  border-color: var(--accent-green);
-  box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15), 0 0 20px rgba(16, 185, 129, 0.3);
-}
-
-.card-viewport.incorrect-answer .card-back {
-  border-color: var(--accent-red);
-  box-shadow: 0 20px 50px rgba(239, 68, 68, 0.15), 0 0 20px rgba(239, 68, 68, 0.3);
-}
-
 .card-indicator {
   font-size: 0.75rem;
   font-weight: 500;
@@ -185,6 +174,14 @@ body.light-theme .hiragana-text {
   display: none !important;
 }
 
+.card-disambiguator {
+  font-family: var(--font-jp);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+
 .card-sub-info {
   font-size: 0.9rem;
   color: var(--text-muted);
@@ -235,81 +232,6 @@ body.light-theme .speak-button {
   width: 20px;
   height: 20px;
   fill: currentColor;
-}
-
-/* Typing mode */
-.typing-container {
-  display: flex;
-  gap: 0.75rem;
-  width: var(--card-width);
-  margin: 1.5rem auto 0;
-  padding: 0 1rem;
-}
-
-.typing-container.hidden {
-  display: none !important;
-}
-
-#typing-input {
-  flex: 1;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 0.85rem 1.25rem;
-  color: var(--text);
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-body.light-theme #typing-input {
-  background: #ffffff;
-  border-color: rgba(2, 132, 199, 0.2);
-  color: #0f172a;
-}
-
-#typing-input:focus {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 15px var(--accent-cyan-glow);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-body.light-theme #typing-input:focus {
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
-}
-
-#typing-input.correct {
-  border-color: var(--accent-green);
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.05);
-}
-
-#typing-input.incorrect {
-  border-color: var(--accent-red);
-  box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-  background: rgba(239, 68, 68, 0.05);
-}
-
-.feedback-text {
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin-top: 0.75rem;
-  text-align: center;
-  min-height: 24px;
-  width: var(--card-width);
-}
-
-.feedback-correct {
-  color: #34d399;
-  text-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
-}
-
-.feedback-incorrect {
-  color: #f87171;
-  text-shadow: 0 0 10px rgba(248, 113, 113, 0.2);
 }
 
 @media (max-width: 767px) {

@@ -1,0 +1,61 @@
+/* Focus mode.
+   While a study session is running, hide everything that answers "what should
+   I study?" and keep only what answers "do I know this card?".
+
+   Measured on a 390x844 phone before this existed: 529px of chrome against a
+   262px card - the card held 31% of the screen. The blocks below aren't just
+   redundant mid-session, they're wrong: the proposal header urges you to
+   "study today" while you are studying, the deck bar offers filters that
+   can't affect a queue that's already built, and the Study/Browse toggle
+   silently destroys the session ("End session" is the intended exit).
+
+   Driven by `body.session-active`, stamped in card.ts's refreshSessionBar(). */
+
+body.session-active header h1,
+body.session-active .deck-bar,
+body.session-active .session-bar .toggle-group {
+  display: none;
+}
+
+/* The card takes back the space the chrome gave up.
+   Sized from what's actually left rather than a flat vh fraction: the status
+   row (~166px), the fixed grade bar (80px) and the tab bar (56px) all have to
+   fit, plus breathing room. A flat `clamp(320px, 58vh, …)` overlapped the
+   grade bar at 320x568, where only ~250px is genuinely free. Height stays
+   constant across the flip so the card doesn't resize under the user's thumb
+   when the grade bar appears. */
+body.session-active {
+  --card-height: clamp(200px, calc(100dvh - 330px), 520px);
+}
+
+
+/* Proposal Progress belongs to Browse only. In Study Session mode the session
+   bar already reports progress, and the two contradicted each other - the
+   header said "0 due, 1289 new - study today" while a session was offering
+   25 cards. Hidden by default, revealed only in Browse. */
+.proposal-container {
+  display: none;
+}
+
+body.mode-browse .proposal-container {
+  display: block;
+}
+
+/* Mark-as-learned toggle (Browse only - it sits inside .nav-buttons, which is
+   hidden during a session). */
+.btn-mark-known {
+  flex: 1;
+  max-width: 220px;
+  font-size: 0.85rem;
+  padding: 0.6rem 1rem;
+}
+
+.btn-mark-known.is-known {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+body.light-theme .btn-mark-known.is-known {
+  border-color: var(--accent-green);
+  color: #047857;
+}

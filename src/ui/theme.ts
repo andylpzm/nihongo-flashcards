@@ -1,7 +1,10 @@
 import { state } from '../state/store';
 import { loadTheme, saveTheme } from '../state/persistence';
 
-const themeToggleCube = document.getElementById('theme-toggle-cube');
+// The theme control lives in the Settings sheet (see settingsSheet.ts). It used
+// to be a fixed 3D cube pinned top-right, which overlapped the page title on
+// any scroll - theme is a set-once preference and doesn't need a permanent
+// floating button. The sky transition below is kept: it's the app's personality.
 
 // Initialize theme from localStorage, falling back to OS preference
 export function initTheme(): void {
@@ -14,18 +17,13 @@ export function initTheme(): void {
   }
 
   document.body.classList.toggle('light-theme', state.isLightTheme);
-  syncCubeRotation();
 }
 
-// Sync cube 3D rotation based on active theme state
-export function syncCubeRotation(): void {
-  if (!themeToggleCube) return;
-  const cube = themeToggleCube.querySelector('.cube') as HTMLElement | null;
-  if (cube) {
-    cube.style.transform = state.isLightTheme
-      ? 'rotateX(45deg) rotateY(225deg)'
-      : 'rotateX(-22deg) rotateY(45deg)';
-  }
+/** Apply a specific theme. Returns once the change is committed to the DOM,
+ * except on the dark->light path, where the sky transition covers the swap. */
+export function setTheme(light: boolean): void {
+  if (light === state.isLightTheme) return;
+  toggleTheme();
 }
 
 // Toggle light/dark themes with sky/cloud transitions
@@ -48,7 +46,6 @@ export function toggleTheme(): void {
       setTimeout(() => {
         state.isLightTheme = true;
         document.body.classList.add('light-theme');
-        syncCubeRotation();
         saveTheme('light');
       }, 400);
 
@@ -70,19 +67,12 @@ export function toggleTheme(): void {
     } else {
       state.isLightTheme = true;
       document.body.classList.add('light-theme');
-      syncCubeRotation();
       saveTheme('light');
     }
   } else {
     // Standard quick toggle to Dark Mode
     state.isLightTheme = false;
     document.body.classList.remove('light-theme');
-    syncCubeRotation();
     saveTheme('dark');
   }
-}
-
-// Attach click listener
-if (themeToggleCube) {
-  themeToggleCube.addEventListener('click', toggleTheme);
 }

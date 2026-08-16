@@ -200,10 +200,4 @@ body.light-theme .btn-forgotten {
     display: none;
   }
 
-  .theme-cube-container {
-    position: fixed;
-    top: max(0.875rem, env(safe-area-inset-top));
-    right: max(0.875rem, env(safe-area-inset-right));
-    z-index: 1025;
-  }
 }

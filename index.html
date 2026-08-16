@@ -47,18 +47,6 @@
     </svg>
   </div>
 
-  <!-- 3D Theme Toggle Blue Cube -->
-  <div class="theme-cube-container" id="theme-toggle-cube" role="button" aria-label="Toggle Light/Dark Mode" tabindex="0">
-    <div class="cube">
-      <div class="cube-face front"></div>
-      <div class="cube-face back"></div>
-      <div class="cube-face right"></div>
-      <div class="cube-face left"></div>
-      <div class="cube-face top"></div>
-      <div class="cube-face bottom"></div>
-    </div>
-  </div>
-
   <!-- Mobile Hamburger Menu Button -->
   <button class="hamburger-menu" id="hamburger-menu-btn" aria-label="Open navigation menu">
     <span></span>
@@ -122,6 +110,7 @@
         </li>
       </ul>
       <div class="sidebar-footer">
+        <button class="btn-forgotten btn-open-settings">Settings</button>
         <button class="btn-forgotten" id="btn-forgotten-things">forgotten things</button>
       </div>
     </aside>
@@ -136,13 +125,14 @@
         </div>
 
         <!-- Proposal Progress Dashboard -->
+        <!-- Browse-only progress: counts words you've hand-marked as learned.
+             Hidden entirely in Study Session mode (see focus.css) - a session
+             reports its own progress and the two were contradicting. -->
         <div class="proposal-container" id="proposal-container">
           <div class="proposal-header">
             <span class="proposal-title">💍 Proposal Progress</span>
             <div class="proposal-stats">
-              <span>Due: <strong id="count-due">0</strong></span>
-              <span style="margin-left: 1rem;">New: <strong id="count-new">0</strong></span>
-              <span style="margin-left: 1rem;">Learned: <strong id="count-learned">0</strong>/<strong id="count-total">0</strong></span>
+              <span><strong id="count-learned">0</strong>/<strong id="count-total">0</strong> learned</span>
               <span style="margin-left: 1rem;">🔥 <strong id="count-streak">0</strong></span>
             </div>
           </div>
@@ -167,13 +157,18 @@
               <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">Study session</button>
               <button class="btn-toggle" id="mode-browse" title="Free browsing, does not affect scheduling">Browse</button>
             </div>
-            <div class="toggle-group" role="group" aria-label="Practice Mode">
-              <button class="btn-toggle active" id="toggle-mode-flashcard" title="Flip cards to check yourself">Flashcard</button>
-              <button class="btn-toggle" id="toggle-mode-typing" title="Type the translation">Typing</button>
+            <div class="session-status" id="session-status">
+              <span class="session-status-line" id="session-status-line"></span>
+              <span class="session-status-sub" id="session-status-sub"></span>
             </div>
-            <span class="session-info" id="session-info"></span>
-            <button class="btn btn-primary hidden" id="btn-start-session">Start Today's Session</button>
-            <button class="btn btn-primary hidden" id="btn-session-end-action">Back to Deck</button>
+            <!-- Length picker: visible only in the idle/available and complete states -->
+            <div class="toggle-group hidden" id="session-length-group" role="group" aria-label="Session length">
+              <button class="btn-toggle" data-length="short">Short</button>
+              <button class="btn-toggle active" data-length="medium">Medium</button>
+              <button class="btn-toggle" data-length="long">Long</button>
+            </div>
+            <button class="btn btn-primary hidden" id="btn-start-session">Start session</button>
+            <button class="btn hidden" id="btn-end-session">End session</button>
           </div>
 
           <!-- 3D Flippable Card Viewport -->
@@ -194,21 +189,17 @@
           <div class="controls-container">
             <!-- SRS Grade Buttons (Study Session mode, shown once the card is flipped) -->
             <div class="grade-buttons hidden" id="grade-buttons">
-              <button class="btn-grade again" id="btn-grade-again" title="Again [1]">
-                <span class="grade-label">Again</span>
-                <span class="grade-interval" id="interval-again"></span>
+              <button class="btn-grade again" id="btn-grade-again" title="Forgot [1]">
+                <span class="grade-label">Forgot</span>
               </button>
               <button class="btn-grade hard" id="btn-grade-hard" title="Hard [2]">
                 <span class="grade-label">Hard</span>
-                <span class="grade-interval" id="interval-hard"></span>
               </button>
-              <button class="btn-grade good" id="btn-grade-good" title="Good [3 / Space]">
-                <span class="grade-label">Good</span>
-                <span class="grade-interval" id="interval-good"></span>
+              <button class="btn-grade good" id="btn-grade-good" title="Normal [3 / Space]">
+                <span class="grade-label">Normal</span>
               </button>
               <button class="btn-grade easy" id="btn-grade-easy" title="Easy [4]">
                 <span class="grade-label">Easy</span>
-                <span class="grade-interval" id="interval-easy"></span>
               </button>
             </div>
 
@@ -218,7 +209,9 @@
                 <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
               </button>
 
-
+              <button class="btn btn-mark-known" id="btn-mark-known" aria-pressed="false">
+                <span id="mark-known-label">Mark as learned</span>
+              </button>
 
               <button class="btn btn-nav-circle" id="btn-next" title="Next card [Right Arrow]" aria-label="Next card">
                 <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
@@ -239,13 +232,6 @@
               </span>
             </button>
 
-            <!-- Typing Input Container (Hidden by default, shown in Typing Mode) -->
-            <div class="typing-container hidden" id="typing-container">
-              <input type="text" id="typing-input" placeholder="Type English translation..." autocomplete="off">
-              <button class="btn btn-primary" id="btn-submit-answer" title="Submit your answer [Enter]">Check</button>
-            </div>
-            <!-- Feedback message display -->
-            <div class="feedback-text" id="feedback-text"></div>
           </div>
         </main>
       </section>
@@ -320,6 +306,7 @@
           <div class="kana-section-header">
             <h2>Study Stats</h2>
             <p>How review sessions have been going.</p>
+            <button class="btn btn-open-settings">Study Settings</button>
           </div>
           <div class="stats-grid" id="stats-grid">
             <!-- Programmatically populated via JS -->
@@ -403,8 +390,8 @@
           <h4 class="filter-section-title">Progress</h4>
           <div class="filter-grid progress-grid" id="drawer-progress-grid">
             <button class="filter-chip-btn active" data-progress="all">All cards</button>
-            <button class="filter-chip-btn" data-progress="learning">Learning</button>
-            <button class="filter-chip-btn" data-progress="mastered">Mastered</button>
+            <button class="filter-chip-btn" data-progress="learning">Not learned</button>
+            <button class="filter-chip-btn" data-progress="mastered">Learned</button>
           </div>
         </div>
 
@@ -453,6 +440,36 @@
           <button class="btn-quick-toggle" id="btn-drawer-select-all">Select All</button>
         </div>
         <button class="btn btn-primary" id="btn-drawer-apply">Apply Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Study Settings Sheet -->
+  <div class="modal-overlay hidden" id="settings-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-sheet filter-drawer" id="settings-drawer">
+      <div class="modal-drag-handle"></div>
+      <div class="drawer-header">
+        <div class="drawer-title-block">
+          <h3 id="settings-modal-title">Settings</h3>
+        </div>
+        <button class="btn-close-drawer" id="btn-close-settings" aria-label="Close Settings">&times;</button>
+      </div>
+
+      <div class="drawer-body">
+        <!-- Theme lives here rather than as a floating control: it's a
+             set-once preference, and as a fixed element it overlapped the
+             page title on any scroll. Applies immediately, not on Save. -->
+        <div class="filter-section">
+          <h4 class="filter-section-title">Theme</h4>
+          <div class="filter-grid progress-grid" id="settings-theme-grid">
+            <button class="filter-chip-btn" data-theme-choice="dark">Dark</button>
+            <button class="filter-chip-btn" data-theme-choice="light">Light</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-actions">
+        <button class="btn btn-primary" id="btn-settings-save">Done</button>
       </div>
     </div>
   </div>

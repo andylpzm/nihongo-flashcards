@@ -108,32 +108,48 @@ export function saveFilters(filters: PersistedFilters): void {
   }
 }
 
-export interface DailyNewProgress {
+export interface DailyProgress {
   date: string; // YYYY-MM-DD
-  count: number;
+  newCount: number;
+  reviewCount: number;
+  /** One-off top-up granted by "Learn more" (D3/Step 6) - added to
+   * newPerDay for the rest of the calendar day. */
+  extraNew: number;
 }
 
-/** How many brand-new cards have been introduced today, for enforcing the
- * newPerDay session budget across multiple sessions in the same calendar
- * day (not just within a single queue build). */
-export function loadDailyNewProgress(): DailyNewProgress {
+/** Replaces the old loadDailyNewProgress/saveDailyNewProgress pair. Keeps the
+ * legacy key readable so an in-flight day isn't lost when this ships. */
+export function loadDailyProgress(): DailyProgress {
   try {
-    const saved = localStorage.getItem('nihongo_daily_new_progress');
-    if (saved) {
-      const parsed = JSON.parse(saved) as Partial<DailyNewProgress>;
-      if (typeof parsed.date === 'string' && typeof parsed.count === 'number') {
-        return { date: parsed.date, count: parsed.count };
+    const raw = localStorage.getItem('nihongo_daily_progress');
+    if (raw) {
+      const p = JSON.parse(raw) as Partial<DailyProgress>;
+      if (typeof p.date === 'string') {
+        return {
+          date: p.date,
+          newCount: typeof p.newCount === 'number' ? p.newCount : 0,
+          reviewCount: typeof p.reviewCount === 'number' ? p.reviewCount : 0,
+          extraNew: typeof p.extraNew === 'number' ? p.extraNew : 0,
+        };
+      }
+    }
+    // One-time read of the pre-existing key so today's new-card count survives.
+    const legacy = localStorage.getItem('nihongo_daily_new_progress');
+    if (legacy) {
+      const p = JSON.parse(legacy) as { date?: string; count?: number };
+      if (typeof p.date === 'string' && typeof p.count === 'number') {
+        return { date: p.date, newCount: p.count, reviewCount: 0, extraNew: 0 };
       }
     }
   } catch {
-    // ignore, fall back to a fresh count
+    // ignore
   }
-  return { date: '', count: 0 };
+  return { date: '', newCount: 0, reviewCount: 0, extraNew: 0 };
 }
 
-export function saveDailyNewProgress(progress: DailyNewProgress): void {
+export function saveDailyProgress(progress: DailyProgress): void {
   try {
-    localStorage.setItem('nihongo_daily_new_progress', JSON.stringify(progress));
+    localStorage.setItem('nihongo_daily_progress', JSON.stringify(progress));
   } catch {
     // ignore
   }

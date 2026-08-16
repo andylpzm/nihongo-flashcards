@@ -33,8 +33,6 @@ export interface VocabCard {
   topics: Topic[];
   /** Kana reading shared with another card; set only for the ~40 duplicate readings. */
   homophoneGroup?: string;
-  /** Short disambiguator shown alongside homophoneGroup cards, e.g. "weather". */
-  hint?: string;
   examples?: { jp: string; en: string }[];
 }
 

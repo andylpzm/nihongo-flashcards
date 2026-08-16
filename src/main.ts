@@ -10,6 +10,7 @@ import './styles/components/kana.css';
 import './styles/components/story.css';
 import './styles/components/stats.css';
 import './styles/components/misc.css';
+import './styles/components/focus.css';
 import './styles/themes.css';
 
 import { FeedbackAudio } from './audio/feedback';
@@ -21,26 +22,22 @@ import {
   modeSessionBtn,
   modeBrowseBtn,
   btnStartSession,
-  btnSessionEndAction,
+  btnEndSession,
   btnGradeAgain,
   btnGradeHard,
   btnGradeGood,
   btnGradeEasy,
-  modeFlashcardBtn,
-  modeTypingBtn,
-  submitBtn,
-  typingInput,
   flipCard,
   prevCard,
   nextCard,
-  setPracticeMode,
-  submitAnswer,
   toggleRomajiVisibility,
   loadDeck,
   startSession,
+  toggleCurrentCardKnown,
+  btnMarkKnown,
   gradeCurrentCard,
   setStudyMode,
-  acknowledgeSessionEnd,
+  endSessionEarly,
   updateStats,
   getActiveCard,
 } from './ui/card';
@@ -63,6 +60,7 @@ import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
 import { runMigrationIfNeeded } from './srs/migration';
 import { onSwipe } from './ui/gestures';
+import { setupSettingsSheet } from './ui/settingsSheet';
 
 const btnPracticeHiragana = document.getElementById('btn-practice-hiragana')!;
 const btnPracticeKatakana = document.getElementById('btn-practice-katakana')!;
@@ -122,9 +120,15 @@ function setupEventListeners(): void {
   modeSessionBtn.addEventListener('click', () => void setStudyMode('session'));
   modeBrowseBtn.addEventListener('click', () => void setStudyMode('browse'));
 
+  btnMarkKnown?.addEventListener('click', () => toggleCurrentCardKnown());
+
   // Session lifecycle
   btnStartSession.addEventListener('click', () => void startSession());
-  btnSessionEndAction.addEventListener('click', () => acknowledgeSessionEnd());
+  btnEndSession.addEventListener('click', () => endSessionEarly());
+
+  // Study settings sheet (Step 7) - reachable from the sidebar footer and
+  // the Stats section (see .btn-open-settings triggers in index.html).
+  setupSettingsSheet();
 
   // SRS Grade buttons
   const bindGrade = (btn: HTMLElement, grade: Grade) => {
@@ -143,20 +147,8 @@ function setupEventListeners(): void {
   // types and topics all live inside it now.
   setupFilterDrawer();
 
-  // Practice Mode toggles
-  modeFlashcardBtn.addEventListener('click', () => setPracticeMode('flashcard'));
-  modeTypingBtn.addEventListener('click', () => setPracticeMode('typing'));
 
-  // Typing submit button
-  submitBtn.addEventListener('click', submitAnswer);
 
-  // Typing Input key listener (Enter to check/next)
-  typingInput.addEventListener('keydown', (e) => {
-    if (e.code === 'Enter') {
-      e.preventDefault();
-      submitAnswer();
-    }
-  });
 
   // Sidebar Menu triggers
   menuVocabulary.addEventListener('click', () => {
@@ -384,7 +376,7 @@ function setupEventListeners(): void {
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const target = e.target as HTMLElement;
-    if (!target.matches('.menu-item[role="menuitem"], #theme-toggle-cube')) return;
+    if (!target.matches('.menu-item[role="menuitem"]')) return;
     e.preventDefault();
     target.click();
   });

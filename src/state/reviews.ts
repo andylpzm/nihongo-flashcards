@@ -1,20 +1,40 @@
 import { getAllReviews, putReview } from '../srs/db';
-import { newFsrsCard, scheduleReview, State } from '../srs/scheduler';
-import type { ReviewRecord, Grade } from '../srs/types';
+import { State } from '../srs/scheduler';
+import type { ReviewRecord, Grade, FsrsCard } from '../srs/types';
 import type { Card, CardId } from './types';
-import { loadDailyNewProgress, saveDailyNewProgress } from './persistence';
+import { loadDailyProgress, saveDailyProgress, type DailyProgress } from './persistence';
 
 function todayKey(now: Date): string {
   return now.toISOString().slice(0, 10);
 }
 
+function todayProgress(now: Date): DailyProgress {
+  const progress = loadDailyProgress();
+  const today = todayKey(now);
+  return progress.date === today ? progress : { date: today, newCount: 0, reviewCount: 0, extraNew: 0 };
+}
+
 /** How many new cards are still available today, given the newPerDay budget
- * and how many new cards have already been introduced today across any
- * earlier sessions (not just the current one). */
+ * (plus any one-off "Learn more" top-up) and how many new cards have already
+ * been introduced today across any earlier sessions (not just the current
+ * one). */
 export function getRemainingNewBudget(newPerDay: number, now: Date = new Date()): number {
-  const progress = loadDailyNewProgress();
-  const usedToday = progress.date === todayKey(now) ? progress.count : 0;
-  return Math.max(0, newPerDay - usedToday);
+  const progress = todayProgress(now);
+  return Math.max(0, newPerDay + progress.extraNew - progress.newCount);
+}
+
+/** How many scheduled reviews are still allowed today, given the
+ * maxReviewsPerDay budget and how many have already been recorded today. */
+export function getRemainingReviewBudget(maxReviewsPerDay: number, now: Date = new Date()): number {
+  const progress = todayProgress(now);
+  return Math.max(0, maxReviewsPerDay - progress.reviewCount);
+}
+
+/** Grants a one-off top-up of `amount` new cards for the rest of today (the
+ * "Learn more" action once the daily budget is spent). */
+export function grantExtraNewBudget(amount: number, now: Date = new Date()): void {
+  const progress = todayProgress(now);
+  saveDailyProgress({ ...progress, extraNew: progress.extraNew + amount });
 }
 
 /** A card is considered durably "learned" once it has graduated to FSRS
@@ -53,18 +73,33 @@ export function isCardMastered(cardId: CardId): boolean {
   return !!review && review.card.state === State.Review && review.card.stability >= MASTERED_STABILITY_DAYS;
 }
 
-/** Grade a card: schedules its next review via FSRS, persists the updated
- * record to IndexedDB, and updates the in-memory cache. */
+function bumpDailyProgress(kind: 'new' | 'review', now: Date): void {
+  const progress = todayProgress(now);
+  saveDailyProgress({
+    ...progress,
+    newCount: progress.newCount + (kind === 'new' ? 1 : 0),
+    reviewCount: progress.reviewCount + (kind === 'review' ? 1 : 0),
+  });
+}
+
+/**
+ * Grade a card: persists the already-scheduled FSRS card to IndexedDB and
+ * updates the in-memory cache.
+ *
+ * The scheduled card is passed in (rather than computed here via
+ * scheduleReview()) so the interval the UI advertised is the interval that
+ * gets written. With enable_fuzz on, a second scheduling call re-rolls fuzz
+ * and produces a different due date than the one shown on the button - see
+ * D10/D11 in SESSION_REBUILD_PLAN.md.
+ */
 export async function recordGrade(
   card: Card,
   grade: Grade,
+  scheduled: FsrsCard,
   now: Date = new Date(),
   elapsedMs = 0
 ): Promise<ReviewRecord> {
   const existing = reviewsByCardId.get(card.id);
-  const fsrsCard = existing ? existing.card : newFsrsCard(now);
-  const { card: scheduled } = scheduleReview(fsrsCard, grade, now);
-
   const record: ReviewRecord = {
     cardId: card.id,
     card: scheduled,
@@ -73,17 +108,7 @@ export async function recordGrade(
 
   await putReview(record);
   reviewsByCardId.set(card.id, record);
-
-  if (!existing) {
-    // This card had never been reviewed before - it counts against today's
-    // newPerDay budget regardless of which session introduced it.
-    const progress = loadDailyNewProgress();
-    const today = todayKey(now);
-    saveDailyNewProgress({
-      date: today,
-      count: (progress.date === today ? progress.count : 0) + 1,
-    });
-  }
+  bumpDailyProgress(existing ? 'review' : 'new', now);
 
   return record;
 }

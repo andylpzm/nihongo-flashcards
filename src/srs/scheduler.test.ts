@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { newFsrsCard, scheduleReview, formatInterval, Rating } from './scheduler';
-import { buildQueue, defaultSessionSettings } from './queue';
+import { buildQueue } from './queue';
+import { SESSION_SIZES } from './settings';
 import type { Card } from '../state/types';
 import type { ReviewRecord } from './types';
+
+const sessionSize = SESSION_SIZES.medium;
 
 function makeCard(id: number): Card {
   return {
@@ -88,12 +91,12 @@ describe('grading a card Good removes it from today\'s queue and it reappears on
 
     // Right after grading: not due yet, queue is empty.
     const rightAfter = new Date(day2.getTime() + 60 * 1000);
-    const queueSameDay = buildQueue([card], new Map([[1, record]]), defaultSessionSettings, rightAfter);
-    expect(queueSameDay).toHaveLength(0);
+    const queueSameDay = buildQueue([card], new Map([[1, record]]), sessionSize, rightAfter);
+    expect(queueSameDay.items).toHaveLength(0);
 
     // On its due date: back in the queue.
     const onDueDate = record.card.due;
-    const queueOnDue = buildQueue([card], new Map([[1, record]]), defaultSessionSettings, onDueDate);
-    expect(queueOnDue.map((q) => q.card.id)).toEqual([1]);
+    const queueOnDue = buildQueue([card], new Map([[1, record]]), sessionSize, onDueDate);
+    expect(queueOnDue.items.map((q) => q.card.id)).toEqual([1]);
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { buildQueue, StudySession, defaultSessionSettings } from './queue';
+import { buildQueue } from './queue';
 import { Rating, State } from './scheduler';
+import { SESSION_SIZES } from './settings';
 import type { ReviewRecord, FsrsCard } from './types';
 import type { Card } from '../state/types';
 
@@ -40,6 +41,8 @@ function makeReview(cardId: number, due: Date): ReviewRecord {
   };
 }
 
+const fullSessionSize = SESSION_SIZES.medium;
+
 describe('buildQueue', () => {
   const now = new Date('2026-06-15T12:00:00Z');
   const yesterday = new Date('2026-06-14T12:00:00Z');
@@ -52,9 +55,10 @@ describe('buildQueue', () => {
       [2, makeReview(2, tomorrow)], // not due yet
     ]);
 
-    const queue = buildQueue(cards, reviews, defaultSessionSettings, now);
+    const result = buildQueue(cards, reviews, fullSessionSize, now);
 
-    expect(queue.map((q) => q.card.id)).toEqual([1]);
+    expect(result.items.map((q) => q.card.id)).toEqual([1]);
+    expect(result.nextDueAt).toEqual(tomorrow);
   });
 
   it('sorts due reviews oldest-due-first', () => {
@@ -65,101 +69,90 @@ describe('buildQueue', () => {
       [2, makeReview(2, twoDaysAgo)],
     ]);
 
-    const queue = buildQueue(cards, reviews, defaultSessionSettings, now);
+    const result = buildQueue(cards, reviews, fullSessionSize, now);
 
-    expect(queue.map((q) => q.card.id)).toEqual([2, 1]);
+    expect(result.items.map((q) => q.card.id)).toEqual([2, 1]);
   });
 
   it('treats cards with no review record as new cards', () => {
     const cards = [makeCard(1)];
-    const queue = buildQueue(cards, new Map(), defaultSessionSettings, now);
+    const result = buildQueue(cards, new Map(), fullSessionSize, now);
 
-    expect(queue).toHaveLength(1);
-    expect(queue[0]!.review).toBeNull();
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]!.isNew).toBe(true);
+    expect(result.newCount).toBe(1);
   });
 
-  it('caps new cards at newPerDay', () => {
-    const cards = Array.from({ length: 20 }, (_, i) => makeCard(i + 1));
-    const queue = buildQueue(cards, new Map(), { newPerDay: 5, maxReviewsPerDay: 100 }, now);
+  it('admits exactly the session size in new cards, and no more', () => {
+    const cards = Array.from({ length: fullSessionSize + 15 }, (_, i) => makeCard(i + 1));
+    const result = buildQueue(cards, new Map(), fullSessionSize, now);
 
-    expect(queue).toHaveLength(5);
+    // Session length is the only limit now - there is no daily new-card cap
+    // to shrink a sitting below the size the user asked for.
+    expect(result.items).toHaveLength(fullSessionSize);
+    expect(result.newCount).toBe(fullSessionSize);
+    expect(result.newHeldBack).toBe(15);
   });
 
-  it('caps due reviews at maxReviewsPerDay', () => {
-    const cards = Array.from({ length: 20 }, (_, i) => makeCard(i + 1));
+  it('admits at most the session size in due reviews', () => {
+    const cards = Array.from({ length: fullSessionSize + 10 }, (_, i) => makeCard(i + 1));
     const reviews = new Map(cards.map((c) => [c.id as number, makeReview(c.id as number, yesterday)]));
-    const queue = buildQueue(cards, reviews, { newPerDay: 0, maxReviewsPerDay: 5 }, now);
+    const result = buildQueue(cards, reviews, fullSessionSize, now);
 
-    expect(queue).toHaveLength(5);
+    expect(result.items).toHaveLength(fullSessionSize);
+  });
+
+  it('a smaller preset produces a smaller sitting', () => {
+    const cards = Array.from({ length: 200 }, (_, i) => makeCard(i + 1));
+    expect(buildQueue(cards, new Map(), SESSION_SIZES.short, now).items).toHaveLength(SESSION_SIZES.short);
+    expect(buildQueue(cards, new Map(), SESSION_SIZES.medium, now).items).toHaveLength(SESSION_SIZES.medium);
+    expect(buildQueue(cards, new Map(), SESSION_SIZES.long, now).items).toHaveLength(SESSION_SIZES.long);
   });
 
   it('puts due reviews before new cards', () => {
     const cards = [makeCard(1), makeCard(2)];
     const reviews = new Map([[1, makeReview(1, yesterday)]]);
-    const queue = buildQueue(cards, reviews, defaultSessionSettings, now);
+    const result = buildQueue(cards, reviews, fullSessionSize, now);
 
-    expect(queue.map((q) => q.card.id)).toEqual([1, 2]);
-  });
-});
-
-describe('StudySession', () => {
-  it('advances through the queue and tracks progress', () => {
-    const items = [makeCard(1), makeCard(2), makeCard(3)].map((card) => ({ card, review: null }));
-    const session = new StudySession(items);
-
-    expect(session.progress).toEqual({ reviewed: 0, total: 3, correct: 0 });
-    expect(session.current?.card.id).toBe(1);
-
-    session.advance(Rating.Good);
-    expect(session.progress).toEqual({ reviewed: 1, total: 3, correct: 1 });
-    expect(session.current?.card.id).toBe(2);
-
-    session.advance(Rating.Again);
-    expect(session.progress.correct).toBe(1); // Again does not count as correct
-
-    session.advance(Rating.Easy);
-    expect(session.progress.correct).toBe(2);
+    expect(result.items.map((q) => q.card.id)).toEqual([1, 2]);
   });
 
-  it('re-inserts an Again-graded card later in the session instead of dropping it', () => {
-    const items = Array.from({ length: 20 }, (_, i) => ({ card: makeCard(i + 1), review: null }));
-    const session = new StudySession(items);
+  it('never exceeds sessionSize, admitting due reviews before new cards when supply exceeds it', () => {
+    const dueCards = Array.from({ length: 8 }, (_, i) => makeCard(i + 1));
+    const newCards = Array.from({ length: 8 }, (_, i) => makeCard(100 + i));
+    const cards = [...dueCards, ...newCards];
+    const reviews = new Map(dueCards.map((c) => [c.id as number, makeReview(c.id as number, yesterday)]));
 
-    session.advance(Rating.Again); // card 1 graded Again
+    const result = buildQueue(cards, reviews, 10, now);
 
-    // card 1 must still appear somewhere later in the session, not lost
-    const remainingIds: number[] = [];
-    while (!session.isComplete) {
-      const id = session.current!.card.id as number;
-      remainingIds.push(id);
-      session.advance(Rating.Good);
-    }
-
-    expect(remainingIds.filter((id) => id === 1)).toHaveLength(1);
-    expect(session.isComplete).toBe(true);
+    expect(result.items).toHaveLength(10);
+    expect(result.items.slice(0, 8).map((q) => q.card.id)).toEqual(dueCards.map((c) => c.id));
+    expect(result.items.slice(8).map((q) => q.card.id)).toEqual(newCards.slice(0, 2).map((c) => c.id));
   });
 
-  it('pushes an Again card to the very end when fewer than 5 cards remain', () => {
-    const items = Array.from({ length: 4 }, (_, i) => ({ card: makeCard(i + 1), review: null }));
-    const session = new StudySession(items);
+  it('reports newHeldBack as the new cards that exist but weren\'t admitted', () => {
+    const cards = Array.from({ length: fullSessionSize + 3 }, (_, i) => makeCard(i + 1));
+    const result = buildQueue(cards, new Map(), fullSessionSize, now);
 
-    session.advance(Rating.Good); // card 1 done, 3 remain (< 5)
-    session.advance(Rating.Again); // card 2 graded Again with only 2 left - should go to the end
-
-    const remainingIds: number[] = [];
-    while (!session.isComplete) {
-      remainingIds.push(session.current!.card.id as number);
-      session.advance(Rating.Good);
-    }
-
-    expect(remainingIds[remainingIds.length - 1]).toBe(2);
+    expect(result.newCount).toBe(fullSessionSize);
+    expect(result.newHeldBack).toBe(3);
   });
 
-  it('is complete once every item (including re-inserts) has been graded', () => {
-    const items = [{ card: makeCard(1), review: null }];
-    const session = new StudySession(items);
-    expect(session.isComplete).toBe(false);
-    session.advance(Rating.Good);
-    expect(session.isComplete).toBe(true);
+  it('nextDueAt is null when every candidate is new', () => {
+    const cards = [makeCard(1), makeCard(2)];
+    const result = buildQueue(cards, new Map(), fullSessionSize, now);
+    expect(result.nextDueAt).toBeNull();
+  });
+
+  it('nextDueAt is the earliest future due date among candidates', () => {
+    const soon = new Date('2026-06-15T13:00:00Z');
+    const later = new Date('2026-06-20T00:00:00Z');
+    const cards = [makeCard(1), makeCard(2)];
+    const reviews = new Map([
+      [1, makeReview(1, later)],
+      [2, makeReview(2, soon)],
+    ]);
+    const result = buildQueue(cards, reviews, fullSessionSize, now);
+    expect(result.nextDueAt).toEqual(soon);
   });
 });

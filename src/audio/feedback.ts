@@ -80,6 +80,36 @@ export const FeedbackAudio = {
     playNote(880, now + 0.08, 0.25); // A5
   },
 
+  /** Grading "Forgot". A short descending two-tone buzz - the game-style
+   * "missed it" cue. Deliberately distinct from playCorrect()'s rising pair,
+   * and low enough not to feel like a scolding: forgetting a card is normal
+   * and is exactly the signal the scheduler needs. */
+  playMiss(): void {
+    this.init();
+    if (!this.ctx) return;
+
+    const playNote = (freq: number, time: number, duration: number) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, time);
+
+      gain.gain.setValueAtTime(0.05, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+      osc.connect(gain);
+      gain.connect(this.ctx!.destination);
+
+      osc.start(time);
+      osc.stop(time + duration);
+    };
+
+    const now = this.ctx.currentTime;
+    playNote(233.08, now, 0.1); // Bb3
+    playNote(174.61, now + 0.1, 0.22); // F3
+  },
+
   playSuccess(): void {
     this.init();
     if (!this.ctx) return;

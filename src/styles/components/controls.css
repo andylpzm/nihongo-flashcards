@@ -281,10 +281,51 @@ body.light-theme .session-bar .toggle-group {
   white-space: nowrap;
 }
 
-.session-info {
-  font-size: 0.85rem;
+/* Session status: replaces the old single-line #session-info span. Owns two
+   lines (primary state + detail/countdown) so the bar can say something
+   meaningful in every state instead of just "Card N / M" (see sessionBar.ts). */
+.session-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.session-status:empty {
+  display: none;
+}
+
+.session-status-line {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.session-status-sub {
+  font-size: 0.78rem;
   color: var(--text-muted);
-  font-weight: 500;
+}
+
+/* Study Settings sheet number inputs (reuses .filter-chip-btn conventions
+   from the filter drawer for the session-length chip group above it). */
+.settings-number-input {
+  width: 100%;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.6rem 0.85rem;
+  border-radius: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  min-height: 44px;
+}
+
+body.light-theme .settings-number-input {
+  background: rgba(255, 255, 255, 0.85);
+  color: #334155;
+  border-color: rgba(2, 132, 199, 0.2);
 }
 
 /* SRS grade buttons (Again / Hard / Good / Easy) */
@@ -318,13 +359,8 @@ body.light-theme .btn-grade {
 }
 
 .grade-label {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
-}
-
-.grade-interval {
-  font-size: 0.7rem;
-  color: var(--text-muted);
 }
 
 .btn-grade.again {
