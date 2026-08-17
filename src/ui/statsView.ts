@@ -3,6 +3,10 @@
 // Ordered by how often it is worth looking at: today first, then the calendar
 // that gives the streak a shape, then the slower-moving measures.
 //
+// The deck breakdown counts the vocabulary deck only - kana and kanji share
+// the review store but are their own decks, and folding them in overstated
+// vocabulary progress.
+//
 // The deck breakdown is two buckets, not three. With learning steps removed
 // (scheduler.ts) a card is scheduled the moment it is answered, so there is no
 // intermediate state to report - it is either in rotation or untouched.
@@ -72,7 +76,14 @@ export async function renderStatsView(): Promise<void> {
   const paceTrend = computePaceTrend(reviews);
   const mix = computeGradeMix(reviews);
   const calendar = computeCalendar(reviews);
-  const stateCounts = computeStateCounts(reviews, vocab.length);
+  // Scoped to the vocabulary deck. Kana and kanji reviews live in the same
+  // store, so counting every record against vocab.length made studying kana
+  // advance the vocabulary bar: 8 kana/kanji answers reported 62 vocabulary
+  // cards in rotation when only 54 were vocabulary. It stayed internally
+  // consistent (the two numbers still summed to 1294) which is exactly why it
+  // was easy to miss.
+  const vocabReviews = reviews.filter((r) => cardsById.has(r.cardId));
+  const stateCounts = computeStateCounts(vocabReviews, vocab.length);
   const weakestTopics = computeWeakestTopics(reviews, cardsById);
   // Every answered card is scheduled, so "started" is simply everything that
   // is not new. Summed rather than read off one state so a card mid-flight
@@ -213,7 +224,7 @@ export async function renderStatsView(): Promise<void> {
     </div>
 
     <div class="stat-tile stat-tile-full">
-      <h4>Your deck</h4>
+      <h4>Vocabulary</h4>
       <div class="deck-bar-viz">
         <span class="deck-seg deck-rotation" style="width:${(started / vocab.length) * 100}%"></span>
       </div>
