@@ -31,6 +31,10 @@ export function renderSessionBar(state: SessionBarState, onCountdownElapsed: () 
       // through the queue - roughly 25 answers of no visible progress, which
       // reads as a broken counter.
       line.textContent = `${state.remaining} left`;
+      // The global resume bar reads the same number, so it can never drift
+      // from the session it points at.
+      const resumeCount = document.getElementById('resume-count');
+      if (resumeCount) resumeCount.textContent = ` · ${state.remaining} left`;
       sub.textContent =
         `${state.answers} answer${state.answers === 1 ? '' : 's'}` +
         (state.learned > 0 ? ` · ${state.learned} learned` : '');
@@ -42,8 +46,9 @@ export function renderSessionBar(state: SessionBarState, onCountdownElapsed: () 
     case 'available': {
       // Plain count, no "due"/"new" jargon - on a fresh deck "0 due" was a
       // fact about nothing, and the split meant nothing to a learner.
-      const total = state.dueCount + state.newCount;
-      line.textContent = `${total} card${total === 1 ? '' : 's'} ready`;
+      // The card face carries the count now (renderEmptyState), so repeating
+      // it here was the same fact printed twice, three inches apart.
+      line.textContent = '';
       sub.textContent = '';
       // Reset: the complete state relabels this to "Continue studying".
       start.textContent = 'Start session';

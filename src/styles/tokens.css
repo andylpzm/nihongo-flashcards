@@ -11,8 +11,11 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.2);
 
-  --accent-pink: #ff2d55;
-  --accent-pink-glow: rgba(255, 45, 85, 0.4);
+  /* Basketball orange - Blue Box is a basketball story, and the warm tone
+     sits better against the dark navy than the old pink did. Light mode
+     keeps its own accent (see themes.css). */
+  --accent-primary: #ff6d18;
+  --accent-primary-glow: color-mix(in srgb, var(--accent-primary) 40%, transparent);
   --accent-cyan: #06b6d4;
   --accent-cyan-glow: rgba(6, 182, 212, 0.4);
   --accent-orange: #f97316;
@@ -23,6 +26,42 @@
   --accent-purple: #8b5cf6;
 
   --shadow-color: rgba(0, 0, 0, 0.35);
+
+  /* Background court netting (layout.css). */
+  --net-line: rgba(255, 255, 255, 0.055);
+  --net-opacity: 1;
+
+  /* Physical surfaces: recessed panels, the key tray, and raised/pressed
+     keys. Declared here so light mode is a re-valuing in themes.css rather
+     than a second implementation - see the note at the top of that file. */
+  --recess-fill: rgba(0, 0, 0, 0.11);
+  --recess-shadow: rgba(0, 0, 0, 0.28);
+  --recess-highlight: rgba(255, 255, 255, 0.04);
+
+  /* Flat fills, not gradients: a top-to-bottom sheen plus a 1px highlight
+     line is the skeuomorphic-button look. Depth here comes from a single
+     soft shadow and the pressed state's inset, nothing else. */
+  --tray-fill: rgba(0, 0, 0, 0.1);
+  --tray-shadow: rgba(0, 0, 0, 0.22);
+
+  /* Keys sit *above* the card, so they are lighter than it - matching the
+     card's own colour made them read as holes rather than caps. Lift comes
+     from three things and no gradient: a paler face, a soft drop shadow, and
+     one faint sheen along the top edge for curvature. */
+  --key-face: rgba(255, 255, 255, 0.1);
+  --key-sheen: rgba(255, 255, 255, 0.13);
+  --key-shadow: rgba(0, 0, 0, 0.4);
+  --key-pressed-fill: rgba(0, 0, 0, 0.26);
+  --key-pressed-shadow: rgba(0, 0, 0, 0.34);
+
+
+  /* Gradient text (page titles, big display numerals, the kana on a card).
+     Deliberately colourless and off-white: pure #fff on a near-black ground
+     glares, and tinting it fought the orange accent rather than supporting
+     it. A slight cool falloff keeps the type feeling lit without colouring
+     it. Light mode keeps its blue - see themes.css. */
+  --hero-gradient: linear-gradient(160deg, #edf0f6 38%, #c4ccdb 135%);
+  --title-gradient: linear-gradient(100deg, #edf0f6 42%, #c4ccdb 128%);
 
   /* Card sizing scales continuously with viewport instead of jumping at a
      breakpoint - see 4.7. Clamp keeps it inside a sane min/max. */

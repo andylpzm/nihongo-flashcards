@@ -13,6 +13,12 @@ export interface SwipeHandlers {
   /** Fired on pointerup/cancel; `committed` is true when a swipe threshold was crossed. */
   onDragEnd?: (committed: boolean) => void;
   threshold?: number;
+  /**
+   * Selector for descendants that own their own horizontal swipe. A gesture
+   * starting inside one is ignored here, which is what lets a page-level
+   * pager and the card viewport's next/previous swipe share a screen.
+   */
+  ignoreFrom?: string;
 }
 
 export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
@@ -22,11 +28,15 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
   let active = false;
   let horizontal = false;
   let captured = false;
-  let suppressNextClick = false;
+  // Time-bounded rather than a sticky boolean. The click a committed swipe
+  // generates arrives within a frame; a flag that waits indefinitely for one
+  // survives when no click ever comes (pointercancel, or a release outside
+  // the element) and then eats the user's next genuine tap instead.
+  let suppressClicksUntil = 0;
 
   const onClick = (e: MouseEvent) => {
-    if (suppressNextClick) {
-      suppressNextClick = false;
+    if (performance.now() < suppressClicksUntil) {
+      suppressClicksUntil = 0;
       e.preventDefault();
       e.stopImmediatePropagation();
     }
@@ -34,6 +44,7 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
 
   const onPointerDown = (e: PointerEvent) => {
     if (!e.isPrimary) return;
+    if (handlers.ignoreFrom && (e.target as HTMLElement).closest?.(handlers.ignoreFrom)) return;
     startX = e.clientX;
     startY = e.clientY;
     active = true;
@@ -79,7 +90,7 @@ export function onSwipe(el: HTMLElement, handlers: SwipeHandlers): () => void {
     }
     const committed = horizontal && Math.abs(dx) > threshold;
     if (committed) {
-      suppressNextClick = true;
+      suppressClicksUntil = performance.now() + 400;
       if (dx < 0) handlers.onSwipeLeft?.();
       else handlers.onSwipeRight?.();
     }

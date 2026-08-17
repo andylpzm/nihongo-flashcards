@@ -76,14 +76,37 @@ body.light-theme .modal-sheet {
     transform: translateY(100%);
   }
 
+  /* The visible pill stays 40x4, but the element itself is a 72x24 touch
+     target - a 4px-tall grab area is not hittable with a thumb. The header
+     is a drag zone too (see modal.ts), since reaching for the title bar is
+     the more natural gesture. touch-action: none stops the browser claiming
+     the vertical drag as a scroll and cancelling the pointer. */
   .modal-drag-handle {
     display: block;
+    position: relative;
+    width: 72px;
+    height: 24px;
+    margin: 0.3rem auto 0;
+    flex-shrink: 0;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .modal-drag-handle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 40px;
     height: 4px;
     border-radius: 999px;
     background: var(--border-hover);
-    margin: 0.6rem auto 0;
-    flex-shrink: 0;
+  }
+
+  .modal-sheet .drawer-header,
+  .modal-sheet .story-modal-header {
+    touch-action: none;
   }
 }
 

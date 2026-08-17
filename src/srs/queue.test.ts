@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { buildQueue } from './queue';
-import { Rating, State } from './scheduler';
+import { Rating, State, newFsrsCard } from './scheduler';
 import { SESSION_SIZES } from './settings';
 import type { ReviewRecord, FsrsCard } from './types';
-import type { Card } from '../state/types';
+import type { Card, CardId } from '../state/types';
 
 function makeCard(id: number, kana = 'あ'): Card {
   return {
@@ -154,5 +154,60 @@ describe('buildQueue', () => {
     ]);
     const result = buildQueue(cards, reviews, fullSessionSize, now);
     expect(result.nextDueAt).toEqual(soon);
+  });
+});
+
+describe('new-card reserve', () => {
+  it('admits new cards even when due reviews could fill the sitting', () => {
+    // Regression: pure review-priority starved new material entirely for a
+    // learner with a persistent backlog.
+    const cards: Card[] = Array.from({ length: 60 }, (_, i) => ({
+      id: i + 1,
+      kana: 'あ',
+      romaji: 'a',
+      meanings: ['a'],
+      level: 'N5' as const,
+      pos: 'other' as const,
+      topics: ['other'],
+    }));
+    const now = new Date('2026-05-01T09:00:00Z');
+    const reviews = new Map<CardId, ReviewRecord>();
+    // 50 cards all overdue - more than a 25-card sitting can hold.
+    for (let i = 0; i < 50; i++) {
+      reviews.set(cards[i]!.id, {
+        cardId: cards[i]!.id,
+        card: { ...newFsrsCard(now), due: new Date(now.getTime() - 86400000) },
+        log: [],
+      });
+    }
+    const build = buildQueue(cards, reviews, 25, now);
+    expect(build.items).toHaveLength(25);
+    expect(build.newCount).toBeGreaterThan(0);
+    // ...but the backlog still gets the lion's share.
+    expect(build.items.filter((i) => !i.isNew).length).toBeGreaterThanOrEqual(20);
+  });
+
+  it('gives the whole sitting to reviews when there are no new cards left', () => {
+    const cards: Card[] = Array.from({ length: 30 }, (_, i) => ({
+      id: i + 1,
+      kana: 'あ',
+      romaji: 'a',
+      meanings: ['a'],
+      level: 'N5' as const,
+      pos: 'other' as const,
+      topics: ['other'],
+    }));
+    const now = new Date('2026-05-01T09:00:00Z');
+    const reviews = new Map<CardId, ReviewRecord>();
+    for (const c of cards) {
+      reviews.set(c.id, {
+        cardId: c.id,
+        card: { ...newFsrsCard(now), due: new Date(now.getTime() - 86400000) },
+        log: [],
+      });
+    }
+    const build = buildQueue(cards, reviews, 25, now);
+    expect(build.items).toHaveLength(25);
+    expect(build.newCount).toBe(0);
   });
 });

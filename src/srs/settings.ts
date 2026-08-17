@@ -8,16 +8,6 @@ export const SESSION_SIZES: Record<SessionLength, number> = {
   long: 50,
 };
 
-/**
- * A card whose next due time falls within this window stays in the current
- * sitting rather than leaving it - this is what makes FSRS learning steps
- * behave as a study session instead of ending it after one pass.
- *
- * Deliberately a constant, not a setting: it is algorithm plumbing with no
- * meaning to a learner, and exposing it only invited people to break their
- * own scheduling.
- */
-export const LEARN_AHEAD_MINUTES = 20;
 
 /**
  * Session length is the only study knob. There is intentionally no

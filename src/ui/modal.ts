@@ -87,8 +87,14 @@ export function createModal(overlay: HTMLElement, opts: { onClose?: () => void }
     opts.onClose?.();
   }
 
-  if (dragHandle && sheet) {
-    setupDragToDismiss(dragHandle, sheet, close);
+  // Both the handle and the header drag the sheet down. Reaching for the
+  // title bar is the more natural gesture, and the header never scrolls, so
+  // claiming its vertical drag costs nothing.
+  if (sheet) {
+    const header = overlay.querySelector<HTMLElement>('.drawer-header, .story-modal-header');
+    for (const zone of [dragHandle, header]) {
+      if (zone) setupDragToDismiss(zone, sheet, close);
+    }
   }
 
   return { open, close };
@@ -99,6 +105,8 @@ function setupDragToDismiss(handle: HTMLElement, sheet: HTMLElement, close: () =
   let dragging = false;
 
   const onDown = (e: PointerEvent) => {
+    // Dragging from the header must not swallow taps on the close button.
+    if ((e.target as HTMLElement).closest('button')) return;
     dragging = true;
     startY = e.clientY;
     sheet.style.transition = 'none';

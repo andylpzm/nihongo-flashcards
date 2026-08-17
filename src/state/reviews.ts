@@ -14,29 +14,6 @@ function todayProgress(now: Date): DailyProgress {
   return progress.date === today ? progress : { date: today, newCount: 0, reviewCount: 0, extraNew: 0 };
 }
 
-/** How many new cards are still available today, given the newPerDay budget
- * (plus any one-off "Learn more" top-up) and how many new cards have already
- * been introduced today across any earlier sessions (not just the current
- * one). */
-export function getRemainingNewBudget(newPerDay: number, now: Date = new Date()): number {
-  const progress = todayProgress(now);
-  return Math.max(0, newPerDay + progress.extraNew - progress.newCount);
-}
-
-/** How many scheduled reviews are still allowed today, given the
- * maxReviewsPerDay budget and how many have already been recorded today. */
-export function getRemainingReviewBudget(maxReviewsPerDay: number, now: Date = new Date()): number {
-  const progress = todayProgress(now);
-  return Math.max(0, maxReviewsPerDay - progress.reviewCount);
-}
-
-/** Grants a one-off top-up of `amount` new cards for the rest of today (the
- * "Learn more" action once the daily budget is spent). */
-export function grantExtraNewBudget(amount: number, now: Date = new Date()): void {
-  const progress = todayProgress(now);
-  saveDailyProgress({ ...progress, extraNew: progress.extraNew + amount });
-}
-
 /** A card is considered durably "learned" once it has graduated to FSRS
  * Review state with a stability past the old app's mastery bar. Mirrors
  * srs/stats.ts's countLearned() threshold for a single-card check. */

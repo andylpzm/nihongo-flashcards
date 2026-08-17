@@ -87,7 +87,7 @@ body {
 }
 
 .orb-pink {
-  background: var(--accent-pink);
+  background: var(--accent-primary);
   top: -100px;
   right: -50px;
 }
@@ -177,4 +177,20 @@ button,
 .bottom-nav-item {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Removed from the page visually but left in the accessibility tree and the
+   document outline. Used for the site h1: the pager titles are the visible
+   headings now, but the page still needs a top-level name. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }

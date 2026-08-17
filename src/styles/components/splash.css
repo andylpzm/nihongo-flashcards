@@ -1,0 +1,221 @@
+/* Opening screen (ui/splash.ts) - "Dawn Gym".
+   Blue Box's own setting is a gymnasium in early-morning light, and its anime
+   opening is deliberately photographic: static, toned-down, mood carried by
+   colour rather than movement. So this holds still. The only things that move
+   are the counter and the hairline rule, and it leaves by fading.
+
+   Deliberately one palette in both themes: it is a curtain in front of the
+   app, not a surface inside it, so it does not re-value with the theme. */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  /* Above the bottom nav (1010) and the modal overlays (2000): it is a
+     curtain over the entire app, not a layer inside it. */
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* The ground the wash pools on; the blooms above supply the colour. */
+  background: linear-gradient(178deg, #0b1626 0%, #122a44 44%, #1f4a6d 78%, #34719c 100%);
+  transition: opacity 0.75s ease 0.45s, visibility 0.75s ease 0.45s;
+}
+
+/* The sheet the splash bleaches into on the way out. It is --surface, not a
+   hardcoded white, so it lands on the app's actual ground: white in light
+   mode, and the dark navy in dark mode rather than a white flash. */
+.splash-bleach {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--surface);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.65s ease;
+}
+
+body.splash-open {
+  overflow: hidden;
+}
+
+/* Two stages, ~1.2s total: the watercolour first washes out to the app's
+   background, then that sheet fades to reveal the app underneath. Fading the
+   splash straight to transparent cross-dissolved the blue wash against the
+   UI and looked muddy for the whole transition. */
+.splash.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash.is-leaving .splash-bleach {
+  opacity: 1;
+}
+
+/* ---- watercolour wash ----------------------------------------------------
+   Built from layered blurred blooms rather than an image: several oversized
+   radial gradients in cobalt, cerulean, violet and a little teal, heavily
+   blurred and screen-blended so they pool and overlap the way wet pigment
+   does on paper. Nothing here animates - it is composited once and then
+   sits still, so the blur costs nothing after the first frame. */
+.splash-wash {
+  position: absolute;
+  /* Overscanned so the blur has pigment to pull from past every edge, rather
+     than fading to nothing at the screen boundary. */
+  inset: -22%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  filter: blur(46px) saturate(125%);
+  background:
+    radial-gradient(38% 26% at 22% 20%, rgba(64, 132, 200, 0.85), transparent 70%),
+    radial-gradient(30% 22% at 78% 14%, rgba(96, 176, 222, 0.7), transparent 72%),
+    radial-gradient(34% 24% at 68% 40%, rgba(108, 96, 190, 0.55), transparent 70%),
+    radial-gradient(28% 20% at 30% 52%, rgba(74, 168, 190, 0.6), transparent 72%),
+    radial-gradient(42% 30% at 50% 82%, rgba(150, 205, 238, 0.8), transparent 68%),
+    radial-gradient(26% 18% at 12% 74%, rgba(86, 150, 214, 0.5), transparent 74%);
+}
+
+/* A second, tighter pass. Watercolour is never one flat wash - the pigment
+   settles unevenly and leaves denser pools inside the lighter field. */
+.splash-wash-2 {
+  position: absolute;
+  inset: -18%;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  filter: blur(26px);
+  opacity: 0.75;
+  background:
+    radial-gradient(22% 15% at 34% 28%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(18% 12% at 62% 62%, rgba(210, 240, 255, 0.45), transparent 72%),
+    radial-gradient(16% 11% at 80% 34%, rgba(120, 90, 180, 0.4), transparent 70%),
+    radial-gradient(20% 14% at 18% 46%, rgba(60, 120, 180, 0.35), transparent 72%);
+}
+
+/* Paper. Fractal noise at two frequencies: a fine tooth for the sheet itself,
+   and a coarser mottle that reads as pigment granulating into the grain. */
+.splash-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.34;
+  mix-blend-mode: overlay;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.06' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23m)'/%3E%3C/svg%3E");
+  background-size: 180px 180px, 320px 320px;
+}
+
+/* Light rising off the gym floor. */
+.splash-glow {
+  position: absolute;
+  left: 50%;
+  top: 76%;
+  transform: translate(-50%, -50%);
+  width: min(120vw, 460px);
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(190, 225, 250, 0.42), transparent 68%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+/* 青 - "blue". Ghosted large enough to read as texture, not as a word. */
+.splash-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-jp);
+  font-size: min(78vw, 20rem);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.05);
+  user-select: none;
+  pointer-events: none;
+}
+
+.splash-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.splash-kana {
+  font-family: var(--font-jp);
+  font-size: 0.9rem;
+  letter-spacing: 0.55em;
+  /* letter-spacing adds a trailing gap; the indent re-centres the word. */
+  text-indent: 0.55em;
+  color: rgba(214, 236, 255, 0.72);
+  margin-bottom: 1.4rem;
+}
+
+.splash-title-1 {
+  font-size: clamp(1.3rem, 6vw, 1.75rem);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #eaf4ff;
+}
+
+.splash-title-2 {
+  font-size: clamp(2rem, 9vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: #fff;
+  /* The wash is mottled, so the type needs its own soft halo to stay
+     readable wherever a pale bloom happens to sit behind it. */
+  text-shadow: 0 2px 22px rgba(8, 22, 40, 0.55);
+}
+
+.splash-title-1,
+.splash-kana {
+  text-shadow: 0 2px 18px rgba(8, 22, 40, 0.5);
+}
+
+.splash-rail {
+  position: absolute;
+  left: 2.4rem;
+  right: 2.4rem;
+  bottom: calc(3.6rem + env(safe-area-inset-bottom));
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.splash-fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.6), #fff);
+}
+
+.splash-status {
+  position: absolute;
+  right: 2.4rem;
+  bottom: calc(4.4rem + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: rgba(230, 244, 255, 0.85);
+}
+
+.splash-loading {
+  font-family: var(--font-jp);
+}
+
+/* Tabular figures so the rule and the label do not shuffle as digits change. */
+.splash-pct {
+  font-variant-numeric: tabular-nums;
+  min-width: 3.2ch;
+  text-align: right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash {
+    transition: none;
+  }
+}

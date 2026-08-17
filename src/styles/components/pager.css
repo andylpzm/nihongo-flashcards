@@ -1,0 +1,526 @@
+/* Page-card pager (ui/pager.ts).
+   A big page title plus a dot indicator, replacing the small pill switchers.
+   The title doubles as the "where am I" signal that the pill pair used to
+   carry in ~28px of height. */
+
+.pager-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  margin-bottom: 1.1rem;
+  /* Springs back after a non-committed drag; the drag itself sets transform
+     inline, so only the release is animated. */
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The page title is the largest thing on the screen now that the site title
+   is gone - it names where you are, so it carries the weight the old h1 had. */
+.pager-title {
+  font-size: clamp(2.4rem, 12vw, 3.4rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  /* background-clip:text clips to the line box, so line-height:1 sheared the
+     descenders off Hiragana, Kanji and Browse. */
+  line-height: 1.2;
+  padding-bottom: 0.04em;
+  text-align: center;
+  background: var(--title-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* The title swaps while the cards are mid-flight; a short cross-fade ties
+   the two together instead of the text snapping. */
+.pager-title.is-changing {
+  animation: pager-title-swap 0.34s ease;
+}
+
+@keyframes pager-title-swap {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pager-dots {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* The dot is 8px of ink inside a 38x44 touch target - the swipe is an
+   accelerator, so the tap equivalent has to be genuinely tappable. The row
+   has no gap: the targets sit flush and the padding inside each one supplies
+   the visual spacing. Widening these to 44 *and* keeping a gap pushed the
+   visible pills 14px apart and the row read as broken. */
+.pager-dot {
+  position: relative;
+  width: 38px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pager-dot::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border-hover);
+  transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1), background 0.2s;
+}
+
+.pager-dot.is-active::before {
+  width: 22px;
+  background: var(--text);
+}
+
+body.light-theme .pager-dot::before {
+  background: rgba(2, 132, 199, 0.3);
+}
+
+body.light-theme .pager-dot.is-active::before {
+  background: #0284c7;
+}
+
+/* ---- the deck ------------------------------------------------------------
+   Each page is a physical card, and the cards still to come peek out from
+   behind its top edge the way a ring-bound flashcard stack does. Peeks are
+   drawn on the stage rather than being real elements, and the count comes
+   from data-remaining so the stack visibly thins as you work through it. */
+
+.pager-stage {
+  position: relative;
+  width: 100%;
+  /* Room for the stack edges above the top card. */
+  padding-top: 14px;
+}
+
+.pager-stage::before,
+.pager-stage::after {
+  content: '';
+  position: absolute;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  background: var(--surface-raised);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pager-stage::before {
+  left: 10px;
+  right: 10px;
+  top: 7px;
+}
+
+.pager-stage::after {
+  left: 21px;
+  right: 21px;
+  top: 0;
+}
+
+.pager-stage[data-remaining='1']::before,
+.pager-stage[data-remaining='2']::before {
+  opacity: 1;
+}
+
+.pager-stage[data-remaining='2']::after {
+  opacity: 0.6;
+}
+
+body.light-theme .pager-stage::before,
+body.light-theme .pager-stage::after {
+  background: #f1f5f9;
+  border-color: rgba(2, 132, 199, 0.15);
+}
+
+/* The card itself. Same material as the flashcard so the two read as the
+   same kind of object. */
+.pager-card {
+  position: relative;
+  z-index: 2;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  /* Opaque base under the glass sheen. A translucent card looks fine at
+     rest, but mid-deal the two cards overlap and you read both at once -
+     a real card hides what's beneath it. */
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    var(--surface-raised);
+  box-shadow: 0 16px 34px var(--shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 1.1rem 0.9rem 1.4rem;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  /* Corners must clip the content, or a long grid paints over the radius. */
+  overflow: hidden;
+}
+
+/* Liquid-glass rim: a 1px gradient ring that catches light at the top-left
+   and fades along the sides, rather than a flat uniform border. Drawn as a
+   masked gradient so it follows the radius exactly. */
+.pager-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.08) 28%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.light-theme .pager-card::after {
+  background: linear-gradient(
+    145deg,
+    rgba(2, 132, 199, 0.35) 0%,
+    rgba(2, 132, 199, 0.1) 30%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(2, 132, 199, 0.18) 100%
+  );
+}
+
+body.light-theme .pager-card {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.18);
+}
+
+.pager-ghost {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 14px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---- dealing -------------------------------------------------------------
+   Forward: the top card is thrown off to the left and the next one rises out
+   of the stack behind it. Backward: the previous card flies back in from the
+   left and lands on top, pushing the current one down into the stack. The
+   card that moves is always the one on top, which is what makes it read as a
+   deck rather than a carousel. */
+
+.pager-stage.is-forward .pager-ghost {
+  z-index: 3;
+  animation: pager-throw-off 0.36s cubic-bezier(0.4, 0, 0.7, 0.5) forwards;
+}
+
+.pager-stage.is-forward .pager-incoming {
+  z-index: 2;
+  animation: pager-rise 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pager-stage.is-back .pager-ghost {
+  z-index: 2;
+  animation: pager-sink 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.pager-stage.is-back .pager-incoming {
+  z-index: 3;
+  animation: pager-fly-in 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* No opacity anywhere in these: fading an element makes the whole card
+   translucent mid-flight and you read both pages at once. A thrown card
+   stays solid and simply leaves the frame. Depth is carried by scale and
+   brightness, which do not make the card see-through. */
+@keyframes pager-throw-off {
+  to {
+    transform: translateX(-118%) rotate(-6deg);
+  }
+}
+
+@keyframes pager-fly-in {
+  from {
+    transform: translateX(-118%) rotate(-6deg);
+  }
+  to {
+    transform: translateX(0) rotate(0);
+  }
+}
+
+/* Rising and sinking are the same move in opposite directions: the card
+   behind is smaller, lower and darker than the one on top. */
+@keyframes pager-rise {
+  from {
+    transform: scale(0.93) translateY(12px);
+    filter: brightness(0.62);
+  }
+  to {
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes pager-sink {
+  from {
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(0.93) translateY(12px);
+    filter: brightness(0.62);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pager-header,
+  .pager-card,
+  .pager-dot::before {
+    transition: none;
+  }
+
+  .pager-stage .pager-incoming,
+  .pager-stage .pager-ghost {
+    animation: none;
+  }
+}
+
+/* The Study/Browse pill pair is superseded by the deck's title and dots. It
+   stays in the DOM because card.ts still drives its active state, but it is
+   never drawn - two controls for one choice is exactly the clutter the deck
+   was meant to remove. */
+.session-bar .toggle-group[aria-label='Study Mode'] {
+  display: none;
+}
+
+/* A story chapter is a fixed curriculum, not a Study/Browse choice - story
+   mode forces browse, so offering the deck there would misreport the state.
+   Keyed off the visible Return-to-Story button rather than a second flag. */
+#section-vocabulary:has(#btn-back-to-story:not(.hidden)) > .pager-header {
+  display: none;
+}
+
+/* ---- Study deck: the flashcard is a card inside a card -------------------
+   Everywhere else the page card is the top of the stack and lifts off the
+   background. Here it contains another one, so inverting the light makes the
+   relationship legible: the flashcard reads as pressed *into* the page card.
+   Every value below is a token, so light mode is handled in themes.css and
+   this block needs no light-theme twin. */
+
+#section-vocabulary .pager-card {
+  --card-width: min(100%, 480px);
+  /* Study and Browse hang different chrome below the flashcard, which left
+     the Browse card 50px shorter. Both stretch to the taller layout so the
+     card does not resize under you when you swipe. Tracks --card-height so
+     it still scales with the viewport. */
+  min-height: calc(var(--card-height) + 256px);
+  /* No backdrop-filter: it establishes a containing block for position:fixed
+     descendants, and the grade bar lives inside this card - with the filter
+     on it anchored to the card instead of the viewport. */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* Column layout, with main stretching, so the controls block can take
+     margin-top:auto and settle the deck count at the foot of the card. */
+  display: flex;
+  flex-direction: column;
+}
+
+#section-vocabulary .pager-card > main {
+  flex: 1;
+}
+
+#section-vocabulary .pager-card .controls-container {
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+#section-vocabulary .pager-card .card-face {
+  background: var(--recess-fill);
+  /* No outline: a real recess is defined by the shadow falling into it. */
+  border-color: transparent;
+  box-shadow:
+    inset 0 2px 4px var(--recess-shadow),
+    inset 0 -1px 0 var(--recess-highlight);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The lift-on-hover glow fights the pressed-in look. */
+@media (hover: hover) {
+  #section-vocabulary .pager-card .card-viewport:hover .card-front,
+  #section-vocabulary .pager-card .card-viewport:hover .card-back {
+    box-shadow:
+      inset 0 2px 4px var(--recess-shadow),
+      inset 0 -1px 0 var(--recess-highlight);
+  }
+}
+
+/* Length picker: three keys standing proud of a recessed tray, the chosen
+   one pressed back down into it. */
+#session-length-group {
+  display: flex;
+  gap: 0.3rem;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  padding: 0.3rem;
+  flex-wrap: nowrap;
+  border: none;
+  border-radius: 16px;
+  background: var(--tray-fill);
+  box-shadow: inset 0 1px 3px var(--tray-shadow);
+}
+
+#session-length-group .btn-toggle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05rem;
+  padding: 0.55rem 0.3rem;
+  border: none;
+  border-radius: 13px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text);
+  background: var(--key-face);
+  box-shadow:
+    0 2px 6px var(--key-shadow),
+    inset 0 1px 0 var(--key-sheen);
+  transition: background 0.15s, box-shadow 0.15s, transform 0.12s, color 0.15s;
+}
+
+#session-length-group .btn-toggle small {
+  font-size: 0.63rem;
+  font-weight: 500;
+  opacity: 0.55;
+}
+
+/* Pressed in: the key sinks, its shadow moves inside, and the highlight
+   swaps to the bottom edge where light would now catch. */
+#session-length-group .btn-toggle.active,
+#session-length-group .btn-toggle:active {
+  transform: translateY(1px);
+  background: var(--key-pressed-fill);
+  color: var(--text);
+  box-shadow: inset 0 1px 3px var(--key-pressed-shadow);
+}
+
+/* Start session: same physical language, but it keeps the accent fill - the
+   keys are neutral controls whose pressed state means "selected", this is the
+   primary action. Its glow is a token, so it follows the theme's accent
+   instead of staying pink on a blue button. */
+.start-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.9rem;
+}
+
+.start-row #btn-start-session {
+  min-width: 200px;
+  border: none;
+  box-shadow:
+    0 4px 10px var(--accent-primary-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition: box-shadow 0.15s, transform 0.12s, filter 0.15s;
+}
+
+.start-row #btn-start-session:active {
+  transform: translateY(2px);
+  filter: brightness(0.94);
+  box-shadow:
+    0 1px 3px var(--accent-primary-glow),
+    inset 0 2px 5px var(--key-pressed-shadow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #session-length-group .btn-toggle,
+  .start-row #btn-start-session {
+    transition: none;
+  }
+}
+
+/* ---- idle study card -----------------------------------------------------
+   What is waiting, stated once, in the one place the eye already is. */
+.ready-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 100%;
+  text-align: center;
+}
+
+.ready-count {
+  font-size: clamp(3rem, 16vw, 4.4rem);
+  font-weight: 900;
+  /* background-clip:text clips to the line box, so a sub-1 line-height shaves
+     the top and bottom off the digits. */
+  line-height: 1.3;
+  padding: 0.06em 0.08em;
+  letter-spacing: -0.04em;
+  background: var(--hero-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ready-label {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.ready-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.ready-body {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  max-width: 26ch;
+  line-height: 1.5;
+}
+
+/* Long-term progress lives below the deck, not in it: you finish with the
+   card, cross a divider, and this is a separate thing about the whole
+   collection rather than about the session in front of you. */
+#section-vocabulary > main > .proposal-container {
+  width: 100%;
+  max-width: var(--card-width);
+  margin: 2.25rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Deck bar sits directly in the card column now, not inside .controls-container. */
+#section-vocabulary .pager-card .deck-bar {
+  max-width: var(--card-width);
+}

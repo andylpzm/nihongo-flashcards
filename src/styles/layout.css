@@ -30,7 +30,9 @@
 header {
   width: 100%;
   max-width: 900px;
-  padding: 1.5rem 2rem 0.75rem;
+  /* The site title is visually hidden, so this only has to clear the status
+     bar and seat the progress panel. */
+  padding: 0.75rem 2rem 0.5rem;
   text-align: center;
 }
 
@@ -54,11 +56,11 @@ body.light-theme .logo-section h1 {
   width: 100%;
   max-width: 600px;
   margin: 1.5rem auto 0;
-  background: linear-gradient(135deg, rgba(255, 45, 85, 0.08) 0%, rgba(139, 92, 246, 0.05) 100%);
-  border: 1px solid rgba(255, 45, 85, 0.2);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-primary) 8%, transparent) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 20%, transparent);
   border-radius: 18px;
   padding: 1.25rem 1.5rem;
-  box-shadow: 0 10px 30px rgba(255, 45, 85, 0.1);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--accent-primary) 10%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -75,8 +77,8 @@ body.light-theme .logo-section h1 {
 
 .proposal-title {
   font-weight: 600;
-  color: var(--accent-pink);
-  text-shadow: 0 0 10px var(--accent-pink-glow);
+  color: var(--accent-primary);
+  text-shadow: 0 0 10px var(--accent-primary-glow);
 }
 
 .proposal-stats {
@@ -117,10 +119,10 @@ body.light-theme .proposal-bar-bg {
 .proposal-bar-fill {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent-pink) 0%, var(--accent-purple) 100%);
+  background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-purple) 100%);
   border-radius: 999px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 0 10px rgba(255, 45, 85, 0.5);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-primary) 50%, transparent);
 }
 
 /* Section visibility toggles */
@@ -258,4 +260,24 @@ body.light-theme .kb-shortcut {
     padding-right: max(1rem, env(safe-area-inset-right));
     padding-bottom: calc(var(--bottom-nav-height) + max(1rem, env(safe-area-inset-bottom)));
   }
+}
+
+/* Court netting behind everything. A 45-degree criss-cross reads as sports
+   net without being a literal illustration. Masked so it fades out before it
+   reaches the content, and pinned behind on a fixed layer with a negative
+   z-index so it can never intercept a tap. Light mode needs roughly triple
+   the alpha of dark: a pale line on near-white has far less contrast to work
+   with than the same line on near-black. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--net-opacity, 0.5);
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 27px, var(--net-line) 27px 28px),
+    repeating-linear-gradient(-45deg, transparent 0 27px, var(--net-line) 27px 28px);
+  -webkit-mask-image: radial-gradient(120% 85% at 50% 8%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(120% 85% at 50% 8%, #000 0%, transparent 72%);
 }

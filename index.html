@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
   <link rel="shortcut icon" href="/apple-touch-icon.png?v=2">
 </head>
-<body>
+<body class="splash-open">
 
   <!-- Floating Background & Sports Decorations Container (Clips overflows on iOS) -->
   <div class="decorations-container" aria-hidden="true">
@@ -59,6 +59,35 @@
 
   <!-- Mobile Bottom Tab Bar (primary navigation, replaces the hamburger
        drawer for the four main sections on phones/tablets) -->
+  <!-- Shown on every section except Study while a session is running, so the
+       session is never something you have silently walked away from. -->
+  <button class="resume-bar" id="btn-resume-session" hidden>
+    <span class="resume-dot" aria-hidden="true"></span>
+    <span class="resume-text">Session in progress<span class="resume-count" id="resume-count"></span></span>
+    <span class="resume-cta">Resume</span>
+  </button>
+
+  <!-- Opening screen (ui/splash.ts). Sits first in the body so it paints
+       before the app behind it, and is removed from the DOM once dismissed. -->
+  <div class="splash" id="splash" role="status" aria-live="polite" aria-label="Loading Nihongo Cards">
+    <div class="splash-wash" aria-hidden="true"></div>
+    <div class="splash-wash-2" aria-hidden="true"></div>
+    <div class="splash-grain" aria-hidden="true"></div>
+    <div class="splash-mark" aria-hidden="true" lang="ja">&#38738;</div>
+    <div class="splash-glow" aria-hidden="true"></div>
+    <div class="splash-body">
+      <div class="splash-kana" lang="ja" aria-hidden="true">&#12395;&#12411;&#12435;&#12372;</div>
+      <div class="splash-title-1">Nihongo Cards</div>
+      <div class="splash-title-2">for Chris-kun</div>
+    </div>
+    <div class="splash-status">
+      <span class="splash-loading" lang="ja">&#35501;&#12415;&#36796;&#12415;&#20013;</span>
+      <span class="splash-pct" id="splash-pct">0%</span>
+    </div>
+    <div class="splash-rail"><div class="splash-fill" id="splash-fill"></div></div>
+    <div class="splash-bleach" aria-hidden="true"></div>
+  </div>
+
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary">
     <button class="bottom-nav-item active" id="bottom-nav-study" aria-label="Study Vocabulary" aria-current="page">
       <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
@@ -72,9 +101,9 @@
       <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
       <span>Story</span>
     </button>
-    <button class="bottom-nav-item" id="bottom-nav-stats" aria-label="Stats">
+    <button class="bottom-nav-item" id="bottom-nav-stats" aria-label="Progress">
       <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
-      <span>Stats</span>
+      <span>Progress</span>
     </button>
   </nav>
 
@@ -106,7 +135,7 @@
         </li>
         <li class="menu-item" id="menu-stats" role="menuitem" tabindex="0">
           <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
-          Stats
+          Progress
         </li>
       </ul>
       <div class="sidebar-footer">
@@ -120,38 +149,30 @@
       
       <!-- Top Title and Metrics Dashboard -->
       <header>
+        <!-- Kept for the document outline and screen readers; the visible
+             heading on every screen is now the pager's page title. -->
         <div class="logo-section">
-          <h1>Nihongo Cards for Chris-kun</h1>
+          <h1 class="visually-hidden">Nihongo Cards for Chris-kun</h1>
         </div>
 
-        <!-- Proposal Progress Dashboard -->
-        <!-- Browse-only progress: counts words you've hand-marked as learned.
-             Hidden entirely in Study Session mode (see focus.css) - a session
-             reports its own progress and the two were contradicting. -->
-        <div class="proposal-container" id="proposal-container">
-          <div class="proposal-header">
-            <span class="proposal-title">💍 Proposal Progress</span>
-            <div class="proposal-stats">
-              <span><strong id="count-learned">0</strong>/<strong id="count-total">0</strong> learned</span>
-              <span style="margin-left: 1rem;">🔥 <strong id="count-streak">0</strong></span>
-            </div>
-          </div>
-          <div class="proposal-bar-bg" style="margin-bottom: 0.65rem;">
-            <div class="proposal-bar-fill" id="proposal-bar-fill"></div>
-          </div>
-          <div class="proposal-remaining" id="proposal-remaining">Loading...</div>
-        </div>
       </header>
 
       <!-- Mode 1: Vocabulary Workspace -->
       <section class="section" id="section-vocabulary">
         <main style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <!-- Study session / Browse are two cards of one deck (ui/pager.ts).
+               The stage is what the pager animates; the card viewport inside
+               keeps its own next/previous swipe (see pager's ignoreFrom). -->
+          <div class="pager-stage">
+            <div class="pager-content" id="study-pages">
           <!-- Return to Story button (Only visible in story study mode) -->
           <button class="btn hidden" id="btn-back-to-story">
             ← Return to Story Roadmap
           </button>
 
           <!-- Study Mode Toggle + Session Status Bar -->
+
+          <!-- 3D Flippable Card Viewport -->
           <div class="session-bar">
             <div class="toggle-group" role="group" aria-label="Study Mode">
               <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">Study session</button>
@@ -163,15 +184,27 @@
             </div>
             <!-- Length picker: visible only in the idle/available and complete states -->
             <div class="toggle-group hidden" id="session-length-group" role="group" aria-label="Session length">
-              <button class="btn-toggle" data-length="short">Short</button>
-              <button class="btn-toggle active" data-length="medium">Medium</button>
-              <button class="btn-toggle" data-length="long">Long</button>
+              <button class="btn-toggle" data-length="short">Short<small>10</small></button>
+              <button class="btn-toggle active" data-length="medium">Medium<small>25</small></button>
+              <button class="btn-toggle" data-length="long">Long<small>50</small></button>
             </div>
-            <button class="btn btn-primary hidden" id="btn-start-session">Start session</button>
             <button class="btn hidden" id="btn-end-session">End session</button>
           </div>
 
-          <!-- 3D Flippable Card Viewport -->
+            <!-- Deck bar: live summary of the filtered deck + one entry point
+            to the filter sheet (replaces the old wall of toggle pills) -->
+            <button class="deck-bar" id="btn-open-filters" aria-haspopup="dialog" aria-label="Deck filters">
+            <span class="deck-bar-text">
+            <span class="deck-bar-count" id="deck-bar-count">0 cards</span>
+            <span class="deck-bar-summary" id="deck-bar-summary">No filters</span>
+            </span>
+            <span class="deck-bar-action">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
+            Filters
+            <span class="deck-bar-badge hidden" id="deck-bar-badge">0</span>
+            </span>
+            </button>
+
           <div class="card-viewport" id="card-viewport" role="button" tabindex="0" aria-label="Flashcard. Click to flip." aria-live="polite">
             <div class="flashcard">
               <!-- Front Face -->
@@ -184,6 +217,13 @@
               </div>
             </div>
           </div>
+
+          <!-- Below the card on purpose: the card states what is waiting,
+               so the action that acts on it reads after it, not before. -->
+          <div class="start-row">
+            <button class="btn btn-primary hidden" id="btn-start-session">Start session</button>
+          </div>
+
 
           <!-- Controls Panel -->
           <div class="controls-container">
@@ -218,20 +258,25 @@
               </button>
             </div>
 
-            <!-- Deck bar: live summary of the filtered deck + one entry point
-                 to the filter sheet (replaces the old wall of toggle pills) -->
-            <button class="deck-bar" id="btn-open-filters" aria-haspopup="dialog" aria-label="Deck filters">
-              <span class="deck-bar-text">
-                <span class="deck-bar-count" id="deck-bar-count">0 cards</span>
-                <span class="deck-bar-summary" id="deck-bar-summary">No filters</span>
-              </span>
-              <span class="deck-bar-action">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></svg>
-                Filters
-                <span class="deck-bar-badge hidden" id="deck-bar-badge">0</span>
-              </span>
-            </button>
 
+          </div>
+          </div>
+          </div>
+
+          <!-- Outside the card on purpose: you scroll past the deck, cross a
+               divider, and the long-term progress panel is its own thing. -->
+          <div class="proposal-container" id="proposal-container">
+            <div class="proposal-header">
+              <span class="proposal-title">&#128141; Proposal Progress</span>
+              <div class="proposal-stats">
+                <span><strong id="count-learned">0</strong>/<strong id="count-total">0</strong> learned</span>
+                <span style="margin-left: 1rem;">&#128293; <strong id="count-streak">0</strong></span>
+              </div>
+            </div>
+            <div class="proposal-bar-bg" style="margin-bottom: 0.65rem;">
+              <div class="proposal-bar-fill" id="proposal-bar-fill"></div>
+            </div>
+            <div class="proposal-remaining" id="proposal-remaining">Loading...</div>
           </div>
         </main>
       </section>
@@ -251,69 +296,84 @@
       </section>
 
       <!-- Mode 2: Hiragana Learning Workspace -->
-      <section class="section hidden" id="section-hiragana">
+      <!-- Modes 3A-3C: Kana + Kanji charts, one pager (ui/pager.ts).
+           The three used to be separate sections each carrying a duplicate
+           three-button switcher; they are now pages of one deck. -->
+      <section class="section hidden" id="section-kana">
         <div class="kana-section">
-          <div class="kana-switch" role="group" aria-label="Syllabary">
-            <button class="btn-kana-switch active" data-kana="hiragana" lang="ja">ひらがな<span lang="en">Hiragana</span></button>
-            <button class="btn-kana-switch" data-kana="katakana" lang="ja">カタカナ<span lang="en">Katakana</span></button>
-          </div>
-          <div class="kana-section-header">
-            <h2>Hiragana Academy</h2>
-            <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
-            <div class="chart-tab-group" id="hiragana-tabs">
-              <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
-              <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
-              <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
+          <div class="pager-stage">
+            <div class="pager-content" id="kana-pages">
+
+              <div class="kana-page" data-kana-page="hiragana">
+                <div class="kana-section-header">
+                  <div class="chart-tab-group" id="hiragana-tabs">
+                    <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
+                    <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
+                    <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
+                  </div>
+                  <button class="btn btn-primary btn-study-kana" id="btn-practice-hiragana">
+                    Study Hiragana Flashcards
+                  </button>
+                </div>
+                <div class="kana-grid-container" id="hiragana-grid-container"></div>
+              </div>
+
+              <div class="kana-page hidden" data-kana-page="katakana">
+                <div class="kana-section-header">
+                  <div class="chart-tab-group" id="katakana-tabs">
+                    <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
+                    <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
+                    <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
+                  </div>
+                  <button class="btn btn-primary btn-study-kana" id="btn-practice-katakana">
+                    Study Katakana Flashcards
+                  </button>
+                </div>
+                <div class="kana-grid-container" id="katakana-grid-container"></div>
+              </div>
+
+              <div class="kana-page hidden" data-kana-page="kanji">
+                <div class="kana-section-header">
+                  <div class="chart-tab-group" id="kanji-tabs">
+                    <button class="btn-chart-tab active" data-level="N5">N5 (80)</button>
+                    <button class="btn-chart-tab" data-level="N4">N4 (170)</button>
+                  </div>
+                  <button class="btn btn-primary btn-study-kana" id="btn-practice-kanji">
+                    Study Kanji Flashcards
+                  </button>
+                </div>
+                <div class="kana-grid-container kanji-grid" id="kanji-grid-container"></div>
+                <p class="data-credit">
+                  Kanji readings and meanings from
+                  <a href="http://www.edrdg.org/wiki/index.php/KANJIDIC_Project" target="_blank" rel="noopener">KANJIDIC2</a>
+                  &copy; EDRDG, CC BY-SA 4.0.
+                </p>
+              </div>
+
             </div>
-            <button class="btn btn-primary btn-study-kana" id="btn-practice-hiragana">
-              Study Hiragana Flashcards
-            </button>
-          </div>
-          <div class="kana-grid-container" id="hiragana-grid-container">
-            <!-- Programmatically populated via JS -->
           </div>
         </div>
       </section>
 
-      <!-- Mode 3: Katakana Learning Workspace -->
-      <section class="section hidden" id="section-katakana">
-        <div class="kana-section">
-          <div class="kana-switch" role="group" aria-label="Syllabary">
-            <button class="btn-kana-switch" data-kana="hiragana" lang="ja">ひらがな<span lang="en">Hiragana</span></button>
-            <button class="btn-kana-switch active" data-kana="katakana" lang="ja">カタカナ<span lang="en">Katakana</span></button>
-          </div>
-          <div class="kana-section-header">
-            <h2>Katakana Academy</h2>
-            <p>Click on any character cell to hear its native pronunciation. Switch to Study mode to test your memory!</p>
-            <div class="chart-tab-group" id="katakana-tabs">
-              <button class="btn-chart-tab active" data-tab="basic">Basic (清音)</button>
-              <button class="btn-chart-tab" data-tab="voiced">Voiced (濁音)</button>
-              <button class="btn-chart-tab" data-tab="combos">Combos (拗音)</button>
-            </div>
-            <button class="btn btn-primary btn-study-kana" id="btn-practice-katakana">
-              Study Katakana Flashcards
-            </button>
-          </div>
-          <div class="kana-grid-container" id="katakana-grid-container">
-            <!-- Programmatically populated via JS -->
-          </div>
-        </div>
-      </section>
-
-      <!-- Mode 4: Study Stats Dashboard -->
+      <!-- Mode 4: Progress Dashboard -->
       <section class="section hidden" id="section-stats">
         <div class="kana-section" style="max-width: 800px; width: 100%;">
-          <div class="kana-section-header">
-            <h2>Study Stats</h2>
-            <p>How review sessions have been going.</p>
-            <button class="btn btn-open-settings">Study Settings</button>
-          </div>
           <div class="stats-grid" id="stats-grid">
             <!-- Programmatically populated via JS -->
           </div>
+          <!-- Settings sits at the foot of the page as an ordinary row. It was
+               a gear absolutely positioned in the corner, which overlapped the
+               first tile and had nothing to anchor to. -->
+          <button class="settings-row btn-open-settings">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5zm7.4-2.6a7.6 7.6 0 0 0 0-1.8l2-1.6a.5.5 0 0 0 .1-.6l-1.9-3.2a.5.5 0 0 0-.6-.2l-2.3.9a7.3 7.3 0 0 0-1.6-.9l-.3-2.5a.5.5 0 0 0-.5-.4h-3.8a.5.5 0 0 0-.5.4l-.3 2.5a7.3 7.3 0 0 0-1.6.9l-2.3-.9a.5.5 0 0 0-.6.2L2.5 8.9a.5.5 0 0 0 .1.6l2 1.6a7.6 7.6 0 0 0 0 1.8l-2 1.6a.5.5 0 0 0-.1.6l1.9 3.2a.5.5 0 0 0 .6.2l2.3-.9a7.3 7.3 0 0 0 1.6.9l.3 2.5a.5.5 0 0 0 .5.4h3.8a.5.5 0 0 0 .5-.4l.3-2.5a7.3 7.3 0 0 0 1.6-.9l2.3.9a.5.5 0 0 0 .6-.2l1.9-3.2a.5.5 0 0 0-.1-.6z"/></svg>
+            <span>Settings</span>
+            <span class="settings-row-chevron" aria-hidden="true">&rsaquo;</span>
+          </button>
+
           <!-- On mobile the sidebar (and its footer) is gone, so main.ts moves
                the forgotten-things trigger in here -->
           <div class="forgotten-host" id="forgotten-host"></div>
+
         </div>
       </section>
 
@@ -369,6 +429,20 @@
       <source srcset="/forgotten_things.webp" type="image/webp">
       <img src="/forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
     </picture>
+  </div>
+
+  <!-- Kanji detail sheet -->
+  <div class="modal-overlay hidden" id="kanji-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="kanji-sheet-title">
+    <div class="modal-sheet kanji-sheet" id="kanji-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="drawer-header">
+        <div class="drawer-title-block">
+          <h3 id="kanji-sheet-title">Kanji</h3>
+        </div>
+        <button class="btn-close-drawer" id="btn-close-kanji" aria-label="Close">&times;</button>
+      </div>
+      <div class="drawer-body" id="kanji-sheet-body"></div>
+    </div>
   </div>
 
   <!-- Vocabulary Filter Drawer Modal (Concept B Refined) -->
@@ -462,8 +536,8 @@
         <div class="filter-section">
           <h4 class="filter-section-title">Theme</h4>
           <div class="filter-grid progress-grid" id="settings-theme-grid">
-            <button class="filter-chip-btn" data-theme-choice="dark">Dark</button>
-            <button class="filter-chip-btn" data-theme-choice="light">Light</button>
+            <button class="filter-chip-btn" data-theme-choice="dark" aria-label="Chii, dark theme">Chii</button>
+            <button class="filter-chip-btn" data-theme-choice="light" aria-label="Taiki, light theme">Taiki</button>
           </div>
         </div>
       </div>

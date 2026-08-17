@@ -13,8 +13,13 @@ body.light-theme {
   --border: rgba(2, 132, 199, 0.12);
   --border-hover: rgba(2, 132, 199, 0.24);
 
-  --accent-pink: #ec4899;
-  --accent-pink-glow: rgba(236, 72, 153, 0.15);
+  /* Blue, like the rest of this theme. It was pink, which nothing else here
+     used - invisible until the Progress calendar started tinting itself with
+     the accent, at which point the whole page went pink against a blue UI. */
+  --accent-primary: #0284c7;
+  /* Stronger than dark's: a pale line on a near-white ground has far less
+     contrast to work with than a pale line on near-black. */
+  --net-line: rgba(2, 132, 199, 0.16);
   --accent-cyan: #0284c7;
   --accent-cyan-glow: rgba(2, 132, 199, 0.2);
   --accent-orange: #0284c7;
@@ -25,13 +30,18 @@ body.light-theme {
   position: relative;
 }
 
+/* Both orbs stay cool. The top one used to be orange (#f97316), which is the
+   one warm element in an otherwise entirely blue light theme - and once the
+   net went over it, warm wash under cool lines desaturated into a muddy
+   grey-brown. Two related blues keep the wash airy and let the net read as
+   line rather than as dirt. */
 body.light-theme .glow-orb {
-  opacity: 0.24;
-  filter: blur(100px);
+  opacity: 0.2;
+  filter: blur(110px);
 }
 
 body.light-theme .orb-pink {
-  background: #f97316;
+  background: #93c5fd;
   width: 450px;
   height: 450px;
   top: 5%;
@@ -39,9 +49,33 @@ body.light-theme .orb-pink {
 }
 
 body.light-theme .orb-cyan {
-  background: #38bdf8;
+  background: #7dd3fc;
   width: 500px;
   height: 500px;
   bottom: 10%;
   left: 5%;
+}
+
+/* Physical surfaces in light mode: the same shapes lit from the same angle,
+   only re-valued. No component rules are duplicated for this. */
+body.light-theme {
+  --recess-fill: rgba(2, 132, 199, 0.04);
+  --recess-shadow: rgba(2, 132, 199, 0.1);
+  --recess-highlight: rgba(255, 255, 255, 0.8);
+
+  /* Tray tinted a touch harder here so the white keys have something to pop
+     against - on a white card an untinted track leaves them invisible. */
+  --tray-fill: rgba(2, 132, 199, 0.08);
+  --tray-shadow: rgba(2, 132, 199, 0.13);
+
+  --key-face: #ffffff;
+  --key-sheen: rgba(255, 255, 255, 0.9);
+  --key-shadow: rgba(15, 23, 42, 0.14);
+  --key-pressed-fill: rgba(2, 132, 199, 0.1);
+  --key-pressed-shadow: rgba(2, 132, 199, 0.16);
+
+  --accent-primary-glow: rgba(2, 132, 199, 0.28);
+
+  --hero-gradient: linear-gradient(160deg, #0f4c81 40%, var(--accent-cyan) 135%);
+  --title-gradient: linear-gradient(100deg, #0f4c81 45%, #0284c7 100%);
 }

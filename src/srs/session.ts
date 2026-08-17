@@ -1,7 +1,10 @@
-import { Rating, State } from './scheduler';
-import type { FsrsCard, Grade } from './types';
+import { Rating } from './scheduler';
+import type { Grade } from './types';
 import type { QueueItem } from './queue';
 import type { CardId } from '../state/types';
+
+/** How many times one card may come back inside a single sitting. */
+const MAX_REPEATS = 2;
 
 export interface SessionProgress {
   /** Distinct cards that have graduated out of this session. */
@@ -18,23 +21,26 @@ export interface SessionProgress {
 /**
  * An in-flight study sitting.
  *
- * The key rule: a card leaves the session only when its next due time is beyond
- * the learn-ahead window. FSRS learning steps schedule a new card ~10 minutes out,
- * which means "show me again this sitting" - the previous implementation dropped
- * the card instead, so a session was over after `newPerDay` cards and could never
- * teach anything (see D1 in the plan).
+ * A card leaves the session as soon as it is answered - except one you got
+ * wrong, which comes back for a second look before the sitting ends.
+ *
+ * This used to key off FSRS learning steps, which kept *every* card circling
+ * until it had been answered well twice. That made a "10 card" session take 17
+ * answers and made the count meaningless. The schedule is now committed on the
+ * first answer; the repeat below is a queue behaviour, giving the corrective
+ * second attempt to the cards that were actually failed.
  */
 export class StudySession {
   private readonly queue: QueueItem[] = [];
   private readonly totalCards: number;
   private readonly graduated = new Set<CardId>();
+  private readonly repeats = new Map<CardId, number>();
   private readonly startedAt: number;
   private answers = 0;
   private correct = 0;
 
   constructor(
     items: QueueItem[],
-    private readonly learnAheadMs: number,
     now: Date = new Date(),
     /** Resume state for a session restored from sessionStore.ts (Step 4).
      * `graduatedCount` isn't tracked by individual id in storage - only the
@@ -85,34 +91,34 @@ export class StudySession {
   /**
    * Record a grade for the current card and advance.
    *
-   * @param scheduled the FSRS card produced by scheduleReview() for this grade -
-   *        the caller has already persisted it, we only need its `due` to decide
-   *        whether the card stays in this sitting.
+   * Only the grade matters now: the schedule was committed by the caller when
+   * it wrote the review, and whether the card comes back this sitting depends
+   * on whether it was failed, not on where FSRS put it.
    */
-  advance(grade: Grade, scheduled: FsrsCard, now: Date = new Date()): void {
+  advance(grade: Grade): void {
     const item = this.queue.shift();
     if (!item) return;
 
     this.answers++;
     if (grade === Rating.Good || grade === Rating.Easy) this.correct++;
 
-    const dueInMs = scheduled.due.getTime() - now.getTime();
-    const staysInSession =
-      dueInMs <= this.learnAheadMs &&
-      (scheduled.state === State.Learning || scheduled.state === State.Relearning);
+    // Capped so a card answered Forgot repeatedly cannot loop for ever: after
+    // the second failure it is left for the next session rather than blocking
+    // this one.
+    const seen = (this.repeats.get(item.card.id) ?? 0) + 1;
+    const staysInSession = grade === Rating.Again && seen <= MAX_REPEATS;
 
     if (staysInSession) {
+      this.repeats.set(item.card.id, seen);
       this.queue.splice(this.reinsertIndex(grade), 0, item);
     } else {
       this.graduated.add(item.card.id);
     }
   }
 
-  /** Again comes back soon; anything else goes to the back of the working set. */
-  private reinsertIndex(grade: Grade): number {
-    if (grade === Rating.Again) {
-      return Math.min(this.queue.length, 3);
-    }
-    return this.queue.length;
+  /** Far enough back that a few other cards intervene, so the second attempt
+   * is a real retrieval rather than an echo of the answer just seen. */
+  private reinsertIndex(_grade: Grade): number {
+    return Math.min(this.queue.length, 3);
   }
 }

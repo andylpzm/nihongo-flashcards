@@ -5,7 +5,7 @@ export type { Card };
 
 export type FilterMode = 'all' | 'learning' | 'mastered';
 export type LevelFilter = 'all' | 'N5' | 'N4';
-export type ActiveDeck = 'vocabulary' | 'hiragana' | 'katakana' | 'story';
+export type ActiveDeck = 'vocabulary' | 'hiragana' | 'katakana' | 'kanji' | 'story';
 export type KanaTab = 'basic' | 'voiced' | 'combos';
 /** 'session' = SRS-scheduled review queue. 'browse' = free navigation over
  * the filtered deck, same as the old flashcard behavior; does not record
@@ -28,6 +28,7 @@ export interface AppState {
 
   activeHiraganaTab: KanaTab;
   activeKatakanaTab: KanaTab;
+  activeKanjiLevel: 'N5' | 'N4';
 
   selectedVocabTypes: string[];
   selectedVocabTopics: string[];

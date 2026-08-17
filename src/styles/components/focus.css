@@ -11,7 +11,10 @@
 
    Driven by `body.session-active`, stamped in card.ts's refreshSessionBar(). */
 
-body.session-active header h1,
+/* The deck header goes too: mid-session its dots are inert (the pager is
+   locked) and its title just says "Study" while you are plainly studying.
+   Dead controls read worse than no controls. */
+body.session-active #section-vocabulary > .pager-header,
 body.session-active .deck-bar,
 body.session-active .session-bar .toggle-group {
   display: none;
@@ -25,7 +28,9 @@ body.session-active .session-bar .toggle-group {
    constant across the flip so the card doesn't resize under the user's thumb
    when the grade bar appears. */
 body.session-active {
-  --card-height: clamp(200px, calc(100dvh - 330px), 520px);
+  /* The page card adds ~50px of chrome above the flashcard (stage gap plus
+     the card's own padding) on top of the original 330px allowance. */
+  --card-height: clamp(150px, calc(100dvh - 406px), 520px);
 }
 
 
@@ -37,8 +42,49 @@ body.session-active {
   display: none;
 }
 
+/* Mode alone is enough now: the panel lives inside #section-vocabulary, so
+   it cannot leak onto Kana, Story or Stats the way it did when it sat in the
+   header. (It also can't depend on the body's section- class, which is only
+   stamped by switchSection and so is absent on first load.) */
 body.mode-browse .proposal-container {
   display: block;
+}
+
+/* One control slot above the card, filled in both modes so the flashcard
+   lands at the same height either way: Study puts the length picker there,
+   Browse puts the filter bar there (which is where it belongs anyway - you
+   narrow the deck, then browse it). Without this the card jumped 78px on
+   every swipe between the two. */
+body:not(.mode-browse) #section-vocabulary .pager-card .session-bar {
+  min-height: 55px;
+  align-items: center;
+}
+
+/* Study reads the deck bar as a closing caption, so it drops to the foot;
+   Browse keeps it in the slot above the card. */
+body:not(.mode-browse) #section-vocabulary .pager-card .deck-bar {
+  order: 10;
+  margin-top: 0.9rem;
+}
+
+body.mode-browse #section-vocabulary .pager-card .session-bar {
+  display: none;
+}
+
+/* Matches the length picker's slot height (control + its bottom margin) so
+   the flashcard lands on the same pixel in both modes. */
+body.mode-browse #section-vocabulary .pager-card .deck-bar {
+  margin-bottom: 1.5rem;
+}
+
+/* The card's min-height exists to keep Study and Browse the same size while
+   idle. Mid-session that padding is dead weight: the length picker, Start
+   and the deck count are all hidden, so the card just runs on under the
+   fixed grade bar with no visible bottom edge. Let it wrap its content and
+   finish above the bar instead. */
+body.session-active #section-vocabulary .pager-card {
+  min-height: 0;
+  padding-bottom: 1.1rem;
 }
 
 /* Mark-as-learned toggle (Browse only - it sits inside .nav-buttons, which is
@@ -58,4 +104,81 @@ body.mode-browse .proposal-container {
 body.light-theme .btn-mark-known.is-known {
   border-color: var(--accent-green);
   color: #047857;
+}
+
+/* ---- global "session in progress" bar -----------------------------------
+   Focus mode strips the study screen down, which is right - but it used to
+   strip *every* section's deck header too, so walking to Kana mid-session
+   left a blank band where the title had been, and no sign a session was even
+   running. The header hiding is now scoped to the study section, and this
+   bar carries the session everywhere else. */
+.resume-bar {
+  display: none;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 0.6rem);
+  z-index: 60;
+  width: min(calc(100% - 1.6rem), 460px);
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.75rem 0.65rem 0.95rem;
+  border: none;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 var(--key-sheen);
+}
+
+body.session-active:not(.section-vocabulary) .resume-bar {
+  display: flex;
+}
+
+.resume-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  flex-shrink: 0;
+  animation: resume-pulse 2s ease-in-out infinite;
+}
+
+@keyframes resume-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.resume-text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resume-count {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.resume-cta {
+  flex-shrink: 0;
+  padding: 0.35rem 0.7rem;
+  border-radius: 9px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-dot {
+    animation: none;
+  }
 }

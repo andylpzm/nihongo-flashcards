@@ -1,6 +1,9 @@
 import type { ReviewRecord } from './types';
 import type { Card, CardId } from '../state/types';
 
+/** Seats held for new cards even when reviews could fill the whole sitting. */
+const NEW_CARD_RESERVE = 3;
+
 
 /** A card in the queue. Deliberately carries no ReviewRecord: the record changes
  * every time the card is graded, and a re-queued item must preview intervals from
@@ -53,9 +56,23 @@ export function buildQueue(
 
   due.sort((a, b) => a.dueAt - b.dueAt);
 
-  // Due reviews get first claim on the sitting, then new cards top it up. This
-  // ordering matters: reviews are already scheduled work, new cards are optional.
-  const admittedDue = due.slice(0, Math.max(0, sessionSize)).map((d) => d.item);
+  // Reviews get first claim on the sitting - they are scheduled work, new
+  // cards are optional - but not the whole of it.
+  //
+  // A few seats are held back for new material, because pure review-priority
+  // starves it completely for anyone who forgets more often than FSRS assumes.
+  // Simulated over 180 days on the full deck with a learner recalling 72% on
+  // schedule, every session filled with reviews from the third week onward and
+  // only 181 of 1294 cards were ever introduced: six months of study without
+  // meeting a new word. The reserve keeps the deck moving forward while still
+  // giving the great majority of each sitting to the backlog.
+  // Only bites when the backlog would take the entire sitting. With room to
+  // spare, every due card still gets in and new cards simply top up - holding
+  // seats back there would leave a due card unstudied for no reason.
+  const backlogFillsSitting = due.length >= sessionSize;
+  const reservedForNew = backlogFillsSitting ? Math.min(NEW_CARD_RESERVE, fresh.length) : 0;
+  const dueSeats = Math.max(0, sessionSize - reservedForNew);
+  const admittedDue = due.slice(0, dueSeats).map((d) => d.item);
   const roomLeft = Math.max(0, sessionSize - admittedDue.length);
   const admittedNew = fresh.slice(0, roomLeft);
 

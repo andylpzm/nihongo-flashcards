@@ -50,9 +50,9 @@ body.light-theme .kana-switch {
 }
 
 .btn-kana-switch.active {
-  background: linear-gradient(135deg, var(--accent-pink) 0%, rgba(255, 45, 85, 0.8) 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, color-mix(in srgb, var(--accent-primary) 80%, transparent) 100%);
   color: #fff;
-  box-shadow: 0 4px 12px var(--accent-pink-glow);
+  box-shadow: 0 4px 12px var(--accent-primary-glow);
 }
 
 body.light-theme .btn-kana-switch.active {
@@ -70,7 +70,7 @@ body.light-theme .btn-kana-switch.active {
 .kana-grid-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0.75rem;
+  gap: 0.5rem;
   width: 100%;
   max-width: 600px;
   margin-bottom: 2rem;
@@ -85,7 +85,9 @@ body.light-theme .btn-kana-switch.active {
   background: var(--glass);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 1.25rem 0.5rem;
+  /* Compact: a full chart is 11 rows, so every pixel of cell height costs
+     ~11 of scroll. Still well past the 44px touch minimum. */
+  padding: 0.45rem 0.4rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,7 +96,7 @@ body.light-theme .btn-kana-switch.active {
   transition: all 0.3s;
   position: relative;
   overflow: hidden;
-  min-height: 90px;
+  min-height: 70px;
 }
 
 body.light-theme .kana-grid-cell {
@@ -134,11 +136,17 @@ body.light-theme .kana-grid-cell.empty {
 }
 
 .kana-char {
-  font-size: 2.2rem;
+  font-size: 1.85rem;
   font-weight: 700;
   font-family: var(--font-jp);
   color: #fff;
-  margin-bottom: 0.25rem;
+  /* Kana descenders (あ, す, む) reach low, so the romaji needs a little
+     clearance or it reads as touching the glyph. */
+  /* Japanese glyphs need more line box than Latin at the same size: at 1.18
+     the ink (39px) overran the box (35px) and risked shaving the tops. The
+     padding below is trimmed to match, so the cell height does not grow. */
+  line-height: 1.35;
+  margin-bottom: 0.1rem;
 }
 
 body.light-theme .kana-char {
@@ -146,69 +154,135 @@ body.light-theme .kana-char {
 }
 
 .kana-romaji {
-  font-size: 0.85rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 500;
   letter-spacing: 0.05em;
+  line-height: 1;
   text-transform: uppercase;
 }
 
-/* Character variation tabs (Basic / Voiced / Combos) */
+/* Character variation tabs (Basic / Voiced / Combos, and the kanji N5/N4
+   pair). Same keys-in-a-tray as the session-length picker - these were the
+   last controls still wearing the old accent-gradient pill. */
 .chart-tab-group {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  gap: 0.25rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
+  gap: 0.3rem;
   padding: 0.3rem;
-  border-radius: 30px;
   margin: 1rem auto 0.5rem;
-}
-
-body.light-theme .chart-tab-group {
-  background: rgba(0, 0, 0, 0.03);
+  border: none;
+  border-radius: 16px;
+  background: var(--tray-fill);
+  box-shadow: inset 0 1px 3px var(--tray-shadow);
 }
 
 .btn-chart-tab {
-  background: transparent;
   border: none;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.5rem 1.25rem;
+  border-radius: 13px;
+  padding: 0.5rem 1.05rem;
   min-height: 44px;
-  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
   cursor: pointer;
-  transition: all 0.25s ease;
+  background: var(--key-face);
+  box-shadow:
+    0 2px 6px var(--key-shadow),
+    inset 0 1px 0 var(--key-sheen);
+  transition: background 0.15s, box-shadow 0.15s, transform 0.12s, color 0.15s;
 }
 
-@media (hover: hover) {
-  .btn-chart-tab:hover {
-    color: var(--text);
-  }
-}
-
-.btn-chart-tab.active {
-  background: linear-gradient(135deg, var(--accent-orange) 0%, rgba(249, 115, 22, 0.8) 100%);
-  color: #ffffff;
-  box-shadow: 0 4px 12px var(--accent-orange-glow);
-}
-
-body.light-theme .btn-chart-tab.active {
-  background: linear-gradient(135deg, var(--accent-cyan) 0%, rgba(6, 182, 212, 0.8) 100%);
-  box-shadow: 0 4px 12px var(--accent-cyan-glow);
+.btn-chart-tab.active,
+.btn-chart-tab:active {
+  transform: translateY(1px);
+  background: var(--key-pressed-fill);
+  color: var(--text);
+  box-shadow: inset 0 1px 3px var(--key-pressed-shadow);
 }
 
 @media (max-width: 767px) {
   .chart-tab-group {
-    padding: 0.2rem;
+    padding: 0.25rem;
     margin: 0.5rem auto;
-    gap: 0.15rem;
+    gap: 0.25rem;
   }
 
   .btn-chart-tab {
-    padding: 0.4rem 0.9rem;
-    font-size: 0.75rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.76rem;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-chart-tab {
+    transition: none;
+  }
+}
+
+/* Kanji chart. Denser than the kana grid - 80/170 characters rather than 46 -
+   and cells carry only the glyph, no romaji line. */
+.kanji-grid {
+  grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+  max-width: 640px;
+  gap: 0.5rem;
+}
+
+.kanji-grid .kana-grid-cell {
+  min-height: 58px;
+  padding: 0.5rem 0.25rem;
+}
+
+.kanji-grid .kana-char {
+  font-size: 1.75rem;
+  margin-bottom: 0;
+}
+
+/* Detail sheet */
+.kanji-sheet-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.kanji-sheet-hero .kanji-glyph {
+  font-size: clamp(3.5rem, 22vw, 5rem);
+}
+
+.kanji-sheet-meaning {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.kanji-sheet-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* KANJIDIC2 attribution - a licence requirement, not decoration. */
+.data-credit {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 32rem;
+  margin: 0.5rem auto 2rem;
+  line-height: 1.5;
+}
+
+.data-credit a {
+  color: var(--accent-cyan);
+}
+
+/* Sheet title. The glyph and its meaning are separated by space, never by a
+   dash - an em dash beside a character reads as 一 (one). */
+.kanji-title-glyph {
+  font-family: var(--font-jp);
+  margin-right: 0.75rem;
+}
+
+.kanji-title-meaning {
+  font-weight: 600;
 }

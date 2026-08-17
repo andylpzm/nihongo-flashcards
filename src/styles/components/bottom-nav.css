@@ -49,7 +49,7 @@
   }
 
   .bottom-nav-item.active {
-    color: var(--accent-pink);
+    color: var(--accent-primary);
   }
 
   body.light-theme .bottom-nav-item.active {

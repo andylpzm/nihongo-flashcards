@@ -35,6 +35,7 @@ export const state: AppState = {
 
   activeHiraganaTab: 'basic',
   activeKatakanaTab: 'basic',
+  activeKanjiLevel: 'N5',
 
   selectedVocabTypes: savedFilters.selectedVocabTypes ?? DEFAULT_VOCAB_TYPES,
   selectedVocabTopics: savedFilters.selectedVocabTopics ?? DEFAULT_VOCAB_TOPICS,
@@ -46,14 +47,4 @@ export const state: AppState = {
 
 // Lightweight pub/sub, available for modules that want to react to state
 // changes rather than being called imperatively after each mutation.
-type Listener = (s: AppState) => void;
-const listeners = new Set<Listener>();
 
-export function subscribe(fn: Listener): () => void {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
-}
-
-export function notify(): void {
-  listeners.forEach((fn) => fn(state));
-}

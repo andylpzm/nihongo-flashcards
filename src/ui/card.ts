@@ -1,5 +1,6 @@
-import { loadVocab, loadKana } from '../data/loader';
-import { isVocabCard } from '../data/types';
+import { loadVocab, loadKana, loadKanji } from '../data/loader';
+import { readingRow } from './kanjiReadings';
+import { isVocabCard, isKanjiCard } from '../data/types';
 import type { Pos } from '../data/types';
 import { FeedbackAudio } from '../audio/feedback';
 import { speakJapanese } from '../audio/tts';
@@ -17,7 +18,7 @@ import { Rating, newFsrsCard, previewIntervals } from '../srs/scheduler';
 import type { RecordLogItem } from 'ts-fsrs';
 import { buildQueue, type QueueItem, type QueueBuildResult } from '../srs/queue';
 import { StudySession } from '../srs/session';
-import { loadSettings, saveSettings, SESSION_SIZES, LEARN_AHEAD_MINUTES, type StudySettings } from '../srs/settings';
+import { loadSettings, saveSettings, SESSION_SIZES, type StudySettings } from '../srs/settings';
 import { saveActiveSession, loadActiveSession, clearActiveSession } from '../srs/sessionStore';
 import { renderSessionBar, clearSessionBar, type SessionBarState } from './sessionBar';
 import type { Grade } from '../srs/types';
@@ -204,6 +205,13 @@ export function renderCard(): void {
   hideGradeButtons();
 
 
+  // Chrome visibility depends on the mode, not on there being a card, so it
+  // has to be settled before the empty-state early return below - otherwise
+  // the idle "Ready when you are" screen keeps whatever Browse last left on
+  // screen, stranding "Mark as learned" in Study Session mode.
+  updateNavAndModeVisibility();
+  syncMarkKnownButton();
+
   // Handle empty state (e.g. no cards in filter, or an idle Study Session).
   if (!currentCard) {
     renderEmptyState();
@@ -214,7 +222,7 @@ export function renderCard(): void {
   let level = '';
   if (state.isStoryModeActive && state.activeStoryChapterId !== null) {
     level = `Ch. ${state.activeStoryChapterId}`;
-  } else if (isVocabCard(currentCard)) {
+  } else if (isVocabCard(currentCard) || isKanjiCard(currentCard)) {
     level = currentCard.level;
   }
 
@@ -231,7 +239,7 @@ export function renderCard(): void {
   // FRONT: Japanese
   cardFront.innerHTML = `
     <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
-      <span class="card-indicator">Japanese ${level ? `<span class="level-badge">${level}</span>` : ''}</span>
+      <span class="card-indicator">${isKanjiCard(currentCard) ? 'Kanji' : 'Japanese'} ${level ? `<span class="level-badge">${level}</span>` : ''}</span>
       <div style="display: flex; gap: 0.5rem;">
         ${state.activeDeck === 'vocabulary' ? `
           <button class="speak-button" id="btn-toggle-romaji" title="${state.showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
@@ -244,7 +252,7 @@ export function renderCard(): void {
       </div>
     </div>
     <div class="japanese-container">
-      <div class="hiragana-text" lang="ja">${currentCard.kana}</div>
+      <div class="${isKanjiCard(currentCard) ? 'kanji-glyph' : 'hiragana-text'}" lang="ja">${currentCard.kana}</div>
       ${state.activeDeck === 'vocabulary' ? `<div class="romaji-text">${currentCard.romaji}</div>` : ''}
       ${disambiguator ? `<div class="card-disambiguator" lang="ja">${disambiguator}</div>` : ''}
     </div>
@@ -252,7 +260,27 @@ export function renderCard(): void {
   `;
 
   // BACK: English
-  cardBack.innerHTML = `
+  cardBack.innerHTML = isKanjiCard(currentCard)
+    ? `
+    <span class="card-indicator">Meaning</span>
+    <div class="card-main-text">${currentCard.meanings.join(', ')}</div>
+    <div class="kanji-readings">
+      ${readingRow('On', currentCard.on)}
+      ${readingRow('Kun', currentCard.kun)}
+    </div>
+    ${
+      currentCard.examples.length
+        ? `<div class="kanji-examples">${currentCard.examples
+            .map(
+              (e) =>
+                `<div class="kanji-example"><span class="kanji-example-word" lang="ja">${e.word}</span><span class="kanji-example-reading" lang="ja">${e.reading}</span><span class="kanji-example-meaning">${e.meaning}</span></div>`
+            )
+            .join('')}</div>`
+        : ''
+    }
+    <span class="kanji-strokes">${currentCard.strokes} stroke${currentCard.strokes === 1 ? '' : 's'}</span>
+  `
+    : `
     <span class="card-indicator">English</span>
     <div class="card-main-text">${currentCard.meanings.join(' / ')}</div>
     <div class="card-sub-info">${getCardSubInfo(currentCard)}</div>
@@ -276,34 +304,47 @@ export function renderCard(): void {
     });
   }
 
-  updateNavAndModeVisibility();
-  syncMarkKnownButton();
 }
 
 // Render empty state (no cards in filter, or an idle/exhausted Study Session)
 function renderEmptyState(): void {
+  // The idle card used to print the same sentence twice - once as the
+  // indicator, once as the headline - and carry no information at all. It now
+  // reports what is waiting, which is the one thing worth knowing before you
+  // press Start, and lets the session bar drop its duplicate count.
+  const build = lastBuild;
+
+  if (state.studyMode === 'session' && build && build.items.length > 0) {
+    const total = build.items.length;
+    cardFront.innerHTML = `
+      <div class="ready-hero">
+        <div class="ready-count">${total}</div>
+        <div class="ready-label">card${total === 1 ? '' : 's'} ready</div>
+      </div>
+    `;
+    cardBack.innerHTML = cardFront.innerHTML;
+    hideGradeButtons();
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  }
+
   // Never claim "all caught up" while unlearned cards remain in the deck (D3).
-  // Idle-with-work-available also has to be told apart from idle-with-nothing
-  // - otherwise the card face contradicts the session bar's own "Ready to
-  // study" + visible Start button (a gap the plan's original two-message
-  // sketch didn't account for: it assumed this branch is only reached when
-  // truly idle, but it's also reached before the user has pressed Start).
   const message =
     state.studyMode === 'session'
-      ? lastBuild && lastBuild.items.length > 0
-        ? { title: 'Ready when you are', body: 'Press "Start session" below to begin.' }
-        : lastBuild && lastBuild.newHeldBack > 0
-          ? {
-              title: 'Nothing scheduled right now',
-              body: `${lastBuild.newHeldBack} cards are still unlearned — raise your daily limit in Settings, or press "Learn more".`,
-            }
-          : { title: 'All caught up!', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
-      : { title: 'Empty', body: 'No cards match this filter. Try changing your filters.' };
+      ? build && build.newHeldBack > 0
+        ? {
+            title: 'Nothing scheduled right now',
+            body: `${build.newHeldBack} cards are still unlearned - press "Learn more" to pull some in.`,
+          }
+        : { title: 'All caught up', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
+      : { title: 'Nothing here', body: 'No cards match this filter. Try changing your filters.' };
 
   cardFront.innerHTML = `
-    <span class="card-indicator">${message.title}</span>
-    <div class="card-main-text" style="font-size: 1.5rem; color: var(--text-muted);">${message.title}</div>
-    <span style="font-size: 0.85rem; color: var(--text-muted); opacity: 0.5;">${message.body}</span>
+    <div class="ready-hero">
+      <div class="ready-title">${message.title}</div>
+      <div class="ready-body">${message.body}</div>
+    </div>
   `;
   cardBack.innerHTML = cardFront.innerHTML;
 
@@ -477,6 +518,20 @@ export function updateDeckBar(): void {
   const count = getFilteredCards(scope.progress).length;
   if (deckBarCount) deckBarCount.textContent = `${count} card${count === 1 ? '' : 's'}`;
 
+  // Study Session mode: the queue is built from what's due, so filters can't
+  // change it - offering them is a control that does nothing. Collapse the bar
+  // to a plain count of what's in the deck.
+  const staticCount = state.studyMode === 'session';
+  deckBar.classList.toggle('is-static', staticCount);
+  deckBar.toggleAttribute('disabled', staticCount);
+  if (staticCount) {
+    deckBar.removeAttribute('aria-haspopup');
+    deckBar.setAttribute('aria-label', `${count} cards in this deck`);
+  } else {
+    deckBar.setAttribute('aria-haspopup', 'dialog');
+    deckBar.setAttribute('aria-label', 'Deck filters');
+  }
+
   const parts: string[] = [];
   if (scope.progress && state.filterMode !== 'all') parts.push(state.filterMode);
   if (scope.vocab) {
@@ -539,7 +594,7 @@ function tryResumeSession(deckName: string): boolean {
     return false;
   }
 
-  activeSession = new StudySession(items, LEARN_AHEAD_MINUTES * 60_000, new Date(), {
+  activeSession = new StudySession(items, new Date(), {
     totalCards: persisted.totalCards,
     graduatedCount: Math.max(0, persisted.totalCards - persisted.remainingCardIds.length),
     answers: persisted.answers,
@@ -580,7 +635,7 @@ export async function startSession(): Promise<void> {
     return;
   }
 
-  activeSession = new StudySession(build.items, LEARN_AHEAD_MINUTES * 60_000, new Date());
+  activeSession = new StudySession(build.items, new Date());
   persistActiveSession();
   refreshSessionBar();
   renderCard();
@@ -611,7 +666,7 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
     FeedbackAudio.playCorrect();
   }
 
-  activeSession.advance(grade, chosen.card, new Date());
+  activeSession.advance(grade);
   pendingPreview = null;
   updateStats();
 
@@ -797,11 +852,6 @@ sessionLengthGroup?.querySelectorAll<HTMLElement>('.btn-toggle').forEach((btn) =
   });
 });
 
-/** Called by the settings sheet after Save (Step 7). */
-export function onSettingsApplied(): void {
-  refreshSessionBar();
-}
-
 export async function setStudyMode(mode: StudyMode): Promise<void> {
   state.studyMode = mode;
   modeSessionBtn.classList.toggle('active', mode === 'session');
@@ -916,13 +966,20 @@ export function toggleRomajiVisibility(): void {
 }
 
 // Load a specific Deck (Vocabulary, Hiragana, Katakana) into active study scope
-export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana'): Promise<void> {
+export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana' | 'kanji'): Promise<void> {
   state.activeDeck = deckName;
   activeSession = null;
   sessionComplete = null;
 
   if (deckName === 'vocabulary') {
     state.cards = await loadVocab();
+    if (btnBackToStory) btnBackToStory.classList.add('hidden');
+  } else if (deckName === 'kanji') {
+    // The JLPT level is chosen by the section's own N5/N4 tabs, not the filter
+    // sheet, so slice here rather than going through the level filter.
+    const all = await loadKanji();
+    state.cards = all.filter((c) => c.level === state.activeKanjiLevel);
+    state.levelFilter = 'all';
     if (btnBackToStory) btnBackToStory.classList.add('hidden');
   } else {
     const kana = await loadKana();

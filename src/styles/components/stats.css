@@ -6,11 +6,22 @@
   margin-bottom: 2rem;
 }
 
+/* Same material as the study and kana cards (see pager.css): an opaque
+   surface with a faint sheen over it, not the near-transparent --glass these
+   used, which barely separated from the background in dark mode. */
 .stat-tile {
-  background: var(--glass);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.25rem;
+  box-shadow: 0 16px 34px var(--shadow-color), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+body.light-theme .stat-tile {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.18);
 }
 
 .stat-tile-full {
@@ -57,4 +68,283 @@
 
 .topic-lapse-row:last-child {
   border-bottom: none;
+}
+
+/* Settings row at the foot of the page. Replaces a gear pinned to the
+   section corner with position:absolute, which overlapped the first tile and
+   moved around depending on what was above it. */
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  /* No margin of its own: the grid below already supplies the spacing, and
+     stacking the two put a 52px gutter between the last tile and this row. */
+  margin-top: 0;
+  padding: 0.9rem 1rem;
+  min-height: 52px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015)),
+    var(--surface-raised);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.settings-row svg {
+  width: 19px;
+  height: 19px;
+  fill: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.settings-row span:not(.settings-row-chevron) {
+  flex: 1;
+}
+
+.settings-row-chevron {
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .settings-row:hover {
+    border-color: var(--border-hover);
+  }
+}
+
+/* ---- Progress page ------------------------------------------------------- */
+.stat-today .today-row {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.stat-today .today-row span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* "Not enough data yet" state, used wherever a figure needs a sample. */
+.stat-pending {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  padding: 0.4rem 0;
+}
+
+.stat-note {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 0.5rem;
+  max-width: 46ch;
+}
+
+.stat-delta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.stat-delta.is-better { color: var(--accent-green); }
+.stat-delta.is-worse { color: var(--accent-amber); }
+
+/* Activity calendar: columns are weeks, so it fills left to right and wraps
+   the way a contribution graph does. */
+/* Rows are a fixed height rather than aspect-ratio: with 12 full-width
+   columns, square cells came out ~50px each and the grid dwarfed the page. */
+.cal-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 13px);
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3px;
+  width: 100%;
+}
+
+.cal-cell {
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+}
+
+.cal-cell[data-level='1'] { background: color-mix(in srgb, var(--accent-primary) 28%, transparent); }
+.cal-cell[data-level='2'] { background: color-mix(in srgb, var(--accent-primary) 50%, transparent); }
+.cal-cell[data-level='3'] { background: color-mix(in srgb, var(--accent-primary) 74%, transparent); }
+.cal-cell[data-level='4'] { background: var(--accent-primary); }
+
+.cal-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 0.6rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.cal-legend .cal-cell {
+  width: 10px;
+  height: 10px;
+}
+
+/* Grade mix: one bar, segments proportional to how often each was pressed. */
+.mix-bar {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--tray-fill);
+}
+
+.mix-seg { display: block; height: 100%; }
+.mix-again { background: var(--accent-red); }
+.mix-hard { background: var(--accent-amber); }
+.mix-good { background: var(--accent-cyan); }
+.mix-easy { background: var(--accent-green); }
+
+.mix-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-top: 0.7rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.mix-key span { display: inline-flex; align-items: center; gap: 0.35rem; }
+
+.mix-key i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.deck-split {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  gap: 0.4rem;
+}
+
+.deck-split strong {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.deck-split span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Deck make-up. The bar carries the proportion (which is the honest story -
+   most of the deck is untouched), the rows carry the plain-language meaning
+   of each state, because "new / learning / review" is scheduler vocabulary
+   and says nothing to a learner. */
+.deck-bar-viz {
+  display: flex;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--text-muted) 16%, transparent);
+  margin-bottom: 0.9rem;
+}
+
+.deck-seg { display: block; height: 100%; }
+.deck-rows { display: flex; flex-direction: column; gap: 0.65rem; }
+
+.deck-rows > div {
+  display: grid;
+  grid-template-columns: 10px auto 1fr;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.deck-rows strong { font-weight: 700; }
+
+.deck-rows em {
+  grid-column: 2 / -1;
+  font-style: normal;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.deck-rows i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.deck-rotation { background: var(--accent-green); }
+.deck-learning { background: var(--accent-primary); }
+.deck-new { background: color-mix(in srgb, var(--text-muted) 40%, transparent); }
+
+/* Pace: the number and its delta share a baseline, with six weekly medians
+   underneath so the trend is legible before there is enough data for a
+   single "faster than before" comparison to exist. */
+.pace-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.pace-trend {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  height: 62px;
+  margin-top: 0.9rem;
+}
+
+.pace-week {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 0.35rem;
+}
+
+.pace-week i {
+  display: block;
+  width: 100%;
+  max-width: 26px;
+  border-radius: 5px 5px 2px 2px;
+  background: color-mix(in srgb, var(--accent-primary) 70%, transparent);
+}
+
+/* Taller bar = slower answers, so the most recent week being shortest is the
+   good outcome. The last column is the current week. */
+.pace-week:last-child i {
+  background: var(--accent-primary);
+}
+
+.pace-week.is-empty i {
+  height: 3px;
+  background: color-mix(in srgb, var(--text-muted) 22%, transparent);
+}
+
+.pace-week small {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+/* Sits in the same rhythm as the gap between tiles. */
+#section-stats .stats-grid {
+  margin-bottom: 1rem;
 }

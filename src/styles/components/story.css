@@ -59,12 +59,12 @@ body.light-theme .story-node.cleared {
 @media (hover: hover) {
   .story-node:not(.locked):hover {
     transform: translateY(-2px);
-    border-color: var(--accent-pink);
-    box-shadow: 0 0 20px rgba(255, 45, 85, 0.1);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent-primary) 10%, transparent);
   }
 
   body.light-theme .story-node:not(.locked):hover {
-    border-color: #ec4899;
+    border-color: var(--accent-primary);
     box-shadow: 0 8px 30px rgba(236, 72, 153, 0.12);
   }
 }
@@ -122,7 +122,7 @@ body.light-theme .story-node-badge.locked-badge {
 .story-node-badge.active-badge {
   background: rgba(236, 72, 153, 0.1);
   border-color: rgba(236, 72, 153, 0.2);
-  color: var(--accent-pink);
+  color: var(--accent-primary);
 }
 
 body.light-theme .story-node-badge.active-badge {
@@ -231,7 +231,7 @@ body.light-theme .btn-story-review {
 }
 
 .btn-story-start {
-  background: linear-gradient(135deg, var(--accent-pink) 0%, rgba(244, 63, 94, 0.8) 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, rgba(244, 63, 94, 0.8) 100%);
   color: #fff;
   border: none;
   box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4);

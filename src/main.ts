@@ -11,6 +11,8 @@ import './styles/components/story.css';
 import './styles/components/stats.css';
 import './styles/components/misc.css';
 import './styles/components/focus.css';
+import './styles/components/pager.css';
+import './styles/components/splash.css';
 import './styles/themes.css';
 
 import { FeedbackAudio } from './audio/feedback';
@@ -44,6 +46,7 @@ import {
 import { Rating } from './srs/scheduler';
 import type { Grade } from './srs/types';
 import { renderKanaGrid } from './ui/kana';
+import { renderKanjiGrid } from './ui/kanjiGrid';
 import { setupFilterDrawer } from './ui/filters';
 import {
   menuVocabulary,
@@ -60,6 +63,8 @@ import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
 import { runMigrationIfNeeded } from './srs/migration';
 import { onSwipe } from './ui/gestures';
+import { createPager, type PagerController } from './ui/pager';
+import { startSplash } from './ui/splash';
 import { setupSettingsSheet } from './ui/settingsSheet';
 
 const btnPracticeHiragana = document.getElementById('btn-practice-hiragana')!;
@@ -89,9 +94,62 @@ function syncBottomNav(active: keyof typeof bottomNavButtons | null): void {
   }
 }
 
+// Hiragana / katakana / kanji are pages of one section, driven by the pager.
+// The kanji chart has no sidebar entry of its own, so it borrows the Kana
+// tab's active state.
+type KanaPage = 'hiragana' | 'katakana' | 'kanji';
+let kanaPager: PagerController | null = null;
+let studyPager: PagerController | null = null;
+
+/** Point the study deck at whatever mode the app is actually in, without
+ *  animating - entering the section is not a swipe. Story mode forces browse
+ *  behind our back (story.ts), so this runs on every entry. */
+function syncStudyPager(): void {
+  const mode = state.studyMode === 'browse' ? 'browse' : 'session';
+  if (studyPager && studyPager.getActive() !== mode) studyPager.goTo(mode, false);
+}
+
+/** Show one kana page's content and render its grid. Called by the pager. */
+function renderKanaPage(page: KanaPage): void {
+  document.querySelectorAll<HTMLElement>('.kana-page').forEach((el) => {
+    el.classList.toggle('hidden', el.dataset.kanaPage !== page);
+  });
+  if (page === 'kanji') void renderKanjiGrid();
+  else void renderKanaGrid(page);
+}
+
+/** Enter the Kana section on a given page, from the sidebar or tab bar. */
+function showKanaSection(page: KanaPage): void {
+  state.isStoryModeActive = false;
+  btnBackToStory?.classList.add('hidden');
+  switchSection(page, page === 'kanji' ? 'katakana' : page);
+  syncBottomNav('kana');
+  // Jumping in from outside the section is not a swipe, so it must not
+  // animate - the deal-a-card transition is the signal for "you moved
+  // sideways within this deck", and firing it on entry would misreport that.
+  if (kanaPager && kanaPager.getActive() !== page) kanaPager.goTo(page, false);
+  else renderKanaPage(page);
+}
+
 // Initialize Application
 async function init(): Promise<void> {
+  // Started before any work so the counter reflects the real boot, and
+  // dismissed in a finally so a failed migration can never strand the user
+  // on the splash screen.
+  const splash = startSplash();
+  try {
+    await boot();
+  } finally {
+    void splash.finish();
+  }
+}
+
+async function boot(): Promise<void> {
   setupEventListeners();
+  // Vocabulary is shown by default without going through switchSection, which
+  // left body.section-vocabulary unstamped until the first navigation - and
+  // anything scoped to it (the resume bar, the progress panel) silently dead.
+  switchSection('vocabulary');
   // One-time migration from the old boolean "mastered" localStorage sets to
   // real FSRS review records - must finish before the deck loads so the
   // progress header and session queue reflect migrated state immediately.
@@ -156,24 +214,12 @@ function setupEventListeners(): void {
     btnBackToStory?.classList.add('hidden');
     switchSection('vocabulary');
     syncBottomNav('study');
+    syncStudyPager();
     void loadDeck('vocabulary');
   });
 
-  menuHiragana.addEventListener('click', () => {
-    state.isStoryModeActive = false;
-    btnBackToStory?.classList.add('hidden');
-    switchSection('hiragana');
-    syncBottomNav('kana');
-    void renderKanaGrid('hiragana');
-  });
-
-  menuKatakana.addEventListener('click', () => {
-    state.isStoryModeActive = false;
-    btnBackToStory?.classList.add('hidden');
-    switchSection('katakana');
-    syncBottomNav('kana');
-    void renderKanaGrid('katakana');
-  });
+  menuHiragana.addEventListener('click', () => showKanaSection('hiragana'));
+  menuKatakana.addEventListener('click', () => showKanaSection('katakana'));
 
   menuStory.addEventListener('click', () => {
     state.isStoryModeActive = false;
@@ -225,14 +271,70 @@ function setupEventListeners(): void {
   bottomNavButtons.story?.addEventListener('click', () => menuStory.click());
   bottomNavButtons.stats?.addEventListener('click', () => menuStats.click());
 
-  // Hiragana / Katakana switcher inside the Kana sections. The bottom tab bar
-  // has a single "Kana" slot, so this is the only route between the two on
-  // mobile - it delegates to the same handlers the sidebar uses.
-  document.querySelectorAll<HTMLElement>('.btn-kana-switch').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (btn.dataset.kana === 'katakana') menuKatakana.click();
-      else menuHiragana.click();
+  const studyHost = document.getElementById('section-vocabulary');
+  const studyContent = document.getElementById('study-pages');
+  if (studyHost && studyContent) {
+    studyPager = createPager(studyHost, {
+      content: studyContent,
+      initial: 'session',
+      pages: [
+        { id: 'session', title: 'Study', label: 'Study session' },
+        { id: 'browse', title: 'Browse' },
+      ],
+      // A running session must not be swiped away - "End session" is the
+      // intended exit, and paging would silently discard the queue.
+      isLocked: () => document.body.classList.contains('session-active'),
+      onChange: (id) => void setStudyMode(id === 'browse' ? 'browse' : 'session'),
     });
+  }
+
+  // Global "session in progress" bar. Deliberately does NOT call loadDeck:
+  // a session can be running on the kana or kanji deck, and reloading
+  // vocabulary would swap the cards out from under it. The session lives in
+  // card.ts and survives section changes, so returning the view is enough.
+  document.getElementById('btn-resume-session')?.addEventListener('click', () => {
+    switchSection('vocabulary');
+    syncBottomNav('study');
+  });
+
+  // The three charts are pages of one deck: big title, dots, long swipe.
+  const kanaHost = document.getElementById('section-kana');
+  const kanaContent = document.getElementById('kana-pages');
+  if (kanaHost && kanaContent) {
+    kanaPager = createPager(kanaHost, {
+      content: kanaContent,
+      initial: 'hiragana',
+      pages: [
+        { id: 'hiragana', title: 'Hiragana' },
+        { id: 'katakana', title: 'Katakana' },
+        { id: 'kanji', title: 'Kanji' },
+      ],
+      onChange: (id) => {
+        const page = id as KanaPage;
+        switchSection(page, page === 'kanji' ? 'katakana' : page);
+        syncBottomNav('kana');
+        renderKanaPage(page);
+      },
+    });
+  }
+
+  // Kanji N5/N4 level tabs
+  const kanjiTabBtns = document.querySelectorAll<HTMLElement>('#kanji-tabs .btn-chart-tab');
+  kanjiTabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      kanjiTabBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.activeKanjiLevel = (btn.dataset.level as 'N5' | 'N4') ?? 'N5';
+      void renderKanjiGrid();
+    });
+  });
+
+  document.getElementById('btn-practice-kanji')?.addEventListener('click', () => {
+    state.isStoryModeActive = false;
+    btnBackToStory?.classList.add('hidden');
+    void loadDeck('kanji');
+    switchSection('vocabulary', 'katakana');
+    syncBottomNav('study');
   });
 
   // Hiragana Tab Event Listeners

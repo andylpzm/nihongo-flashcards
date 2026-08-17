@@ -6,14 +6,15 @@ export const menuStory = document.getElementById('menu-story')!;
 export const menuStats = document.getElementById('menu-stats')!;
 
 export const sectionVocabulary = document.getElementById('section-vocabulary')!;
-export const sectionHiragana = document.getElementById('section-hiragana')!;
-export const sectionKatakana = document.getElementById('section-katakana')!;
+// Hiragana, katakana and kanji are pages of one section now (ui/pager.ts),
+// so they share a single element; which page shows is the pager's business.
+export const sectionKana = document.getElementById('section-kana')!;
 export const sectionStory = document.getElementById('section-story')!;
 export const sectionStats = document.getElementById('section-stats')!;
 
 export const btnBackToStory = document.getElementById('btn-back-to-story')!;
 
-export type SectionName = 'vocabulary' | 'hiragana' | 'katakana' | 'story' | 'stats';
+export type SectionName = 'vocabulary' | 'hiragana' | 'katakana' | 'kanji' | 'story' | 'stats';
 
 // Switch Sidebar sections
 export function switchSection(sectionName: SectionName, activeMenuName?: SectionName): void {
@@ -25,8 +26,13 @@ export function switchSection(sectionName: SectionName, activeMenuName?: Section
   menuStats.classList.toggle('active', menuName === 'stats');
 
   sectionVocabulary.classList.toggle('hidden', sectionName !== 'vocabulary');
-  sectionHiragana.classList.toggle('hidden', sectionName !== 'hiragana');
-  sectionKatakana.classList.toggle('hidden', sectionName !== 'katakana');
+  const isKana = sectionName === 'hiragana' || sectionName === 'katakana' || sectionName === 'kanji';
+  sectionKana.classList.toggle('hidden', !isKana);
+
+  // Which section is open, stamped on body so global chrome that lives
+  // outside the sections (the proposal header) can scope itself. Without it
+  // that header follows Browse mode onto the kana and story screens.
+  document.body.classList.toggle('section-vocabulary', sectionName === 'vocabulary');
   sectionStory.classList.toggle('hidden', sectionName !== 'story');
   sectionStats.classList.toggle('hidden', sectionName !== 'stats');
 }

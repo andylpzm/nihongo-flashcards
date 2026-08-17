@@ -1,0 +1,7915 @@
+[
+  {
+    "id": "k-人",
+    "kana": "人",
+    "romaji": "ジン",
+    "meanings": [
+      "person"
+    ],
+    "level": "N5",
+    "on": [
+      "ジン",
+      "ニン"
+    ],
+    "kun": [
+      "ひと"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "人",
+        "reading": "ひと",
+        "meaning": "person"
+      },
+      {
+        "word": "大人",
+        "reading": "おとな",
+        "meaning": "adult"
+      },
+      {
+        "word": "一人",
+        "reading": "ひとり",
+        "meaning": "one person"
+      }
+    ]
+  },
+  {
+    "id": "k-一",
+    "kana": "一",
+    "romaji": "イチ",
+    "meanings": [
+      "one",
+      "one radical (no.1)"
+    ],
+    "level": "N5",
+    "on": [
+      "イチ",
+      "イツ"
+    ],
+    "kun": [
+      "ひと.つ"
+    ],
+    "strokes": 1,
+    "examples": [
+      {
+        "word": "一",
+        "reading": "いち",
+        "meaning": "one"
+      },
+      {
+        "word": "一月",
+        "reading": "ひとつき",
+        "meaning": "one month"
+      },
+      {
+        "word": "一つ",
+        "reading": "ひとつ",
+        "meaning": "one"
+      }
+    ]
+  },
+  {
+    "id": "k-日",
+    "kana": "日",
+    "romaji": "ニチ",
+    "meanings": [
+      "day",
+      "sun",
+      "Japan"
+    ],
+    "level": "N5",
+    "on": [
+      "ニチ",
+      "ジツ"
+    ],
+    "kun": [
+      "ひ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "日",
+        "reading": "ひ",
+        "meaning": "day, sun"
+      },
+      {
+        "word": "六日",
+        "reading": "むいか",
+        "meaning": "six days, sixth day of the month"
+      },
+      {
+        "word": "一日",
+        "reading": "いちにち",
+        "meaning": "(1) one day, (2) first of month"
+      }
+    ]
+  },
+  {
+    "id": "k-大",
+    "kana": "大",
+    "romaji": "ダイ",
+    "meanings": [
+      "large",
+      "big"
+    ],
+    "level": "N5",
+    "on": [
+      "ダイ",
+      "タイ"
+    ],
+    "kun": [
+      "おお.きい"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "大学",
+        "reading": "だいがく",
+        "meaning": "university"
+      },
+      {
+        "word": "大人",
+        "reading": "おとな",
+        "meaning": "adult"
+      },
+      {
+        "word": "大切",
+        "reading": "たいせつ",
+        "meaning": "important"
+      }
+    ]
+  },
+  {
+    "id": "k-年",
+    "kana": "年",
+    "romaji": "ネン",
+    "meanings": [
+      "year",
+      "counter for years"
+    ],
+    "level": "N5",
+    "on": [
+      "ネン"
+    ],
+    "kun": [
+      "とし"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "年",
+        "reading": "とし",
+        "meaning": "year"
+      },
+      {
+        "word": "今年",
+        "reading": "ことし",
+        "meaning": "this year"
+      },
+      {
+        "word": "去年",
+        "reading": "きょねん",
+        "meaning": "last year"
+      }
+    ]
+  },
+  {
+    "id": "k-出",
+    "kana": "出",
+    "romaji": "シュツ",
+    "meanings": [
+      "exit",
+      "leave",
+      "go out"
+    ],
+    "level": "N5",
+    "on": [
+      "シュツ",
+      "スイ"
+    ],
+    "kun": [
+      "で.る",
+      "だ.す",
+      "い.でる"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "出す",
+        "reading": "だす",
+        "meaning": "to put out"
+      },
+      {
+        "word": "出口",
+        "reading": "でぐち",
+        "meaning": "exit"
+      },
+      {
+        "word": "出る",
+        "reading": "でる",
+        "meaning": "to appear, to leave"
+      }
+    ]
+  },
+  {
+    "id": "k-本",
+    "kana": "本",
+    "romaji": "ホン",
+    "meanings": [
+      "book",
+      "present",
+      "main"
+    ],
+    "level": "N5",
+    "on": [
+      "ホン"
+    ],
+    "kun": [
+      "もと"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "本",
+        "reading": "ほん",
+        "meaning": "book"
+      },
+      {
+        "word": "本棚",
+        "reading": "ほんだな",
+        "meaning": "bookshelves"
+      }
+    ]
+  },
+  {
+    "id": "k-中",
+    "kana": "中",
+    "romaji": "チュウ",
+    "meanings": [
+      "in",
+      "inside",
+      "middle"
+    ],
+    "level": "N5",
+    "on": [
+      "チュウ"
+    ],
+    "kun": [
+      "なか",
+      "うち",
+      "あた.る"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "中",
+        "reading": "なか",
+        "meaning": "middle"
+      },
+      {
+        "word": "真中",
+        "reading": "まんなか",
+        "meaning": "middle"
+      },
+      {
+        "word": "途中",
+        "reading": "とちゅう",
+        "meaning": "on the way"
+      }
+    ]
+  },
+  {
+    "id": "k-子",
+    "kana": "子",
+    "romaji": "シ",
+    "meanings": [
+      "child",
+      "sign of the rat",
+      "11PM-1AM"
+    ],
+    "level": "N5",
+    "on": [
+      "シ",
+      "ス",
+      "ツ"
+    ],
+    "kun": [
+      "こ",
+      "ね"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "子",
+        "reading": "こ",
+        "meaning": "child"
+      },
+      {
+        "word": "帽子",
+        "reading": "ぼうし",
+        "meaning": "hat"
+      },
+      {
+        "word": "子供",
+        "reading": "こども",
+        "meaning": "child"
+      }
+    ]
+  },
+  {
+    "id": "k-見",
+    "kana": "見",
+    "romaji": "ケン",
+    "meanings": [
+      "see",
+      "hopes",
+      "chances"
+    ],
+    "level": "N5",
+    "on": [
+      "ケン"
+    ],
+    "kun": [
+      "み.る",
+      "み.える",
+      "み.せる"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "花見",
+        "reading": "はなみ",
+        "meaning": "cherry-blossom viewing"
+      },
+      {
+        "word": "意見",
+        "reading": "いけん",
+        "meaning": "opinion"
+      },
+      {
+        "word": "見物",
+        "reading": "けんぶつ",
+        "meaning": "sightseeing"
+      }
+    ]
+  },
+  {
+    "id": "k-国",
+    "kana": "国",
+    "romaji": "コク",
+    "meanings": [
+      "country"
+    ],
+    "level": "N5",
+    "on": [
+      "コク"
+    ],
+    "kun": [
+      "くに"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "国",
+        "reading": "くに",
+        "meaning": "country"
+      },
+      {
+        "word": "外国",
+        "reading": "がいこく",
+        "meaning": "foreign country"
+      },
+      {
+        "word": "国際",
+        "reading": "こくさい",
+        "meaning": "international"
+      }
+    ]
+  },
+  {
+    "id": "k-上",
+    "kana": "上",
+    "romaji": "ジョウ",
+    "meanings": [
+      "above",
+      "up"
+    ],
+    "level": "N5",
+    "on": [
+      "ジョウ",
+      "ショウ",
+      "シャン"
+    ],
+    "kun": [
+      "うえ",
+      "かみ",
+      "あ.げる"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "上",
+        "reading": "うえ",
+        "meaning": "on top of"
+      },
+      {
+        "word": "上着",
+        "reading": "うわぎ",
+        "meaning": "jacket"
+      },
+      {
+        "word": "上手",
+        "reading": "じょうず",
+        "meaning": "skillful"
+      }
+    ]
+  },
+  {
+    "id": "k-分",
+    "kana": "分",
+    "romaji": "ブン",
+    "meanings": [
+      "part",
+      "minute of time",
+      "segment"
+    ],
+    "level": "N5",
+    "on": [
+      "ブン",
+      "フン",
+      "ブ"
+    ],
+    "kun": [
+      "わ.ける",
+      "わ.け",
+      "わ.かれる"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "自分",
+        "reading": "じぶん",
+        "meaning": "oneself"
+      },
+      {
+        "word": "半分",
+        "reading": "はんぶん",
+        "meaning": "half minute"
+      },
+      {
+        "word": "大分",
+        "reading": "だいぶ",
+        "meaning": "greatly"
+      }
+    ]
+  },
+  {
+    "id": "k-生",
+    "kana": "生",
+    "romaji": "セイ",
+    "meanings": [
+      "life",
+      "genuine",
+      "birth"
+    ],
+    "level": "N5",
+    "on": [
+      "セイ",
+      "ショウ"
+    ],
+    "kun": [
+      "い.きる",
+      "い.かす",
+      "い.ける"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "生徒",
+        "reading": "せいと",
+        "meaning": "pupil"
+      },
+      {
+        "word": "学生",
+        "reading": "がくせい",
+        "meaning": "student"
+      },
+      {
+        "word": "先生",
+        "reading": "せんせい",
+        "meaning": "teacher, doctor"
+      }
+    ]
+  },
+  {
+    "id": "k-行",
+    "kana": "行",
+    "romaji": "コウ",
+    "meanings": [
+      "going",
+      "journey",
+      "carry out"
+    ],
+    "level": "N5",
+    "on": [
+      "コウ",
+      "ギョウ",
+      "アン"
+    ],
+    "kun": [
+      "い.く",
+      "ゆ.く",
+      "おこな.う"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "銀行",
+        "reading": "ぎんこう",
+        "meaning": "bank"
+      },
+      {
+        "word": "旅行",
+        "reading": "りょこう",
+        "meaning": "travel"
+      },
+      {
+        "word": "行く",
+        "reading": "いく",
+        "meaning": "to go"
+      }
+    ]
+  },
+  {
+    "id": "k-二",
+    "kana": "二",
+    "romaji": "ニ",
+    "meanings": [
+      "two",
+      "two radical (no. 7)"
+    ],
+    "level": "N5",
+    "on": [
+      "ニ",
+      "ジ"
+    ],
+    "kun": [
+      "ふた",
+      "ふた.つ",
+      "ふたたび"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "二",
+        "reading": "に",
+        "meaning": "two"
+      },
+      {
+        "word": "二日",
+        "reading": "ふつか",
+        "meaning": "two days, second day of the month"
+      },
+      {
+        "word": "二つ",
+        "reading": "ふたつ",
+        "meaning": "two"
+      }
+    ]
+  },
+  {
+    "id": "k-間",
+    "kana": "間",
+    "romaji": "カン",
+    "meanings": [
+      "interval",
+      "space"
+    ],
+    "level": "N5",
+    "on": [
+      "カン",
+      "ケン"
+    ],
+    "kun": [
+      "あいだ",
+      "ま",
+      "あい"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "間",
+        "reading": "あいだ",
+        "meaning": "a space"
+      },
+      {
+        "word": "時間",
+        "reading": "じかん",
+        "meaning": "time"
+      },
+      {
+        "word": "昼間",
+        "reading": "ひるま",
+        "meaning": "daytime, during the day"
+      }
+    ]
+  },
+  {
+    "id": "k-時",
+    "kana": "時",
+    "romaji": "ジ",
+    "meanings": [
+      "time",
+      "hour"
+    ],
+    "level": "N5",
+    "on": [
+      "ジ"
+    ],
+    "kun": [
+      "とき"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "時々",
+        "reading": "ときどき",
+        "meaning": "sometimes"
+      },
+      {
+        "word": "時間",
+        "reading": "じかん",
+        "meaning": "time"
+      },
+      {
+        "word": "時計",
+        "reading": "とけい",
+        "meaning": "watch, clock"
+      }
+    ]
+  },
+  {
+    "id": "k-気",
+    "kana": "気",
+    "romaji": "キ",
+    "meanings": [
+      "spirit",
+      "mind",
+      "air"
+    ],
+    "level": "N5",
+    "on": [
+      "キ",
+      "ケ"
+    ],
+    "kun": [
+      "いき",
+      "き"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "気",
+        "reading": "き",
+        "meaning": "spirit, mood"
+      },
+      {
+        "word": "電気",
+        "reading": "でんき",
+        "meaning": "electricity, electric light"
+      },
+      {
+        "word": "病気",
+        "reading": "びょうき",
+        "meaning": "illness"
+      }
+    ]
+  },
+  {
+    "id": "k-十",
+    "kana": "十",
+    "romaji": "ジュウ",
+    "meanings": [
+      "ten"
+    ],
+    "level": "N5",
+    "on": [
+      "ジュウ",
+      "ジッ",
+      "ジュッ"
+    ],
+    "kun": [
+      "とお",
+      "と",
+      "そ"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "十",
+        "reading": "じゅう  とお",
+        "meaning": "ten"
+      },
+      {
+        "word": "十日",
+        "reading": "とおか",
+        "meaning": "ten days, the tenth day"
+      },
+      {
+        "word": "十分",
+        "reading": "じゅうぶん",
+        "meaning": "enough"
+      }
+    ]
+  },
+  {
+    "id": "k-女",
+    "kana": "女",
+    "romaji": "ジョ",
+    "meanings": [
+      "woman",
+      "female"
+    ],
+    "level": "N5",
+    "on": [
+      "ジョ",
+      "ニョ",
+      "ニョウ"
+    ],
+    "kun": [
+      "おんな",
+      "め"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "女",
+        "reading": "おんな",
+        "meaning": "woman"
+      },
+      {
+        "word": "女性",
+        "reading": "じょせい",
+        "meaning": "woman"
+      },
+      {
+        "word": "彼女",
+        "reading": "かのじょ",
+        "meaning": "she, girlfriend"
+      }
+    ]
+  },
+  {
+    "id": "k-三",
+    "kana": "三",
+    "romaji": "サン",
+    "meanings": [
+      "three"
+    ],
+    "level": "N5",
+    "on": [
+      "サン",
+      "ゾウ"
+    ],
+    "kun": [
+      "み",
+      "み.つ",
+      "みっ.つ"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "三",
+        "reading": "さん",
+        "meaning": "three"
+      },
+      {
+        "word": "三つ",
+        "reading": "みっつ",
+        "meaning": "three"
+      },
+      {
+        "word": "三日",
+        "reading": "みっか",
+        "meaning": "three days, third day of the month"
+      }
+    ]
+  },
+  {
+    "id": "k-前",
+    "kana": "前",
+    "romaji": "ゼン",
+    "meanings": [
+      "in front",
+      "before"
+    ],
+    "level": "N5",
+    "on": [
+      "ゼン"
+    ],
+    "kun": [
+      "まえ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "前",
+        "reading": "まえ",
+        "meaning": "before"
+      },
+      {
+        "word": "午前",
+        "reading": "ごぜん",
+        "meaning": "morning"
+      },
+      {
+        "word": "名前",
+        "reading": "なまえ",
+        "meaning": "name"
+      }
+    ]
+  },
+  {
+    "id": "k-入",
+    "kana": "入",
+    "romaji": "ニュウ",
+    "meanings": [
+      "enter",
+      "insert"
+    ],
+    "level": "N5",
+    "on": [
+      "ニュウ",
+      "ジュ"
+    ],
+    "kun": [
+      "い.る",
+      "い.れる",
+      "はい.る"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "入る",
+        "reading": "はいる",
+        "meaning": "to enter, to contain"
+      },
+      {
+        "word": "入口",
+        "reading": "いりぐち",
+        "meaning": "entrance"
+      },
+      {
+        "word": "輸入",
+        "reading": "ゆにゅう・する",
+        "meaning": "to import"
+      }
+    ]
+  },
+  {
+    "id": "k-小",
+    "kana": "小",
+    "romaji": "ショウ",
+    "meanings": [
+      "little",
+      "small"
+    ],
+    "level": "N5",
+    "on": [
+      "ショウ"
+    ],
+    "kun": [
+      "ちい.さい"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "小鳥",
+        "reading": "ことり",
+        "meaning": "small bird"
+      },
+      {
+        "word": "小説",
+        "reading": "しょうせつ",
+        "meaning": "novel"
+      },
+      {
+        "word": "小さな",
+        "reading": "ちいさな",
+        "meaning": "little"
+      }
+    ]
+  },
+  {
+    "id": "k-後",
+    "kana": "後",
+    "romaji": "ゴ",
+    "meanings": [
+      "behind",
+      "back",
+      "later"
+    ],
+    "level": "N5",
+    "on": [
+      "ゴ",
+      "コウ"
+    ],
+    "kun": [
+      "のち",
+      "うし.ろ",
+      "うしろ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "後",
+        "reading": "あと",
+        "meaning": "afterwards"
+      },
+      {
+        "word": "午後",
+        "reading": "ごご",
+        "meaning": "afternoon"
+      },
+      {
+        "word": "後ろ",
+        "reading": "うしろ",
+        "meaning": "behind"
+      }
+    ]
+  },
+  {
+    "id": "k-長",
+    "kana": "長",
+    "romaji": "チョウ",
+    "meanings": [
+      "long",
+      "leader",
+      "superior"
+    ],
+    "level": "N5",
+    "on": [
+      "チョウ"
+    ],
+    "kun": [
+      "なが.い",
+      "おさ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "長い",
+        "reading": "ながい",
+        "meaning": "long"
+      },
+      {
+        "word": "社長",
+        "reading": "しゃちょう",
+        "meaning": "company president"
+      },
+      {
+        "word": "部長",
+        "reading": "ぶちょう",
+        "meaning": "head of a section"
+      }
+    ]
+  },
+  {
+    "id": "k-下",
+    "kana": "下",
+    "romaji": "カ",
+    "meanings": [
+      "below",
+      "down",
+      "descend"
+    ],
+    "level": "N5",
+    "on": [
+      "カ",
+      "ゲ"
+    ],
+    "kun": [
+      "した",
+      "しも",
+      "もと"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "下",
+        "reading": "した",
+        "meaning": "below"
+      },
+      {
+        "word": "廊下",
+        "reading": "ろうか",
+        "meaning": "corridor"
+      },
+      {
+        "word": "下手",
+        "reading": "へた",
+        "meaning": "unskillful"
+      }
+    ]
+  },
+  {
+    "id": "k-学",
+    "kana": "学",
+    "romaji": "ガク",
+    "meanings": [
+      "study",
+      "learning",
+      "science"
+    ],
+    "level": "N5",
+    "on": [
+      "ガク"
+    ],
+    "kun": [
+      "まな.ぶ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "大学",
+        "reading": "だいがく",
+        "meaning": "university"
+      },
+      {
+        "word": "学校",
+        "reading": "がっこう",
+        "meaning": "school"
+      },
+      {
+        "word": "学生",
+        "reading": "がくせい",
+        "meaning": "student"
+      }
+    ]
+  },
+  {
+    "id": "k-月",
+    "kana": "月",
+    "romaji": "ゲツ",
+    "meanings": [
+      "month",
+      "moon"
+    ],
+    "level": "N5",
+    "on": [
+      "ゲツ",
+      "ガツ"
+    ],
+    "kun": [
+      "つき"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "一月",
+        "reading": "ひとつき",
+        "meaning": "one month"
+      },
+      {
+        "word": "毎月",
+        "reading": "まいげつ / まいつき",
+        "meaning": "every month"
+      },
+      {
+        "word": "来月",
+        "reading": "らいげつ",
+        "meaning": "next month"
+      }
+    ]
+  },
+  {
+    "id": "k-何",
+    "kana": "何",
+    "romaji": "カ",
+    "meanings": [
+      "what"
+    ],
+    "level": "N5",
+    "on": [
+      "カ"
+    ],
+    "kun": [
+      "なに",
+      "なん"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "何",
+        "reading": "なん / なに",
+        "meaning": "what"
+      }
+    ]
+  },
+  {
+    "id": "k-来",
+    "kana": "来",
+    "romaji": "ライ",
+    "meanings": [
+      "come",
+      "due",
+      "next"
+    ],
+    "level": "N5",
+    "on": [
+      "ライ",
+      "タイ"
+    ],
+    "kun": [
+      "く.る",
+      "きた.る",
+      "きた.す"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "来週",
+        "reading": "らいしゅう",
+        "meaning": "next week"
+      },
+      {
+        "word": "来月",
+        "reading": "らいげつ",
+        "meaning": "next month"
+      },
+      {
+        "word": "来る",
+        "reading": "くる",
+        "meaning": "to come"
+      }
+    ]
+  },
+  {
+    "id": "k-話",
+    "kana": "話",
+    "romaji": "ワ",
+    "meanings": [
+      "tale",
+      "talk"
+    ],
+    "level": "N5",
+    "on": [
+      "ワ"
+    ],
+    "kun": [
+      "はな.す",
+      "はなし"
+    ],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "話",
+        "reading": "はなし",
+        "meaning": "talk, story"
+      },
+      {
+        "word": "電話",
+        "reading": "でんわ",
+        "meaning": "telephone"
+      },
+      {
+        "word": "話す",
+        "reading": "はなす",
+        "meaning": "to speak"
+      }
+    ]
+  },
+  {
+    "id": "k-山",
+    "kana": "山",
+    "romaji": "サン",
+    "meanings": [
+      "mountain"
+    ],
+    "level": "N5",
+    "on": [
+      "サン",
+      "セン"
+    ],
+    "kun": [
+      "やま"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "山",
+        "reading": "やま",
+        "meaning": "mountain"
+      }
+    ]
+  },
+  {
+    "id": "k-高",
+    "kana": "高",
+    "romaji": "コウ",
+    "meanings": [
+      "tall",
+      "high",
+      "expensive"
+    ],
+    "level": "N5",
+    "on": [
+      "コウ"
+    ],
+    "kun": [
+      "たか.い",
+      "たか",
+      "たか.まる"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "高い",
+        "reading": "たかい",
+        "meaning": "tall, expensive"
+      },
+      {
+        "word": "高校",
+        "reading": "こうこう",
+        "meaning": "high school"
+      },
+      {
+        "word": "高校生",
+        "reading": "こうこうせい",
+        "meaning": "high school student"
+      }
+    ]
+  },
+  {
+    "id": "k-今",
+    "kana": "今",
+    "romaji": "コン",
+    "meanings": [
+      "now"
+    ],
+    "level": "N5",
+    "on": [
+      "コン",
+      "キン"
+    ],
+    "kun": [
+      "いま"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "今",
+        "reading": "いま",
+        "meaning": "now"
+      },
+      {
+        "word": "今年",
+        "reading": "ことし",
+        "meaning": "this year"
+      },
+      {
+        "word": "今朝",
+        "reading": "けさ",
+        "meaning": "this morning"
+      }
+    ]
+  },
+  {
+    "id": "k-書",
+    "kana": "書",
+    "romaji": "ショ",
+    "meanings": [
+      "write"
+    ],
+    "level": "N5",
+    "on": [
+      "ショ"
+    ],
+    "kun": [
+      "か.く"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "葉書",
+        "reading": "はがき",
+        "meaning": "postcard"
+      },
+      {
+        "word": "辞書",
+        "reading": "じしょ",
+        "meaning": "dictionary"
+      },
+      {
+        "word": "書く",
+        "reading": "かく",
+        "meaning": "to write"
+      }
+    ]
+  },
+  {
+    "id": "k-五",
+    "kana": "五",
+    "romaji": "ゴ",
+    "meanings": [
+      "five"
+    ],
+    "level": "N5",
+    "on": [
+      "ゴ"
+    ],
+    "kun": [
+      "いつ",
+      "いつ.つ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "五",
+        "reading": "ご",
+        "meaning": "five"
+      },
+      {
+        "word": "五つ",
+        "reading": "いつつ",
+        "meaning": "five"
+      },
+      {
+        "word": "五日",
+        "reading": "いつか",
+        "meaning": "five days, fifth day"
+      }
+    ]
+  },
+  {
+    "id": "k-名",
+    "kana": "名",
+    "romaji": "メイ",
+    "meanings": [
+      "name",
+      "noted",
+      "distinguished"
+    ],
+    "level": "N5",
+    "on": [
+      "メイ",
+      "ミョウ"
+    ],
+    "kun": [
+      "な"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "有名",
+        "reading": "ゆうめい",
+        "meaning": "famous"
+      },
+      {
+        "word": "名前",
+        "reading": "なまえ",
+        "meaning": "name"
+      }
+    ]
+  },
+  {
+    "id": "k-金",
+    "kana": "金",
+    "romaji": "キン",
+    "meanings": [
+      "gold"
+    ],
+    "level": "N5",
+    "on": [
+      "キン",
+      "コン",
+      "ゴン"
+    ],
+    "kun": [
+      "かね"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "お金",
+        "reading": "おかね",
+        "meaning": "money"
+      },
+      {
+        "word": "金曜日",
+        "reading": "きんようび",
+        "meaning": "Friday"
+      },
+      {
+        "word": "お・金持ち",
+        "reading": "かねもち / おかねもち",
+        "meaning": "rich man"
+      }
+    ]
+  },
+  {
+    "id": "k-男",
+    "kana": "男",
+    "romaji": "ダン",
+    "meanings": [
+      "male"
+    ],
+    "level": "N5",
+    "on": [
+      "ダン",
+      "ナン"
+    ],
+    "kun": [
+      "おとこ",
+      "お"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "男",
+        "reading": "おとこ",
+        "meaning": "man"
+      },
+      {
+        "word": "男性",
+        "reading": "だんせい",
+        "meaning": "male"
+      },
+      {
+        "word": "男の子",
+        "reading": "おとこのこ",
+        "meaning": "boy"
+      }
+    ]
+  },
+  {
+    "id": "k-外",
+    "kana": "外",
+    "romaji": "ガイ",
+    "meanings": [
+      "outside"
+    ],
+    "level": "N5",
+    "on": [
+      "ガイ",
+      "ゲ"
+    ],
+    "kun": [
+      "そと",
+      "ほか",
+      "はず.す"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "外",
+        "reading": "そと",
+        "meaning": "outside"
+      },
+      {
+        "word": "外国",
+        "reading": "がいこく",
+        "meaning": "foreign country"
+      },
+      {
+        "word": "郊外",
+        "reading": "こうがい",
+        "meaning": "outskirts"
+      }
+    ]
+  },
+  {
+    "id": "k-四",
+    "kana": "四",
+    "romaji": "シ",
+    "meanings": [
+      "four"
+    ],
+    "level": "N5",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "よ",
+      "よ.つ",
+      "よっ.つ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "四",
+        "reading": "し / よん",
+        "meaning": "four"
+      },
+      {
+        "word": "四つ",
+        "reading": "よっつ",
+        "meaning": "four"
+      },
+      {
+        "word": "四日",
+        "reading": "よっか",
+        "meaning": "four days, fouth day of the month"
+      }
+    ]
+  },
+  {
+    "id": "k-先",
+    "kana": "先",
+    "romaji": "セン",
+    "meanings": [
+      "before",
+      "ahead",
+      "previous"
+    ],
+    "level": "N5",
+    "on": [
+      "セン"
+    ],
+    "kun": [
+      "さき",
+      "ま.ず"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "先",
+        "reading": "さき",
+        "meaning": "the future, previous"
+      },
+      {
+        "word": "先週",
+        "reading": "せんしゅう",
+        "meaning": "last week"
+      },
+      {
+        "word": "先生",
+        "reading": "せんせい",
+        "meaning": "teacher, doctor"
+      }
+    ]
+  },
+  {
+    "id": "k-川",
+    "kana": "川",
+    "romaji": "セン",
+    "meanings": [
+      "stream",
+      "river",
+      "river or three-stroke river radical (no. 47)"
+    ],
+    "level": "N5",
+    "on": [
+      "セン"
+    ],
+    "kun": [
+      "かわ"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "川 / 河",
+        "reading": "かわ",
+        "meaning": "river"
+      }
+    ]
+  },
+  {
+    "id": "k-東",
+    "kana": "東",
+    "romaji": "トウ",
+    "meanings": [
+      "east"
+    ],
+    "level": "N5",
+    "on": [
+      "トウ"
+    ],
+    "kun": [
+      "ひがし"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "東",
+        "reading": "ひがし",
+        "meaning": "east"
+      }
+    ]
+  },
+  {
+    "id": "k-聞",
+    "kana": "聞",
+    "romaji": "ブン",
+    "meanings": [
+      "hear",
+      "ask",
+      "listen"
+    ],
+    "level": "N5",
+    "on": [
+      "ブン",
+      "モン"
+    ],
+    "kun": [
+      "き.く",
+      "き.こえる"
+    ],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "新聞",
+        "reading": "しんぶん",
+        "meaning": "newspaper"
+      },
+      {
+        "word": "聞く",
+        "reading": "きく",
+        "meaning": "to hear, to listen to, to ask"
+      },
+      {
+        "word": "新聞社",
+        "reading": "しんぶんしゃ",
+        "meaning": "newspaper company"
+      }
+    ]
+  },
+  {
+    "id": "k-語",
+    "kana": "語",
+    "romaji": "ゴ",
+    "meanings": [
+      "word",
+      "speech",
+      "language"
+    ],
+    "level": "N5",
+    "on": [
+      "ゴ"
+    ],
+    "kun": [
+      "かた.る",
+      "かた.らう"
+    ],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "英語",
+        "reading": "えいご",
+        "meaning": "English language"
+      }
+    ]
+  },
+  {
+    "id": "k-九",
+    "kana": "九",
+    "romaji": "キュウ",
+    "meanings": [
+      "nine"
+    ],
+    "level": "N5",
+    "on": [
+      "キュウ",
+      "ク"
+    ],
+    "kun": [
+      "ここの",
+      "ここの.つ"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "九",
+        "reading": "きゅう / く",
+        "meaning": "nine"
+      },
+      {
+        "word": "九日",
+        "reading": "ここのか",
+        "meaning": "nine days, ninth day"
+      },
+      {
+        "word": "九つ",
+        "reading": "ここのつ",
+        "meaning": "nine"
+      }
+    ]
+  },
+  {
+    "id": "k-食",
+    "kana": "食",
+    "romaji": "ショク",
+    "meanings": [
+      "eat",
+      "food"
+    ],
+    "level": "N5",
+    "on": [
+      "ショク",
+      "ジキ"
+    ],
+    "kun": [
+      "く.う",
+      "く.らう",
+      "た.べる"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "食堂",
+        "reading": "しょくどう",
+        "meaning": "dining hall"
+      },
+      {
+        "word": "食事",
+        "reading": "しょくじ・する",
+        "meaning": "to have a meal"
+      },
+      {
+        "word": "食べ物",
+        "reading": "たべもの",
+        "meaning": "food"
+      }
+    ]
+  },
+  {
+    "id": "k-八",
+    "kana": "八",
+    "romaji": "ハチ",
+    "meanings": [
+      "eight",
+      "eight radical (no. 12)"
+    ],
+    "level": "N5",
+    "on": [
+      "ハチ",
+      "ハツ"
+    ],
+    "kun": [
+      "や",
+      "や.つ",
+      "やっ.つ"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "八",
+        "reading": "はち",
+        "meaning": "eight"
+      },
+      {
+        "word": "八日",
+        "reading": "ようか",
+        "meaning": "eight days, eighth day of the month"
+      },
+      {
+        "word": "八つ",
+        "reading": "やっつ",
+        "meaning": "eight"
+      }
+    ]
+  },
+  {
+    "id": "k-水",
+    "kana": "水",
+    "romaji": "スイ",
+    "meanings": [
+      "water"
+    ],
+    "level": "N5",
+    "on": [
+      "スイ"
+    ],
+    "kun": [
+      "みず"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "水",
+        "reading": "みず",
+        "meaning": "water"
+      },
+      {
+        "word": "水泳",
+        "reading": "すいえい",
+        "meaning": "swimming"
+      },
+      {
+        "word": "水道",
+        "reading": "すいどう",
+        "meaning": "water supply"
+      }
+    ]
+  },
+  {
+    "id": "k-天",
+    "kana": "天",
+    "romaji": "テン",
+    "meanings": [
+      "heavens",
+      "sky",
+      "imperial"
+    ],
+    "level": "N5",
+    "on": [
+      "テン"
+    ],
+    "kun": [
+      "あまつ",
+      "あめ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "天気",
+        "reading": "てんき",
+        "meaning": "weather"
+      },
+      {
+        "word": "天気予報",
+        "reading": "てんきよほう",
+        "meaning": "weather forecast"
+      }
+    ]
+  },
+  {
+    "id": "k-木",
+    "kana": "木",
+    "romaji": "ボク",
+    "meanings": [
+      "tree",
+      "wood"
+    ],
+    "level": "N5",
+    "on": [
+      "ボク",
+      "モク"
+    ],
+    "kun": [
+      "き"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "木",
+        "reading": "き",
+        "meaning": "tree, wood"
+      },
+      {
+        "word": "木綿",
+        "reading": "もめん",
+        "meaning": "cotton"
+      },
+      {
+        "word": "木曜日",
+        "reading": "もくようび",
+        "meaning": "Thursday"
+      }
+    ]
+  },
+  {
+    "id": "k-六",
+    "kana": "六",
+    "romaji": "ロク",
+    "meanings": [
+      "six"
+    ],
+    "level": "N5",
+    "on": [
+      "ロク",
+      "リク"
+    ],
+    "kun": [
+      "む",
+      "む.つ",
+      "むっ.つ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "六",
+        "reading": "ろく",
+        "meaning": "six"
+      },
+      {
+        "word": "六日",
+        "reading": "むいか",
+        "meaning": "six days, sixth day of the month"
+      },
+      {
+        "word": "六つ",
+        "reading": "むっつ",
+        "meaning": "six"
+      }
+    ]
+  },
+  {
+    "id": "k-万",
+    "kana": "万",
+    "romaji": "マン",
+    "meanings": [
+      "ten thousand",
+      "10,000"
+    ],
+    "level": "N5",
+    "on": [
+      "マン",
+      "バン"
+    ],
+    "kun": [
+      "よろず"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "万",
+        "reading": "まん",
+        "meaning": "ten thousand"
+      },
+      {
+        "word": "万年筆",
+        "reading": "まんねんひつ",
+        "meaning": "fountain pen"
+      }
+    ]
+  },
+  {
+    "id": "k-白",
+    "kana": "白",
+    "romaji": "ハク",
+    "meanings": [
+      "white"
+    ],
+    "level": "N5",
+    "on": [
+      "ハク",
+      "ビャク"
+    ],
+    "kun": [
+      "しろ",
+      "しろ.い"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "白",
+        "reading": "しろ",
+        "meaning": "white"
+      },
+      {
+        "word": "白い",
+        "reading": "しろい",
+        "meaning": "white"
+      }
+    ]
+  },
+  {
+    "id": "k-七",
+    "kana": "七",
+    "romaji": "シチ",
+    "meanings": [
+      "seven"
+    ],
+    "level": "N5",
+    "on": [
+      "シチ"
+    ],
+    "kun": [
+      "なな",
+      "なな.つ",
+      "なの"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "七",
+        "reading": "しち / なな",
+        "meaning": "seven"
+      },
+      {
+        "word": "七つ",
+        "reading": "ななつ",
+        "meaning": "seven"
+      },
+      {
+        "word": "七日",
+        "reading": "なのか",
+        "meaning": "seven days, the seventh day"
+      }
+    ]
+  },
+  {
+    "id": "k-円",
+    "kana": "円",
+    "romaji": "エン",
+    "meanings": [
+      "circle",
+      "yen",
+      "round"
+    ],
+    "level": "N5",
+    "on": [
+      "エン"
+    ],
+    "kun": [
+      "まる.い",
+      "まる",
+      "まど"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "丸い / 円い",
+        "reading": "まるい",
+        "meaning": "round, circular"
+      }
+    ]
+  },
+  {
+    "id": "k-電",
+    "kana": "電",
+    "romaji": "デン",
+    "meanings": [
+      "electricity"
+    ],
+    "level": "N5",
+    "on": [
+      "デン"
+    ],
+    "kun": [],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "電気",
+        "reading": "でんき",
+        "meaning": "electricity, electric light"
+      },
+      {
+        "word": "電話",
+        "reading": "でんわ",
+        "meaning": "telephone"
+      },
+      {
+        "word": "電車",
+        "reading": "でんしゃ",
+        "meaning": "electric train"
+      }
+    ]
+  },
+  {
+    "id": "k-父",
+    "kana": "父",
+    "romaji": "フ",
+    "meanings": [
+      "father"
+    ],
+    "level": "N5",
+    "on": [
+      "フ"
+    ],
+    "kun": [
+      "ちち"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "祖父",
+        "reading": "そふ",
+        "meaning": "grandfather"
+      },
+      {
+        "word": "お父さん",
+        "reading": "おとうさん",
+        "meaning": "(honorable) father"
+      },
+      {
+        "word": "伯父 / 叔父",
+        "reading": "おじいさん",
+        "meaning": "grandfather, male senior citizen"
+      }
+    ]
+  },
+  {
+    "id": "k-北",
+    "kana": "北",
+    "romaji": "ホク",
+    "meanings": [
+      "north"
+    ],
+    "level": "N5",
+    "on": [
+      "ホク"
+    ],
+    "kun": [
+      "きた"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "北",
+        "reading": "きた",
+        "meaning": "north"
+      }
+    ]
+  },
+  {
+    "id": "k-車",
+    "kana": "車",
+    "romaji": "シャ",
+    "meanings": [
+      "car"
+    ],
+    "level": "N5",
+    "on": [
+      "シャ"
+    ],
+    "kun": [
+      "くるま"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "車",
+        "reading": "くるま",
+        "meaning": "car, vehicle"
+      },
+      {
+        "word": "電車",
+        "reading": "でんしゃ",
+        "meaning": "electric train"
+      },
+      {
+        "word": "汽車",
+        "reading": "きしゃ",
+        "meaning": "steam train"
+      }
+    ]
+  },
+  {
+    "id": "k-母",
+    "kana": "母",
+    "romaji": "ボ",
+    "meanings": [
+      "mother"
+    ],
+    "level": "N5",
+    "on": [
+      "ボ"
+    ],
+    "kun": [
+      "はは",
+      "も"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "祖母",
+        "reading": "そぼ",
+        "meaning": "grandmother"
+      },
+      {
+        "word": "お母さん",
+        "reading": "おかあさん",
+        "meaning": "(honorable) mother"
+      },
+      {
+        "word": "伯母さん / 叔母さん",
+        "reading": "おばさん",
+        "meaning": "aunt"
+      }
+    ]
+  },
+  {
+    "id": "k-半",
+    "kana": "半",
+    "romaji": "ハン",
+    "meanings": [
+      "half",
+      "middle",
+      "odd number"
+    ],
+    "level": "N5",
+    "on": [
+      "ハン"
+    ],
+    "kun": [
+      "なか.ば"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "半",
+        "reading": "はん",
+        "meaning": "half"
+      },
+      {
+        "word": "半分",
+        "reading": "はんぶん",
+        "meaning": "half minute"
+      }
+    ]
+  },
+  {
+    "id": "k-百",
+    "kana": "百",
+    "romaji": "ヒャク",
+    "meanings": [
+      "hundred"
+    ],
+    "level": "N5",
+    "on": [
+      "ヒャク",
+      "ビャク"
+    ],
+    "kun": [
+      "もも"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "百",
+        "reading": "ひゃく",
+        "meaning": "hundred"
+      },
+      {
+        "word": "八百屋",
+        "reading": "やおや",
+        "meaning": "greengrocer"
+      }
+    ]
+  },
+  {
+    "id": "k-土",
+    "kana": "土",
+    "romaji": "ド",
+    "meanings": [
+      "soil",
+      "earth",
+      "ground"
+    ],
+    "level": "N5",
+    "on": [
+      "ド",
+      "ト"
+    ],
+    "kun": [
+      "つち"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "土曜日",
+        "reading": "どようび",
+        "meaning": "Saturday"
+      },
+      {
+        "word": "お土産",
+        "reading": "おみやげ",
+        "meaning": "souvenir"
+      }
+    ]
+  },
+  {
+    "id": "k-西",
+    "kana": "西",
+    "romaji": "セイ",
+    "meanings": [
+      "west",
+      "Spain"
+    ],
+    "level": "N5",
+    "on": [
+      "セイ",
+      "サイ",
+      "ス"
+    ],
+    "kun": [
+      "にし"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "西",
+        "reading": "にし",
+        "meaning": "west"
+      },
+      {
+        "word": "西洋",
+        "reading": "せいよう",
+        "meaning": "western countries"
+      }
+    ]
+  },
+  {
+    "id": "k-読",
+    "kana": "読",
+    "romaji": "ドク",
+    "meanings": [
+      "read"
+    ],
+    "level": "N5",
+    "on": [
+      "ドク",
+      "トク",
+      "トウ"
+    ],
+    "kun": [
+      "よ.む"
+    ],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "読む",
+        "reading": "よむ",
+        "meaning": "to read"
+      }
+    ]
+  },
+  {
+    "id": "k-千",
+    "kana": "千",
+    "romaji": "セン",
+    "meanings": [
+      "thousand"
+    ],
+    "level": "N5",
+    "on": [
+      "セン"
+    ],
+    "kun": [
+      "ち"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "千",
+        "reading": "せん",
+        "meaning": "thousand"
+      }
+    ]
+  },
+  {
+    "id": "k-校",
+    "kana": "校",
+    "romaji": "コウ",
+    "meanings": [
+      "exam",
+      "school",
+      "printing"
+    ],
+    "level": "N5",
+    "on": [
+      "コウ",
+      "キョウ"
+    ],
+    "kun": [],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "学校",
+        "reading": "がっこう",
+        "meaning": "school"
+      },
+      {
+        "word": "高校",
+        "reading": "こうこう",
+        "meaning": "high school"
+      },
+      {
+        "word": "校長",
+        "reading": "こうちょう",
+        "meaning": "headmaster"
+      }
+    ]
+  },
+  {
+    "id": "k-右",
+    "kana": "右",
+    "romaji": "ウ",
+    "meanings": [
+      "right"
+    ],
+    "level": "N5",
+    "on": [
+      "ウ",
+      "ユウ"
+    ],
+    "kun": [
+      "みぎ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "右",
+        "reading": "みぎ",
+        "meaning": "right side"
+      }
+    ]
+  },
+  {
+    "id": "k-南",
+    "kana": "南",
+    "romaji": "ナン",
+    "meanings": [
+      "south"
+    ],
+    "level": "N5",
+    "on": [
+      "ナン",
+      "ナ"
+    ],
+    "kun": [
+      "みなみ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "南",
+        "reading": "みなみ",
+        "meaning": "south"
+      }
+    ]
+  },
+  {
+    "id": "k-左",
+    "kana": "左",
+    "romaji": "サ",
+    "meanings": [
+      "left"
+    ],
+    "level": "N5",
+    "on": [
+      "サ",
+      "シャ"
+    ],
+    "kun": [
+      "ひだり"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "左",
+        "reading": "ひだり",
+        "meaning": "left hand side"
+      }
+    ]
+  },
+  {
+    "id": "k-友",
+    "kana": "友",
+    "romaji": "ユウ",
+    "meanings": [
+      "friend"
+    ],
+    "level": "N5",
+    "on": [
+      "ユウ"
+    ],
+    "kun": [
+      "とも"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "友達",
+        "reading": "ともだち",
+        "meaning": "friend"
+      }
+    ]
+  },
+  {
+    "id": "k-火",
+    "kana": "火",
+    "romaji": "カ",
+    "meanings": [
+      "fire"
+    ],
+    "level": "N5",
+    "on": [
+      "カ"
+    ],
+    "kun": [
+      "ひ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "火",
+        "reading": "ひ",
+        "meaning": "fire"
+      },
+      {
+        "word": "火事",
+        "reading": "かじ",
+        "meaning": "fire"
+      },
+      {
+        "word": "火曜日",
+        "reading": "かようび",
+        "meaning": "Tuesday"
+      }
+    ]
+  },
+  {
+    "id": "k-毎",
+    "kana": "毎",
+    "romaji": "マイ",
+    "meanings": [
+      "every"
+    ],
+    "level": "N5",
+    "on": [
+      "マイ"
+    ],
+    "kun": [
+      "ごと"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "毎朝",
+        "reading": "まいあさ",
+        "meaning": "every morning"
+      },
+      {
+        "word": "毎月",
+        "reading": "まいげつ / まいつき",
+        "meaning": "every month"
+      },
+      {
+        "word": "毎週",
+        "reading": "まいしゅう",
+        "meaning": "every week"
+      }
+    ]
+  },
+  {
+    "id": "k-雨",
+    "kana": "雨",
+    "romaji": "ウ",
+    "meanings": [
+      "rain"
+    ],
+    "level": "N5",
+    "on": [
+      "ウ"
+    ],
+    "kun": [
+      "あめ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "雨",
+        "reading": "あめ",
+        "meaning": "rain"
+      }
+    ]
+  },
+  {
+    "id": "k-休",
+    "kana": "休",
+    "romaji": "キュウ",
+    "meanings": [
+      "rest",
+      "day off",
+      "retire"
+    ],
+    "level": "N5",
+    "on": [
+      "キュウ"
+    ],
+    "kun": [
+      "やす.む",
+      "やす.まる",
+      "やす.める"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "休み",
+        "reading": "やすみ",
+        "meaning": "rest, holiday"
+      },
+      {
+        "word": "休む",
+        "reading": "やすむ",
+        "meaning": "to rest"
+      },
+      {
+        "word": "夏休み",
+        "reading": "なつやすみ",
+        "meaning": "summer holiday"
+      }
+    ]
+  },
+  {
+    "id": "k-午",
+    "kana": "午",
+    "romaji": "ゴ",
+    "meanings": [
+      "noon",
+      "sign of the horse",
+      "11AM-1PM"
+    ],
+    "level": "N5",
+    "on": [
+      "ゴ"
+    ],
+    "kun": [
+      "うま"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "午後",
+        "reading": "ごご",
+        "meaning": "afternoon"
+      },
+      {
+        "word": "午前",
+        "reading": "ごぜん",
+        "meaning": "morning"
+      }
+    ]
+  },
+  {
+    "id": "k-言",
+    "kana": "言",
+    "romaji": "ゲン",
+    "meanings": [
+      "say",
+      "word"
+    ],
+    "level": "N4",
+    "on": [
+      "ゲン",
+      "ゴン"
+    ],
+    "kun": [
+      "い.う",
+      "こと"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "言う",
+        "reading": "いう",
+        "meaning": "to say"
+      },
+      {
+        "word": "言葉",
+        "reading": "ことば",
+        "meaning": "word, language"
+      }
+    ]
+  },
+  {
+    "id": "k-手",
+    "kana": "手",
+    "romaji": "シュ",
+    "meanings": [
+      "hand"
+    ],
+    "level": "N4",
+    "on": [
+      "シュ",
+      "ズ"
+    ],
+    "kun": [
+      "て"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "手",
+        "reading": "て",
+        "meaning": "hand"
+      },
+      {
+        "word": "手紙",
+        "reading": "てがみ",
+        "meaning": "letter"
+      },
+      {
+        "word": "下手",
+        "reading": "へた",
+        "meaning": "unskillful"
+      }
+    ]
+  },
+  {
+    "id": "k-自",
+    "kana": "自",
+    "romaji": "ジ",
+    "meanings": [
+      "oneself"
+    ],
+    "level": "N4",
+    "on": [
+      "ジ",
+      "シ"
+    ],
+    "kun": [
+      "みずか.ら",
+      "おの.ずから",
+      "おの.ずと"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "自分",
+        "reading": "じぶん",
+        "meaning": "oneself"
+      },
+      {
+        "word": "自由",
+        "reading": "じゆう",
+        "meaning": "freedom"
+      },
+      {
+        "word": "自転車",
+        "reading": "じてんしゃ",
+        "meaning": "bicycle"
+      }
+    ]
+  },
+  {
+    "id": "k-者",
+    "kana": "者",
+    "romaji": "シャ",
+    "meanings": [
+      "someone",
+      "person"
+    ],
+    "level": "N4",
+    "on": [
+      "シャ"
+    ],
+    "kun": [
+      "もの"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "医者",
+        "reading": "いしゃ",
+        "meaning": "medical doctor"
+      },
+      {
+        "word": "歯医者",
+        "reading": "はいしゃ",
+        "meaning": "dentist"
+      }
+    ]
+  },
+  {
+    "id": "k-事",
+    "kana": "事",
+    "romaji": "ジ",
+    "meanings": [
+      "matter",
+      "thing",
+      "fact"
+    ],
+    "level": "N4",
+    "on": [
+      "ジ",
+      "ズ"
+    ],
+    "kun": [
+      "こと",
+      "つか.う",
+      "つか.える"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "仕事",
+        "reading": "しごと",
+        "meaning": "job"
+      },
+      {
+        "word": "食事",
+        "reading": "しょくじ・する",
+        "meaning": "to have a meal"
+      },
+      {
+        "word": "火事",
+        "reading": "かじ",
+        "meaning": "fire"
+      }
+    ]
+  },
+  {
+    "id": "k-思",
+    "kana": "思",
+    "romaji": "シ",
+    "meanings": [
+      "think"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "おも.う",
+      "おもえら.く",
+      "おぼ.す"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "思う",
+        "reading": "おもう",
+        "meaning": "to think, to feel"
+      },
+      {
+        "word": "思い出す",
+        "reading": "おもいだす",
+        "meaning": "to remember"
+      }
+    ]
+  },
+  {
+    "id": "k-会",
+    "kana": "会",
+    "romaji": "カイ",
+    "meanings": [
+      "meeting",
+      "meet",
+      "party"
+    ],
+    "level": "N4",
+    "on": [
+      "カイ",
+      "エ"
+    ],
+    "kun": [
+      "あ.う",
+      "あ.わせる",
+      "あつ.まる"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "会社",
+        "reading": "かいしゃ",
+        "meaning": "company"
+      },
+      {
+        "word": "会う",
+        "reading": "あう",
+        "meaning": "to meet"
+      },
+      {
+        "word": "会話",
+        "reading": "かいわ",
+        "meaning": "conversation"
+      }
+    ]
+  },
+  {
+    "id": "k-家",
+    "kana": "家",
+    "romaji": "カ",
+    "meanings": [
+      "house",
+      "home",
+      "family"
+    ],
+    "level": "N4",
+    "on": [
+      "カ",
+      "ケ"
+    ],
+    "kun": [
+      "いえ",
+      "や",
+      "うち"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "家",
+        "reading": "いえ",
+        "meaning": "house"
+      },
+      {
+        "word": "家族",
+        "reading": "かぞく",
+        "meaning": "family"
+      },
+      {
+        "word": "家庭",
+        "reading": "かてい",
+        "meaning": "household"
+      }
+    ]
+  },
+  {
+    "id": "k-的",
+    "kana": "的",
+    "romaji": "テキ",
+    "meanings": [
+      "bull's eye",
+      "mark",
+      "target"
+    ],
+    "level": "N4",
+    "on": [
+      "テキ"
+    ],
+    "kun": [
+      "まと"
+    ],
+    "strokes": 8,
+    "examples": []
+  },
+  {
+    "id": "k-方",
+    "kana": "方",
+    "romaji": "ホウ",
+    "meanings": [
+      "direction",
+      "person",
+      "alternative"
+    ],
+    "level": "N4",
+    "on": [
+      "ホウ"
+    ],
+    "kun": [
+      "かた"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "方",
+        "reading": "かた",
+        "meaning": "person, way of doing"
+      },
+      {
+        "word": "夕方",
+        "reading": "ゆうがた",
+        "meaning": "evening"
+      },
+      {
+        "word": "仕方",
+        "reading": "しかた",
+        "meaning": "method"
+      }
+    ]
+  },
+  {
+    "id": "k-地",
+    "kana": "地",
+    "romaji": "チ",
+    "meanings": [
+      "ground",
+      "earth"
+    ],
+    "level": "N4",
+    "on": [
+      "チ",
+      "ジ"
+    ],
+    "kun": [],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "地図",
+        "reading": "ちず",
+        "meaning": "map"
+      },
+      {
+        "word": "地理",
+        "reading": "ちり",
+        "meaning": "geography"
+      },
+      {
+        "word": "地震",
+        "reading": "じしん",
+        "meaning": "earthquake"
+      }
+    ]
+  },
+  {
+    "id": "k-目",
+    "kana": "目",
+    "romaji": "モク",
+    "meanings": [
+      "eye",
+      "class",
+      "look"
+    ],
+    "level": "N4",
+    "on": [
+      "モク",
+      "ボク"
+    ],
+    "kun": [
+      "め"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "目",
+        "reading": "め",
+        "meaning": "eye"
+      }
+    ]
+  },
+  {
+    "id": "k-場",
+    "kana": "場",
+    "romaji": "ジョウ",
+    "meanings": [
+      "location",
+      "place"
+    ],
+    "level": "N4",
+    "on": [
+      "ジョウ",
+      "チョウ"
+    ],
+    "kun": [
+      "ば"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "場合",
+        "reading": "ばあい",
+        "meaning": "situation"
+      },
+      {
+        "word": "工場",
+        "reading": "こうじょう",
+        "meaning": "factory"
+      },
+      {
+        "word": "会場",
+        "reading": "かいじょう",
+        "meaning": "assembly hall or meeting place"
+      }
+    ]
+  },
+  {
+    "id": "k-代",
+    "kana": "代",
+    "romaji": "ダイ",
+    "meanings": [
+      "substitute",
+      "change",
+      "convert"
+    ],
+    "level": "N4",
+    "on": [
+      "ダイ",
+      "タイ"
+    ],
+    "kun": [
+      "か.わる",
+      "かわ.る",
+      "かわ.り"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "時代",
+        "reading": "じだい",
+        "meaning": "era"
+      },
+      {
+        "word": "代わり",
+        "reading": "かわり",
+        "meaning": "substitute, alternate"
+      }
+    ]
+  },
+  {
+    "id": "k-私",
+    "kana": "私",
+    "romaji": "シ",
+    "meanings": [
+      "private",
+      "I",
+      "me"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "わたくし",
+      "わたし"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "私",
+        "reading": "わたくし",
+        "meaning": "(humble) I, myself"
+      }
+    ]
+  },
+  {
+    "id": "k-立",
+    "kana": "立",
+    "romaji": "リツ",
+    "meanings": [
+      "stand up",
+      "rise",
+      "set up"
+    ],
+    "level": "N4",
+    "on": [
+      "リツ",
+      "リュウ",
+      "リットル"
+    ],
+    "kun": [
+      "た.つ",
+      "た.てる"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "立つ",
+        "reading": "たつ",
+        "meaning": "to stand"
+      },
+      {
+        "word": "立てる",
+        "reading": "たてる",
+        "meaning": "to stand something up"
+      },
+      {
+        "word": "役に立つ",
+        "reading": "やくにたつ",
+        "meaning": "to be helpful"
+      }
+    ]
+  },
+  {
+    "id": "k-物",
+    "kana": "物",
+    "romaji": "ブツ",
+    "meanings": [
+      "thing",
+      "object",
+      "matter"
+    ],
+    "level": "N4",
+    "on": [
+      "ブツ",
+      "モツ"
+    ],
+    "kun": [
+      "もの"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "物",
+        "reading": "もの",
+        "meaning": "thing"
+      },
+      {
+        "word": "建物",
+        "reading": "たてもの",
+        "meaning": "building"
+      },
+      {
+        "word": "果物",
+        "reading": "くだもの",
+        "meaning": "fruit"
+      }
+    ]
+  },
+  {
+    "id": "k-田",
+    "kana": "田",
+    "romaji": "デン",
+    "meanings": [
+      "rice field",
+      "rice paddy"
+    ],
+    "level": "N4",
+    "on": [
+      "デン"
+    ],
+    "kun": [
+      "た"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "田舎",
+        "reading": "いなか",
+        "meaning": "countryside"
+      }
+    ]
+  },
+  {
+    "id": "k-体",
+    "kana": "体",
+    "romaji": "タイ",
+    "meanings": [
+      "body",
+      "substance",
+      "object"
+    ],
+    "level": "N4",
+    "on": [
+      "タイ",
+      "テイ"
+    ],
+    "kun": [
+      "からだ",
+      "かたち"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "体",
+        "reading": "からだ",
+        "meaning": "body"
+      },
+      {
+        "word": "大体",
+        "reading": "だいたい",
+        "meaning": "generally"
+      }
+    ]
+  },
+  {
+    "id": "k-動",
+    "kana": "動",
+    "romaji": "ドウ",
+    "meanings": [
+      "move",
+      "motion",
+      "change"
+    ],
+    "level": "N4",
+    "on": [
+      "ドウ"
+    ],
+    "kun": [
+      "うご.く",
+      "うご.かす"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "動物",
+        "reading": "どうぶつ",
+        "meaning": "animal"
+      },
+      {
+        "word": "運動",
+        "reading": "うんどう・する",
+        "meaning": "to exercise"
+      },
+      {
+        "word": "動く",
+        "reading": "うごく",
+        "meaning": "to move"
+      }
+    ]
+  },
+  {
+    "id": "k-社",
+    "kana": "社",
+    "romaji": "シャ",
+    "meanings": [
+      "company",
+      "firm",
+      "office"
+    ],
+    "level": "N4",
+    "on": [
+      "シャ"
+    ],
+    "kun": [
+      "やしろ"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "会社",
+        "reading": "かいしゃ",
+        "meaning": "company"
+      },
+      {
+        "word": "神社",
+        "reading": "じんじゃ",
+        "meaning": "Shinto shrine"
+      },
+      {
+        "word": "社会",
+        "reading": "しゃかい",
+        "meaning": "society, public"
+      }
+    ]
+  },
+  {
+    "id": "k-知",
+    "kana": "知",
+    "romaji": "チ",
+    "meanings": [
+      "know",
+      "wisdom"
+    ],
+    "level": "N4",
+    "on": [
+      "チ"
+    ],
+    "kun": [
+      "し.る",
+      "し.らせる"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "知る",
+        "reading": "しる",
+        "meaning": "to know"
+      },
+      {
+        "word": "承知",
+        "reading": "しょうち・する",
+        "meaning": "to consent"
+      },
+      {
+        "word": "知らせる",
+        "reading": "しらせる",
+        "meaning": "to notify"
+      }
+    ]
+  },
+  {
+    "id": "k-理",
+    "kana": "理",
+    "romaji": "リ",
+    "meanings": [
+      "logic",
+      "arrangement",
+      "reason"
+    ],
+    "level": "N4",
+    "on": [
+      "リ"
+    ],
+    "kun": [
+      "ことわり"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "料理",
+        "reading": "りょうり",
+        "meaning": "cuisine"
+      },
+      {
+        "word": "無理",
+        "reading": "むり",
+        "meaning": "impossible"
+      },
+      {
+        "word": "理由",
+        "reading": "りゆう",
+        "meaning": "reason"
+      }
+    ]
+  },
+  {
+    "id": "k-同",
+    "kana": "同",
+    "romaji": "ドウ",
+    "meanings": [
+      "same",
+      "agree",
+      "equal"
+    ],
+    "level": "N4",
+    "on": [
+      "ドウ"
+    ],
+    "kun": [
+      "おな.じ"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "同じ",
+        "reading": "おなじ",
+        "meaning": "same"
+      }
+    ]
+  },
+  {
+    "id": "k-心",
+    "kana": "心",
+    "romaji": "シン",
+    "meanings": [
+      "heart",
+      "mind",
+      "spirit"
+    ],
+    "level": "N4",
+    "on": [
+      "シン"
+    ],
+    "kun": [
+      "こころ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "心",
+        "reading": "こころ",
+        "meaning": "core, heart"
+      },
+      {
+        "word": "心配",
+        "reading": "しんぱい・する",
+        "meaning": "to worry"
+      },
+      {
+        "word": "安心",
+        "reading": "あんしん",
+        "meaning": "relief"
+      }
+    ]
+  },
+  {
+    "id": "k-発",
+    "kana": "発",
+    "romaji": "ハツ",
+    "meanings": [
+      "departure",
+      "discharge",
+      "publish"
+    ],
+    "level": "N4",
+    "on": [
+      "ハツ",
+      "ホツ"
+    ],
+    "kun": [
+      "た.つ",
+      "あば.く",
+      "おこ.る"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "発音",
+        "reading": "はつおん",
+        "meaning": "pronunciation"
+      },
+      {
+        "word": "出発",
+        "reading": "しゅっぱつ・する",
+        "meaning": "to depart"
+      }
+    ]
+  },
+  {
+    "id": "k-作",
+    "kana": "作",
+    "romaji": "サク",
+    "meanings": [
+      "make",
+      "production",
+      "prepare"
+    ],
+    "level": "N4",
+    "on": [
+      "サク",
+      "サ"
+    ],
+    "kun": [
+      "つく.る",
+      "つく.り"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "作文",
+        "reading": "さくぶん",
+        "meaning": "composition, writing"
+      },
+      {
+        "word": "作る",
+        "reading": "つくる",
+        "meaning": "to make"
+      }
+    ]
+  },
+  {
+    "id": "k-新",
+    "kana": "新",
+    "romaji": "シン",
+    "meanings": [
+      "new"
+    ],
+    "level": "N4",
+    "on": [
+      "シン"
+    ],
+    "kun": [
+      "あたら.しい",
+      "あら.た"
+    ],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "新聞",
+        "reading": "しんぶん",
+        "meaning": "newspaper"
+      },
+      {
+        "word": "新しい",
+        "reading": "あたらしい",
+        "meaning": "new"
+      },
+      {
+        "word": "新聞社",
+        "reading": "しんぶんしゃ",
+        "meaning": "newspaper company"
+      }
+    ]
+  },
+  {
+    "id": "k-世",
+    "kana": "世",
+    "romaji": "セイ",
+    "meanings": [
+      "generation",
+      "world",
+      "society"
+    ],
+    "level": "N4",
+    "on": [
+      "セイ",
+      "セ",
+      "ソウ"
+    ],
+    "kun": [
+      "よ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "世話",
+        "reading": "せわ・する",
+        "meaning": "to look after"
+      },
+      {
+        "word": "世界",
+        "reading": "せかい",
+        "meaning": "the world"
+      }
+    ]
+  },
+  {
+    "id": "k-度",
+    "kana": "度",
+    "romaji": "ド",
+    "meanings": [
+      "degrees",
+      "occurrence",
+      "time"
+    ],
+    "level": "N4",
+    "on": [
+      "ド",
+      "ト",
+      "タク"
+    ],
+    "kun": [
+      "たび"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "一度",
+        "reading": "いちど",
+        "meaning": "once"
+      },
+      {
+        "word": "今度",
+        "reading": "こんど",
+        "meaning": "now, next time"
+      },
+      {
+        "word": "支度",
+        "reading": "したく・する",
+        "meaning": "to prepare"
+      }
+    ]
+  },
+  {
+    "id": "k-明",
+    "kana": "明",
+    "romaji": "メイ",
+    "meanings": [
+      "bright",
+      "light"
+    ],
+    "level": "N4",
+    "on": [
+      "メイ",
+      "ミョウ",
+      "ミン"
+    ],
+    "kun": [
+      "あ.かり",
+      "あか.るい",
+      "あか.るむ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "明日",
+        "reading": "あした",
+        "meaning": "tomorrow"
+      },
+      {
+        "word": "明い",
+        "reading": "あかるい",
+        "meaning": "bright"
+      },
+      {
+        "word": "明日",
+        "reading": "あす",
+        "meaning": "tomorrow"
+      }
+    ]
+  },
+  {
+    "id": "k-力",
+    "kana": "力",
+    "romaji": "リョク",
+    "meanings": [
+      "power",
+      "strength",
+      "strong"
+    ],
+    "level": "N4",
+    "on": [
+      "リョク",
+      "リキ",
+      "リイ"
+    ],
+    "kun": [
+      "ちから"
+    ],
+    "strokes": 2,
+    "examples": [
+      {
+        "word": "力",
+        "reading": "ちから",
+        "meaning": "strength, power"
+      }
+    ]
+  },
+  {
+    "id": "k-意",
+    "kana": "意",
+    "romaji": "イ",
+    "meanings": [
+      "idea",
+      "mind",
+      "heart"
+    ],
+    "level": "N4",
+    "on": [
+      "イ"
+    ],
+    "kun": [],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "意味",
+        "reading": "いみ",
+        "meaning": "meaning"
+      },
+      {
+        "word": "注意",
+        "reading": "ちゅうい",
+        "meaning": "caution"
+      },
+      {
+        "word": "意見",
+        "reading": "いけん",
+        "meaning": "opinion"
+      }
+    ]
+  },
+  {
+    "id": "k-用",
+    "kana": "用",
+    "romaji": "ヨウ",
+    "meanings": [
+      "utilize",
+      "business",
+      "service"
+    ],
+    "level": "N4",
+    "on": [
+      "ヨウ"
+    ],
+    "kun": [
+      "もち.いる"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "用",
+        "reading": "よう",
+        "meaning": "use"
+      },
+      {
+        "word": "利用",
+        "reading": "りよう",
+        "meaning": "utilization"
+      },
+      {
+        "word": "用意",
+        "reading": "ようい",
+        "meaning": "preparation"
+      }
+    ]
+  },
+  {
+    "id": "k-主",
+    "kana": "主",
+    "romaji": "シュ",
+    "meanings": [
+      "lord",
+      "chief",
+      "master"
+    ],
+    "level": "N4",
+    "on": [
+      "シュ",
+      "ス",
+      "シュウ"
+    ],
+    "kun": [
+      "ぬし",
+      "おも",
+      "あるじ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "御主人",
+        "reading": "ごしゅじん",
+        "meaning": "(honorable) your husband"
+      }
+    ]
+  },
+  {
+    "id": "k-通",
+    "kana": "通",
+    "romaji": "ツウ",
+    "meanings": [
+      "traffic",
+      "pass through",
+      "avenue"
+    ],
+    "level": "N4",
+    "on": [
+      "ツウ",
+      "ツ"
+    ],
+    "kun": [
+      "とお.る",
+      "とお.り",
+      "とお.す"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "通る",
+        "reading": "とおる",
+        "meaning": "to go through"
+      },
+      {
+        "word": "交通",
+        "reading": "こうつう",
+        "meaning": "traffic, transportation"
+      },
+      {
+        "word": "普通",
+        "reading": "ふつう",
+        "meaning": "usually, or a train that stops at every station"
+      }
+    ]
+  },
+  {
+    "id": "k-文",
+    "kana": "文",
+    "romaji": "ブン",
+    "meanings": [
+      "sentence",
+      "literature",
+      "style"
+    ],
+    "level": "N4",
+    "on": [
+      "ブン",
+      "モン"
+    ],
+    "kun": [
+      "ふみ",
+      "あや"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "作文",
+        "reading": "さくぶん",
+        "meaning": "composition, writing"
+      },
+      {
+        "word": "文章",
+        "reading": "ぶんしょう",
+        "meaning": "sentence, text"
+      },
+      {
+        "word": "文学",
+        "reading": "ぶんがく",
+        "meaning": "literature"
+      }
+    ]
+  },
+  {
+    "id": "k-屋",
+    "kana": "屋",
+    "romaji": "オク",
+    "meanings": [
+      "roof",
+      "house",
+      "shop"
+    ],
+    "level": "N4",
+    "on": [
+      "オク"
+    ],
+    "kun": [
+      "や"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "部屋",
+        "reading": "へや",
+        "meaning": "room"
+      },
+      {
+        "word": "屋上",
+        "reading": "おくじょう",
+        "meaning": "rooftop"
+      },
+      {
+        "word": "八百屋",
+        "reading": "やおや",
+        "meaning": "greengrocer"
+      }
+    ]
+  },
+  {
+    "id": "k-業",
+    "kana": "業",
+    "romaji": "ギョウ",
+    "meanings": [
+      "business",
+      "vocation",
+      "arts"
+    ],
+    "level": "N4",
+    "on": [
+      "ギョウ",
+      "ゴウ"
+    ],
+    "kun": [
+      "わざ"
+    ],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "授業",
+        "reading": "じゅぎょう",
+        "meaning": "lesson, class work"
+      },
+      {
+        "word": "工業",
+        "reading": "こうぎょう",
+        "meaning": "the manufacturing industry"
+      },
+      {
+        "word": "産業",
+        "reading": "さんぎょう",
+        "meaning": "industry"
+      }
+    ]
+  },
+  {
+    "id": "k-持",
+    "kana": "持",
+    "romaji": "ジ",
+    "meanings": [
+      "hold",
+      "have"
+    ],
+    "level": "N4",
+    "on": [
+      "ジ"
+    ],
+    "kun": [
+      "も.つ",
+      "も.てる"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "持つ",
+        "reading": "もつ",
+        "meaning": "to hold"
+      },
+      {
+        "word": "気持ち",
+        "reading": "きもち",
+        "meaning": "feeling, mood"
+      },
+      {
+        "word": "お・金持ち",
+        "reading": "かねもち / おかねもち",
+        "meaning": "rich man"
+      }
+    ]
+  },
+  {
+    "id": "k-道",
+    "kana": "道",
+    "romaji": "ドウ",
+    "meanings": [
+      "road-way",
+      "street",
+      "district"
+    ],
+    "level": "N4",
+    "on": [
+      "ドウ",
+      "トウ"
+    ],
+    "kun": [
+      "みち",
+      "いう"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "道",
+        "reading": "みち",
+        "meaning": "street"
+      },
+      {
+        "word": "水道",
+        "reading": "すいどう",
+        "meaning": "water supply"
+      },
+      {
+        "word": "道具",
+        "reading": "どうぐ",
+        "meaning": "tool, means"
+      }
+    ]
+  },
+  {
+    "id": "k-身",
+    "kana": "身",
+    "romaji": "シン",
+    "meanings": [
+      "somebody",
+      "person",
+      "one's station in life"
+    ],
+    "level": "N4",
+    "on": [
+      "シン"
+    ],
+    "kun": [
+      "み"
+    ],
+    "strokes": 7,
+    "examples": []
+  },
+  {
+    "id": "k-不",
+    "kana": "不",
+    "romaji": "フ",
+    "meanings": [
+      "negative",
+      "non-",
+      "bad"
+    ],
+    "level": "N4",
+    "on": [
+      "フ",
+      "ブ"
+    ],
+    "kun": [],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "不便",
+        "reading": "ふべん",
+        "meaning": "inconvenience"
+      }
+    ]
+  },
+  {
+    "id": "k-口",
+    "kana": "口",
+    "romaji": "コウ",
+    "meanings": [
+      "mouth"
+    ],
+    "level": "N4",
+    "on": [
+      "コウ",
+      "ク"
+    ],
+    "kun": [
+      "くち"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "口",
+        "reading": "くち",
+        "meaning": "mouth, opening"
+      },
+      {
+        "word": "出口",
+        "reading": "でぐち",
+        "meaning": "exit"
+      },
+      {
+        "word": "入口",
+        "reading": "いりぐち",
+        "meaning": "entrance"
+      }
+    ]
+  },
+  {
+    "id": "k-多",
+    "kana": "多",
+    "romaji": "タ",
+    "meanings": [
+      "many",
+      "frequent",
+      "much"
+    ],
+    "level": "N4",
+    "on": [
+      "タ"
+    ],
+    "kun": [
+      "おお.い",
+      "まさ.に",
+      "まさ.る"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "多い",
+        "reading": "おおい",
+        "meaning": "many"
+      }
+    ]
+  },
+  {
+    "id": "k-野",
+    "kana": "野",
+    "romaji": "ヤ",
+    "meanings": [
+      "plains",
+      "field",
+      "rustic"
+    ],
+    "level": "N4",
+    "on": [
+      "ヤ",
+      "ショ"
+    ],
+    "kun": [
+      "の"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "野菜",
+        "reading": "やさい",
+        "meaning": "vegetable"
+      }
+    ]
+  },
+  {
+    "id": "k-考",
+    "kana": "考",
+    "romaji": "コウ",
+    "meanings": [
+      "consider",
+      "think over"
+    ],
+    "level": "N4",
+    "on": [
+      "コウ"
+    ],
+    "kun": [
+      "かんが.える",
+      "かんが.え"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "考える",
+        "reading": "かんがえる",
+        "meaning": "to consider"
+      }
+    ]
+  },
+  {
+    "id": "k-開",
+    "kana": "開",
+    "romaji": "カイ",
+    "meanings": [
+      "open",
+      "unfold",
+      "unseal"
+    ],
+    "level": "N4",
+    "on": [
+      "カイ"
+    ],
+    "kun": [
+      "ひら.く",
+      "ひら.き",
+      "ひら.ける"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "開く",
+        "reading": "あく",
+        "meaning": "to open, to become open"
+      },
+      {
+        "word": "開く",
+        "reading": "ひらく",
+        "meaning": "to open an event"
+      },
+      {
+        "word": "開ける",
+        "reading": "あける",
+        "meaning": "to open"
+      }
+    ]
+  },
+  {
+    "id": "k-教",
+    "kana": "教",
+    "romaji": "キョウ",
+    "meanings": [
+      "teach",
+      "faith",
+      "doctrine"
+    ],
+    "level": "N4",
+    "on": [
+      "キョウ"
+    ],
+    "kun": [
+      "おし.える",
+      "おそ.わる"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "classroom"
+      },
+      {
+        "word": "教育",
+        "reading": "きょういく",
+        "meaning": "education"
+      },
+      {
+        "word": "教会",
+        "reading": "きょうかい",
+        "meaning": "church"
+      }
+    ]
+  },
+  {
+    "id": "k-近",
+    "kana": "近",
+    "romaji": "キン",
+    "meanings": [
+      "near",
+      "early",
+      "akin"
+    ],
+    "level": "N4",
+    "on": [
+      "キン",
+      "コン"
+    ],
+    "kun": [
+      "ちか.い"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "近く",
+        "reading": "ちかく",
+        "meaning": "near"
+      },
+      {
+        "word": "近い",
+        "reading": "ちかい",
+        "meaning": "near"
+      },
+      {
+        "word": "近所",
+        "reading": "きんじょ",
+        "meaning": "neighbourhood"
+      }
+    ]
+  },
+  {
+    "id": "k-以",
+    "kana": "以",
+    "romaji": "イ",
+    "meanings": [
+      "by means of",
+      "because",
+      "in view of"
+    ],
+    "level": "N4",
+    "on": [
+      "イ"
+    ],
+    "kun": [
+      "もっ.て"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "以上",
+        "reading": "いじょう",
+        "meaning": "more than, this is all"
+      },
+      {
+        "word": "以下",
+        "reading": "いか",
+        "meaning": "less than"
+      },
+      {
+        "word": "以内",
+        "reading": "いない",
+        "meaning": "within"
+      }
+    ]
+  },
+  {
+    "id": "k-問",
+    "kana": "問",
+    "romaji": "モン",
+    "meanings": [
+      "question",
+      "ask",
+      "problem"
+    ],
+    "level": "N4",
+    "on": [
+      "モン"
+    ],
+    "kun": [
+      "と.う",
+      "と.い",
+      "とん"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "問題",
+        "reading": "もんだい",
+        "meaning": "problem"
+      },
+      {
+        "word": "質問",
+        "reading": "しつもん",
+        "meaning": "question"
+      }
+    ]
+  },
+  {
+    "id": "k-正",
+    "kana": "正",
+    "romaji": "セイ",
+    "meanings": [
+      "correct",
+      "justice",
+      "righteous"
+    ],
+    "level": "N4",
+    "on": [
+      "セイ",
+      "ショウ"
+    ],
+    "kun": [
+      "ただ.しい",
+      "ただ.す",
+      "まさ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "正しい",
+        "reading": "ただしい",
+        "meaning": "correct"
+      }
+    ]
+  },
+  {
+    "id": "k-真",
+    "kana": "真",
+    "romaji": "シン",
+    "meanings": [
+      "true",
+      "reality",
+      "Buddhist sect"
+    ],
+    "level": "N4",
+    "on": [
+      "シン"
+    ],
+    "kun": [
+      "ま",
+      "まこと"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "写真",
+        "reading": "しゃしん",
+        "meaning": "photograph"
+      },
+      {
+        "word": "真中",
+        "reading": "まんなか",
+        "meaning": "middle"
+      }
+    ]
+  },
+  {
+    "id": "k-味",
+    "kana": "味",
+    "romaji": "ミ",
+    "meanings": [
+      "flavor",
+      "taste"
+    ],
+    "level": "N4",
+    "on": [
+      "ミ"
+    ],
+    "kun": [
+      "あじ",
+      "あじ.わう"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "味",
+        "reading": "あじ",
+        "meaning": "flavour"
+      },
+      {
+        "word": "意味",
+        "reading": "いみ",
+        "meaning": "meaning"
+      },
+      {
+        "word": "興味",
+        "reading": "きょうみ",
+        "meaning": "an interest"
+      }
+    ]
+  },
+  {
+    "id": "k-界",
+    "kana": "界",
+    "romaji": "カイ",
+    "meanings": [
+      "world",
+      "boundary"
+    ],
+    "level": "N4",
+    "on": [
+      "カイ"
+    ],
+    "kun": [],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "世界",
+        "reading": "せかい",
+        "meaning": "the world"
+      }
+    ]
+  },
+  {
+    "id": "k-無",
+    "kana": "無",
+    "romaji": "ム",
+    "meanings": [
+      "nothingness",
+      "none",
+      "ain't"
+    ],
+    "level": "N4",
+    "on": [
+      "ム",
+      "ブ"
+    ],
+    "kun": [
+      "な.い"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "無理",
+        "reading": "むり",
+        "meaning": "impossible"
+      },
+      {
+        "word": "無くす",
+        "reading": "なくす",
+        "meaning": "to lose something"
+      },
+      {
+        "word": "無くなる",
+        "reading": "なくなる",
+        "meaning": "to disappear, to get lost"
+      }
+    ]
+  },
+  {
+    "id": "k-少",
+    "kana": "少",
+    "romaji": "ショウ",
+    "meanings": [
+      "few",
+      "little"
+    ],
+    "level": "N4",
+    "on": [
+      "ショウ"
+    ],
+    "kun": [
+      "すく.ない",
+      "すこ.し"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "少し",
+        "reading": "すこし",
+        "meaning": "few"
+      },
+      {
+        "word": "少ない",
+        "reading": "すくない",
+        "meaning": "a few"
+      }
+    ]
+  },
+  {
+    "id": "k-海",
+    "kana": "海",
+    "romaji": "カイ",
+    "meanings": [
+      "sea",
+      "ocean"
+    ],
+    "level": "N4",
+    "on": [
+      "カイ"
+    ],
+    "kun": [
+      "うみ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "海",
+        "reading": "うみ",
+        "meaning": "sea"
+      },
+      {
+        "word": "海岸",
+        "reading": "かいがん",
+        "meaning": "coast"
+      }
+    ]
+  },
+  {
+    "id": "k-切",
+    "kana": "切",
+    "romaji": "セツ",
+    "meanings": [
+      "cut",
+      "cutoff",
+      "be sharp"
+    ],
+    "level": "N4",
+    "on": [
+      "セツ",
+      "サイ"
+    ],
+    "kun": [
+      "き.る",
+      "き.り",
+      "き.れる"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "切符",
+        "reading": "きっぷ",
+        "meaning": "ticket"
+      },
+      {
+        "word": "大切",
+        "reading": "たいせつ",
+        "meaning": "important"
+      },
+      {
+        "word": "切る",
+        "reading": "きる",
+        "meaning": "to cut"
+      }
+    ]
+  },
+  {
+    "id": "k-重",
+    "kana": "重",
+    "romaji": "ジュウ",
+    "meanings": [
+      "heavy",
+      "important",
+      "esteem"
+    ],
+    "level": "N4",
+    "on": [
+      "ジュウ",
+      "チョウ"
+    ],
+    "kun": [
+      "え",
+      "おも.い",
+      "おも.り"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "重い",
+        "reading": "おもい",
+        "meaning": "heavy"
+      }
+    ]
+  },
+  {
+    "id": "k-集",
+    "kana": "集",
+    "romaji": "シュウ",
+    "meanings": [
+      "gather",
+      "meet",
+      "congregate"
+    ],
+    "level": "N4",
+    "on": [
+      "シュウ"
+    ],
+    "kun": [
+      "あつ.まる",
+      "あつ.める",
+      "つど.う"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "集る",
+        "reading": "あつまる",
+        "meaning": "to gather"
+      },
+      {
+        "word": "集める",
+        "reading": "あつめる",
+        "meaning": "to collect something"
+      }
+    ]
+  },
+  {
+    "id": "k-員",
+    "kana": "員",
+    "romaji": "イン",
+    "meanings": [
+      "employee",
+      "member",
+      "number"
+    ],
+    "level": "N4",
+    "on": [
+      "イン"
+    ],
+    "kun": [],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "店員",
+        "reading": "てんいん",
+        "meaning": "shop assistant"
+      },
+      {
+        "word": "公務員",
+        "reading": "こうむいん",
+        "meaning": "government worker"
+      }
+    ]
+  },
+  {
+    "id": "k-公",
+    "kana": "公",
+    "romaji": "コウ",
+    "meanings": [
+      "public",
+      "prince",
+      "official"
+    ],
+    "level": "N4",
+    "on": [
+      "コウ",
+      "ク"
+    ],
+    "kun": [
+      "おおやけ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "公園",
+        "reading": "こうえん",
+        "meaning": "park"
+      },
+      {
+        "word": "公務員",
+        "reading": "こうむいん",
+        "meaning": "government worker"
+      }
+    ]
+  },
+  {
+    "id": "k-画",
+    "kana": "画",
+    "romaji": "ガ",
+    "meanings": [
+      "brush-stroke",
+      "picture"
+    ],
+    "level": "N4",
+    "on": [
+      "ガ",
+      "カク",
+      "エ"
+    ],
+    "kun": [
+      "えが.く",
+      "かく.する",
+      "かぎ.る"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "映画",
+        "reading": "えいが",
+        "meaning": "movie"
+      },
+      {
+        "word": "漫画",
+        "reading": "まんが",
+        "meaning": "comic"
+      },
+      {
+        "word": "計画",
+        "reading": "けいかく・する",
+        "meaning": "to plan"
+      }
+    ]
+  },
+  {
+    "id": "k-死",
+    "kana": "死",
+    "romaji": "シ",
+    "meanings": [
+      "death",
+      "die"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "し.ぬ"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "死ぬ",
+        "reading": "しぬ",
+        "meaning": "to die"
+      }
+    ]
+  },
+  {
+    "id": "k-安",
+    "kana": "安",
+    "romaji": "アン",
+    "meanings": [
+      "relax",
+      "cheap",
+      "low"
+    ],
+    "level": "N4",
+    "on": [
+      "アン"
+    ],
+    "kun": [
+      "やす.い",
+      "やす.まる",
+      "やす"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "安い",
+        "reading": "やすい",
+        "meaning": "cheap"
+      },
+      {
+        "word": "安全",
+        "reading": "あんぜん",
+        "meaning": "safety"
+      },
+      {
+        "word": "安心",
+        "reading": "あんしん",
+        "meaning": "relief"
+      }
+    ]
+  },
+  {
+    "id": "k-親",
+    "kana": "親",
+    "romaji": "シン",
+    "meanings": [
+      "parent",
+      "intimacy",
+      "relative"
+    ],
+    "level": "N4",
+    "on": [
+      "シン"
+    ],
+    "kun": [
+      "おや",
+      "した.しい",
+      "した.しむ"
+    ],
+    "strokes": 16,
+    "examples": [
+      {
+        "word": "親",
+        "reading": "おや",
+        "meaning": "parents"
+      },
+      {
+        "word": "両親",
+        "reading": "りょうしん",
+        "meaning": "both parents"
+      },
+      {
+        "word": "親切",
+        "reading": "しんせつ",
+        "meaning": "kindness"
+      }
+    ]
+  },
+  {
+    "id": "k-強",
+    "kana": "強",
+    "romaji": "キョウ",
+    "meanings": [
+      "strong"
+    ],
+    "level": "N4",
+    "on": [
+      "キョウ",
+      "ゴウ"
+    ],
+    "kun": [
+      "つよ.い",
+      "つよ.まる",
+      "つよ.める"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "勉強",
+        "reading": "べんきょうする",
+        "meaning": "to study"
+      },
+      {
+        "word": "強い",
+        "reading": "つよい",
+        "meaning": "powerful"
+      }
+    ]
+  },
+  {
+    "id": "k-使",
+    "kana": "使",
+    "romaji": "シ",
+    "meanings": [
+      "use",
+      "send on a mission",
+      "order"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "つか.う",
+      "つか.い"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "使う",
+        "reading": "つかう",
+        "meaning": "to use"
+      },
+      {
+        "word": "大使館",
+        "reading": "たいしかん",
+        "meaning": "embassy"
+      }
+    ]
+  },
+  {
+    "id": "k-朝",
+    "kana": "朝",
+    "romaji": "チョウ",
+    "meanings": [
+      "morning",
+      "dynasty",
+      "regime"
+    ],
+    "level": "N4",
+    "on": [
+      "チョウ"
+    ],
+    "kun": [
+      "あさ"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "朝",
+        "reading": "あさ",
+        "meaning": "morning"
+      },
+      {
+        "word": "毎朝",
+        "reading": "まいあさ",
+        "meaning": "every morning"
+      },
+      {
+        "word": "今朝",
+        "reading": "けさ",
+        "meaning": "this morning"
+      }
+    ]
+  },
+  {
+    "id": "k-題",
+    "kana": "題",
+    "romaji": "ダイ",
+    "meanings": [
+      "topic",
+      "subject"
+    ],
+    "level": "N4",
+    "on": [
+      "ダイ"
+    ],
+    "kun": [],
+    "strokes": 18,
+    "examples": [
+      {
+        "word": "問題",
+        "reading": "もんだい",
+        "meaning": "problem"
+      },
+      {
+        "word": "宿題",
+        "reading": "しゅくだい",
+        "meaning": "homework"
+      }
+    ]
+  },
+  {
+    "id": "k-仕",
+    "kana": "仕",
+    "romaji": "シ",
+    "meanings": [
+      "attend",
+      "doing",
+      "official"
+    ],
+    "level": "N4",
+    "on": [
+      "シ",
+      "ジ"
+    ],
+    "kun": [
+      "つか.える"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "仕事",
+        "reading": "しごと",
+        "meaning": "job"
+      },
+      {
+        "word": "仕方",
+        "reading": "しかた",
+        "meaning": "method"
+      }
+    ]
+  },
+  {
+    "id": "k-京",
+    "kana": "京",
+    "romaji": "キョウ",
+    "meanings": [
+      "capital",
+      "10**16"
+    ],
+    "level": "N4",
+    "on": [
+      "キョウ",
+      "ケイ",
+      "キン"
+    ],
+    "kun": [
+      "みやこ"
+    ],
+    "strokes": 8,
+    "examples": []
+  },
+  {
+    "id": "k-足",
+    "kana": "足",
+    "romaji": "ソク",
+    "meanings": [
+      "leg",
+      "foot",
+      "be sufficient"
+    ],
+    "level": "N4",
+    "on": [
+      "ソク"
+    ],
+    "kun": [
+      "あし",
+      "た.りる",
+      "た.る"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "足",
+        "reading": "あし",
+        "meaning": "foot, leg"
+      },
+      {
+        "word": "足す",
+        "reading": "たす",
+        "meaning": "to add a number"
+      },
+      {
+        "word": "足りる",
+        "reading": "たりる",
+        "meaning": "to be enough"
+      }
+    ]
+  },
+  {
+    "id": "k-品",
+    "kana": "品",
+    "romaji": "ヒン",
+    "meanings": [
+      "goods",
+      "refinement",
+      "dignity"
+    ],
+    "level": "N4",
+    "on": [
+      "ヒン",
+      "ホン"
+    ],
+    "kun": [
+      "しな"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "品物",
+        "reading": "しなもの",
+        "meaning": "goods"
+      },
+      {
+        "word": "食料品",
+        "reading": "しょくりょうひん",
+        "meaning": "groceries"
+      }
+    ]
+  },
+  {
+    "id": "k-着",
+    "kana": "着",
+    "romaji": "チャク",
+    "meanings": [
+      "don",
+      "arrive",
+      "wear"
+    ],
+    "level": "N4",
+    "on": [
+      "チャク",
+      "ジャク"
+    ],
+    "kun": [
+      "き.る",
+      "き.せる",
+      "つ.く"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "上着",
+        "reading": "うわぎ",
+        "meaning": "jacket"
+      },
+      {
+        "word": "着る",
+        "reading": "きる",
+        "meaning": "to put on from the shoulders down"
+      },
+      {
+        "word": "着く",
+        "reading": "つく",
+        "meaning": "to arrive at"
+      }
+    ]
+  },
+  {
+    "id": "k-別",
+    "kana": "別",
+    "romaji": "ベツ",
+    "meanings": [
+      "separate",
+      "branch off",
+      "diverge"
+    ],
+    "level": "N4",
+    "on": [
+      "ベツ"
+    ],
+    "kun": [
+      "わか.れる",
+      "わ.ける"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "別",
+        "reading": "べつ",
+        "meaning": "different"
+      },
+      {
+        "word": "特別",
+        "reading": "とくべつ",
+        "meaning": "special"
+      },
+      {
+        "word": "別れる",
+        "reading": "わかれる",
+        "meaning": "to separate"
+      }
+    ]
+  },
+  {
+    "id": "k-音",
+    "kana": "音",
+    "romaji": "オン",
+    "meanings": [
+      "sound",
+      "noise"
+    ],
+    "level": "N4",
+    "on": [
+      "オン",
+      "イン"
+    ],
+    "kun": [
+      "おと",
+      "ね"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "音",
+        "reading": "おと",
+        "meaning": "sound, note"
+      },
+      {
+        "word": "音楽",
+        "reading": "おんがく",
+        "meaning": "music"
+      },
+      {
+        "word": "発音",
+        "reading": "はつおん",
+        "meaning": "pronunciation"
+      }
+    ]
+  },
+  {
+    "id": "k-元",
+    "kana": "元",
+    "romaji": "ゲン",
+    "meanings": [
+      "beginning",
+      "former time",
+      "origin"
+    ],
+    "level": "N4",
+    "on": [
+      "ゲン",
+      "ガン"
+    ],
+    "kun": [
+      "もと"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "元気",
+        "reading": "げんき",
+        "meaning": "health, vitality"
+      }
+    ]
+  },
+  {
+    "id": "k-特",
+    "kana": "特",
+    "romaji": "トク",
+    "meanings": [
+      "special"
+    ],
+    "level": "N4",
+    "on": [
+      "トク"
+    ],
+    "kun": [],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "特に",
+        "reading": "とくに",
+        "meaning": "particularly, especially"
+      },
+      {
+        "word": "特急",
+        "reading": "とっきゅう",
+        "meaning": "limited express train (faster than an express train)"
+      },
+      {
+        "word": "特別",
+        "reading": "とくべつ",
+        "meaning": "special"
+      }
+    ]
+  },
+  {
+    "id": "k-風",
+    "kana": "風",
+    "romaji": "フウ",
+    "meanings": [
+      "wind",
+      "air",
+      "style"
+    ],
+    "level": "N4",
+    "on": [
+      "フウ",
+      "フ"
+    ],
+    "kun": [
+      "かぜ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "風",
+        "reading": "かぜ",
+        "meaning": "wind"
+      },
+      {
+        "word": "風邪",
+        "reading": "かぜ",
+        "meaning": "a cold"
+      },
+      {
+        "word": "台風",
+        "reading": "たいふう",
+        "meaning": "typhoon"
+      }
+    ]
+  },
+  {
+    "id": "k-夜",
+    "kana": "夜",
+    "romaji": "ヤ",
+    "meanings": [
+      "night",
+      "evening"
+    ],
+    "level": "N4",
+    "on": [
+      "ヤ"
+    ],
+    "kun": [
+      "よ",
+      "よる"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "夜",
+        "reading": "よる",
+        "meaning": "evening, night"
+      },
+      {
+        "word": "昨夜",
+        "reading": "ゆうべ",
+        "meaning": "last night"
+      },
+      {
+        "word": "今夜",
+        "reading": "こんや",
+        "meaning": "tonight"
+      }
+    ]
+  },
+  {
+    "id": "k-空",
+    "kana": "空",
+    "romaji": "クウ",
+    "meanings": [
+      "empty",
+      "sky",
+      "void"
+    ],
+    "level": "N4",
+    "on": [
+      "クウ"
+    ],
+    "kun": [
+      "そら",
+      "あ.く",
+      "あ.き"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "空",
+        "reading": "そら",
+        "meaning": "sky"
+      },
+      {
+        "word": "空気",
+        "reading": "くうき",
+        "meaning": "air, atmosphere"
+      },
+      {
+        "word": "空く",
+        "reading": "あく",
+        "meaning": "to open, to become empty"
+      }
+    ]
+  },
+  {
+    "id": "k-有",
+    "kana": "有",
+    "romaji": "ユウ",
+    "meanings": [
+      "possess",
+      "have",
+      "exist"
+    ],
+    "level": "N4",
+    "on": [
+      "ユウ",
+      "ウ"
+    ],
+    "kun": [
+      "あ.る"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "有名",
+        "reading": "ゆうめい",
+        "meaning": "famous"
+      }
+    ]
+  },
+  {
+    "id": "k-起",
+    "kana": "起",
+    "romaji": "キ",
+    "meanings": [
+      "rouse",
+      "wake up",
+      "get up"
+    ],
+    "level": "N4",
+    "on": [
+      "キ"
+    ],
+    "kun": [
+      "お.きる",
+      "お.こる",
+      "お.こす"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "起す",
+        "reading": "おこす",
+        "meaning": "to wake"
+      },
+      {
+        "word": "起きる",
+        "reading": "おきる",
+        "meaning": "to get up"
+      }
+    ]
+  },
+  {
+    "id": "k-運",
+    "kana": "運",
+    "romaji": "ウン",
+    "meanings": [
+      "carry",
+      "luck",
+      "destiny"
+    ],
+    "level": "N4",
+    "on": [
+      "ウン"
+    ],
+    "kun": [
+      "はこ.ぶ"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "運ぶ",
+        "reading": "はこぶ",
+        "meaning": "to transport"
+      },
+      {
+        "word": "運動",
+        "reading": "うんどう・する",
+        "meaning": "to exercise"
+      },
+      {
+        "word": "運転",
+        "reading": "うんてん・する",
+        "meaning": "to drive"
+      }
+    ]
+  },
+  {
+    "id": "k-料",
+    "kana": "料",
+    "romaji": "リョウ",
+    "meanings": [
+      "fee",
+      "materials"
+    ],
+    "level": "N4",
+    "on": [
+      "リョウ"
+    ],
+    "kun": [],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "料理",
+        "reading": "りょうり",
+        "meaning": "cuisine"
+      },
+      {
+        "word": "食料品",
+        "reading": "しょくりょうひん",
+        "meaning": "groceries"
+      }
+    ]
+  },
+  {
+    "id": "k-楽",
+    "kana": "楽",
+    "romaji": "ガク",
+    "meanings": [
+      "music",
+      "comfort",
+      "ease"
+    ],
+    "level": "N4",
+    "on": [
+      "ガク",
+      "ラク",
+      "ゴウ"
+    ],
+    "kun": [
+      "たの.しい",
+      "たの.しむ",
+      "この.む"
+    ],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "音楽",
+        "reading": "おんがく",
+        "meaning": "music"
+      },
+      {
+        "word": "楽む",
+        "reading": "たのしむ",
+        "meaning": "to enjoy oneself"
+      },
+      {
+        "word": "楽しい",
+        "reading": "たのしい",
+        "meaning": "enjoyable"
+      }
+    ]
+  },
+  {
+    "id": "k-色",
+    "kana": "色",
+    "romaji": "ショク",
+    "meanings": [
+      "color"
+    ],
+    "level": "N4",
+    "on": [
+      "ショク",
+      "シキ"
+    ],
+    "kun": [
+      "いろ"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "色",
+        "reading": "いろ",
+        "meaning": "colour"
+      },
+      {
+        "word": "茶色",
+        "reading": "ちゃいろ",
+        "meaning": "brown"
+      },
+      {
+        "word": "黄色",
+        "reading": "きいろ",
+        "meaning": "yellow"
+      }
+    ]
+  },
+  {
+    "id": "k-帰",
+    "kana": "帰",
+    "romaji": "キ",
+    "meanings": [
+      "homecoming",
+      "arrive at",
+      "lead to"
+    ],
+    "level": "N4",
+    "on": [
+      "キ"
+    ],
+    "kun": [
+      "かえ.る",
+      "かえ.す",
+      "おく.る"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "帰る",
+        "reading": "かえる",
+        "meaning": "to go back"
+      },
+      {
+        "word": "帰り",
+        "reading": "かえり",
+        "meaning": "return"
+      }
+    ]
+  },
+  {
+    "id": "k-歩",
+    "kana": "歩",
+    "romaji": "ホ",
+    "meanings": [
+      "walk",
+      "counter for steps"
+    ],
+    "level": "N4",
+    "on": [
+      "ホ",
+      "ブ",
+      "フ"
+    ],
+    "kun": [
+      "ある.く",
+      "あゆ.む"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "散歩",
+        "reading": "さんぽする",
+        "meaning": "to stroll"
+      },
+      {
+        "word": "歩く",
+        "reading": "あるく",
+        "meaning": "to walk"
+      }
+    ]
+  },
+  {
+    "id": "k-悪",
+    "kana": "悪",
+    "romaji": "アク",
+    "meanings": [
+      "bad",
+      "vice",
+      "rascal"
+    ],
+    "level": "N4",
+    "on": [
+      "アク",
+      "オ"
+    ],
+    "kun": [
+      "わる.い",
+      "あ.し",
+      "にく.い"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "悪い",
+        "reading": "わるい",
+        "meaning": "bad"
+      }
+    ]
+  },
+  {
+    "id": "k-広",
+    "kana": "広",
+    "romaji": "コウ",
+    "meanings": [
+      "wide",
+      "broad",
+      "spacious"
+    ],
+    "level": "N4",
+    "on": [
+      "コウ"
+    ],
+    "kun": [
+      "ひろ.い",
+      "ひろ.まる",
+      "ひろ.める"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "広い",
+        "reading": "ひろい",
+        "meaning": "spacious, wide"
+      },
+      {
+        "word": "背広",
+        "reading": "せびろ",
+        "meaning": "business suit"
+      }
+    ]
+  },
+  {
+    "id": "k-店",
+    "kana": "店",
+    "romaji": "テン",
+    "meanings": [
+      "store",
+      "shop"
+    ],
+    "level": "N4",
+    "on": [
+      "テン"
+    ],
+    "kun": [
+      "みせ",
+      "たな"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "店",
+        "reading": "みせ",
+        "meaning": "shop"
+      },
+      {
+        "word": "店員",
+        "reading": "てんいん",
+        "meaning": "shop assistant"
+      },
+      {
+        "word": "喫茶店",
+        "reading": "きっさてん",
+        "meaning": "coffee lounge"
+      }
+    ]
+  },
+  {
+    "id": "k-町",
+    "kana": "町",
+    "romaji": "チョウ",
+    "meanings": [
+      "town",
+      "village",
+      "block"
+    ],
+    "level": "N4",
+    "on": [
+      "チョウ"
+    ],
+    "kun": [
+      "まち"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "町",
+        "reading": "まち",
+        "meaning": "town, city"
+      }
+    ]
+  },
+  {
+    "id": "k-住",
+    "kana": "住",
+    "romaji": "ジュウ",
+    "meanings": [
+      "dwell",
+      "reside",
+      "live"
+    ],
+    "level": "N4",
+    "on": [
+      "ジュウ",
+      "ヂュウ",
+      "チュウ"
+    ],
+    "kun": [
+      "す.む",
+      "す.まう"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "住む",
+        "reading": "すむ",
+        "meaning": "to live in"
+      },
+      {
+        "word": "住所",
+        "reading": "じゅうしょ",
+        "meaning": "an address, a residence"
+      }
+    ]
+  },
+  {
+    "id": "k-売",
+    "kana": "売",
+    "romaji": "バイ",
+    "meanings": [
+      "sell"
+    ],
+    "level": "N4",
+    "on": [
+      "バイ"
+    ],
+    "kun": [
+      "う.る",
+      "う.れる"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "売る",
+        "reading": "うる",
+        "meaning": "to sell"
+      },
+      {
+        "word": "売り場",
+        "reading": "うりば",
+        "meaning": "place where things are sold"
+      }
+    ]
+  },
+  {
+    "id": "k-待",
+    "kana": "待",
+    "romaji": "タイ",
+    "meanings": [
+      "wait",
+      "depend on"
+    ],
+    "level": "N4",
+    "on": [
+      "タイ"
+    ],
+    "kun": [
+      "ま.つ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "待つ",
+        "reading": "まつ",
+        "meaning": "to wait"
+      },
+      {
+        "word": "招待",
+        "reading": "しょうたい・する",
+        "meaning": "to invite"
+      }
+    ]
+  },
+  {
+    "id": "k-古",
+    "kana": "古",
+    "romaji": "コ",
+    "meanings": [
+      "old"
+    ],
+    "level": "N4",
+    "on": [
+      "コ"
+    ],
+    "kun": [
+      "ふる.い"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "古い",
+        "reading": "ふるい",
+        "meaning": "old (not used for people)"
+      }
+    ]
+  },
+  {
+    "id": "k-始",
+    "kana": "始",
+    "romaji": "シ",
+    "meanings": [
+      "commence",
+      "begin"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "はじ.める",
+      "はじ.まる"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "始まる",
+        "reading": "はじまる",
+        "meaning": "to begin"
+      },
+      {
+        "word": "始める",
+        "reading": "はじめる",
+        "meaning": "to begin"
+      },
+      {
+        "word": "初め / 始め",
+        "reading": "はじめ",
+        "meaning": "beginning"
+      }
+    ]
+  },
+  {
+    "id": "k-終",
+    "kana": "終",
+    "romaji": "シュウ",
+    "meanings": [
+      "end",
+      "finish"
+    ],
+    "level": "N4",
+    "on": [
+      "シュウ"
+    ],
+    "kun": [
+      "お.わる",
+      "おわ.る",
+      "お.える"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "終る",
+        "reading": "おわる",
+        "meaning": "to finish"
+      },
+      {
+        "word": "終わり",
+        "reading": "おわり",
+        "meaning": "the end"
+      }
+    ]
+  },
+  {
+    "id": "k-計",
+    "kana": "計",
+    "romaji": "ケイ",
+    "meanings": [
+      "plot",
+      "plan",
+      "scheme"
+    ],
+    "level": "N4",
+    "on": [
+      "ケイ"
+    ],
+    "kun": [
+      "はか.る",
+      "はか.らう"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "時計",
+        "reading": "とけい",
+        "meaning": "watch, clock"
+      },
+      {
+        "word": "計画",
+        "reading": "けいかく・する",
+        "meaning": "to plan"
+      }
+    ]
+  },
+  {
+    "id": "k-院",
+    "kana": "院",
+    "romaji": "イン",
+    "meanings": [
+      "Inst.",
+      "institution",
+      "temple"
+    ],
+    "level": "N4",
+    "on": [
+      "イン"
+    ],
+    "kun": [],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "病院",
+        "reading": "びょういん",
+        "meaning": "hospital"
+      },
+      {
+        "word": "入院",
+        "reading": "にゅういん・する",
+        "meaning": "to hospitalise"
+      },
+      {
+        "word": "退院",
+        "reading": "たいいん・する",
+        "meaning": "to leave hospital"
+      }
+    ]
+  },
+  {
+    "id": "k-送",
+    "kana": "送",
+    "romaji": "ソウ",
+    "meanings": [
+      "escort",
+      "send"
+    ],
+    "level": "N4",
+    "on": [
+      "ソウ"
+    ],
+    "kun": [
+      "おく.る"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "放送",
+        "reading": "ほうそう・する",
+        "meaning": "to broadcast"
+      },
+      {
+        "word": "送る",
+        "reading": "おくる",
+        "meaning": "to send"
+      }
+    ]
+  },
+  {
+    "id": "k-族",
+    "kana": "族",
+    "romaji": "ゾク",
+    "meanings": [
+      "tribe",
+      "family"
+    ],
+    "level": "N4",
+    "on": [
+      "ゾク"
+    ],
+    "kun": [],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "家族",
+        "reading": "かぞく",
+        "meaning": "family"
+      }
+    ]
+  },
+  {
+    "id": "k-映",
+    "kana": "映",
+    "romaji": "エイ",
+    "meanings": [
+      "reflect",
+      "reflection",
+      "projection"
+    ],
+    "level": "N4",
+    "on": [
+      "エイ"
+    ],
+    "kun": [
+      "うつ.る",
+      "うつ.す",
+      "は.える"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "映画",
+        "reading": "えいが",
+        "meaning": "movie"
+      },
+      {
+        "word": "映画館",
+        "reading": "えいがかん",
+        "meaning": "cinema"
+      }
+    ]
+  },
+  {
+    "id": "k-買",
+    "kana": "買",
+    "romaji": "バイ",
+    "meanings": [
+      "buy"
+    ],
+    "level": "N4",
+    "on": [
+      "バイ"
+    ],
+    "kun": [
+      "か.う"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "買う",
+        "reading": "かう",
+        "meaning": "to buy"
+      },
+      {
+        "word": "買い物",
+        "reading": "かいもの",
+        "meaning": "shopping"
+      }
+    ]
+  },
+  {
+    "id": "k-病",
+    "kana": "病",
+    "romaji": "ビョウ",
+    "meanings": [
+      "ill",
+      "sick"
+    ],
+    "level": "N4",
+    "on": [
+      "ビョウ",
+      "ヘイ"
+    ],
+    "kun": [
+      "や.む",
+      "やまい"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "病気",
+        "reading": "びょうき",
+        "meaning": "illness"
+      },
+      {
+        "word": "病院",
+        "reading": "びょういん",
+        "meaning": "hospital"
+      }
+    ]
+  },
+  {
+    "id": "k-早",
+    "kana": "早",
+    "romaji": "ソウ",
+    "meanings": [
+      "early",
+      "fast"
+    ],
+    "level": "N4",
+    "on": [
+      "ソウ",
+      "サッ"
+    ],
+    "kun": [
+      "はや.い",
+      "はや",
+      "はや.まる"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "早い",
+        "reading": "はやい",
+        "meaning": "early"
+      }
+    ]
+  },
+  {
+    "id": "k-質",
+    "kana": "質",
+    "romaji": "シツ",
+    "meanings": [
+      "substance",
+      "quality",
+      "matter"
+    ],
+    "level": "N4",
+    "on": [
+      "シツ",
+      "シチ",
+      "チ"
+    ],
+    "kun": [
+      "たち",
+      "ただ.す",
+      "もと"
+    ],
+    "strokes": 15,
+    "examples": [
+      {
+        "word": "質問",
+        "reading": "しつもん",
+        "meaning": "question"
+      }
+    ]
+  },
+  {
+    "id": "k-台",
+    "kana": "台",
+    "romaji": "ダイ",
+    "meanings": [
+      "pedestal",
+      "a stand",
+      "counter for machines and vehicles"
+    ],
+    "level": "N4",
+    "on": [
+      "ダイ",
+      "タイ"
+    ],
+    "kun": [
+      "うてな",
+      "われ",
+      "つかさ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "台所",
+        "reading": "だいどころ",
+        "meaning": "kitchen"
+      },
+      {
+        "word": "台風",
+        "reading": "たいふう",
+        "meaning": "typhoon"
+      }
+    ]
+  },
+  {
+    "id": "k-室",
+    "kana": "室",
+    "romaji": "シツ",
+    "meanings": [
+      "room",
+      "apartment",
+      "chamber"
+    ],
+    "level": "N4",
+    "on": [
+      "シツ"
+    ],
+    "kun": [
+      "むろ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "教室",
+        "reading": "きょうしつ",
+        "meaning": "classroom"
+      },
+      {
+        "word": "研究室",
+        "reading": "けんきゅうしつ",
+        "meaning": "study room, laboratory"
+      },
+      {
+        "word": "会議室",
+        "reading": "かいぎしつ",
+        "meaning": "meeting room"
+      }
+    ]
+  },
+  {
+    "id": "k-可",
+    "kana": "可",
+    "romaji": "カ",
+    "meanings": [
+      "can",
+      "passable",
+      "approval"
+    ],
+    "level": "N4",
+    "on": [
+      "カ",
+      "コク"
+    ],
+    "kun": [],
+    "strokes": 5,
+    "examples": []
+  },
+  {
+    "id": "k-建",
+    "kana": "建",
+    "romaji": "ケン",
+    "meanings": [
+      "build"
+    ],
+    "level": "N4",
+    "on": [
+      "ケン",
+      "コン"
+    ],
+    "kun": [
+      "た.てる",
+      "た.て",
+      "た.つ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "建物",
+        "reading": "たてもの",
+        "meaning": "building"
+      },
+      {
+        "word": "建てる",
+        "reading": "たてる",
+        "meaning": "to build"
+      },
+      {
+        "word": "二階建て",
+        "reading": "にかいだて",
+        "meaning": "two storied"
+      }
+    ]
+  },
+  {
+    "id": "k-転",
+    "kana": "転",
+    "romaji": "テン",
+    "meanings": [
+      "revolve",
+      "turn around",
+      "change"
+    ],
+    "level": "N4",
+    "on": [
+      "テン"
+    ],
+    "kun": [
+      "ころ.がる",
+      "ころ.げる",
+      "ころ.がす"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "運転",
+        "reading": "うんてん・する",
+        "meaning": "to drive"
+      },
+      {
+        "word": "自転車",
+        "reading": "じてんしゃ",
+        "meaning": "bicycle"
+      },
+      {
+        "word": "運転手",
+        "reading": "うんてんしゅ",
+        "meaning": "driver"
+      }
+    ]
+  },
+  {
+    "id": "k-医",
+    "kana": "医",
+    "romaji": "イ",
+    "meanings": [
+      "doctor",
+      "medicine"
+    ],
+    "level": "N4",
+    "on": [
+      "イ"
+    ],
+    "kun": [
+      "い.やす",
+      "い.する",
+      "くすし"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "医者",
+        "reading": "いしゃ",
+        "meaning": "medical doctor"
+      },
+      {
+        "word": "医学",
+        "reading": "いがく",
+        "meaning": "medical science"
+      },
+      {
+        "word": "歯医者",
+        "reading": "はいしゃ",
+        "meaning": "dentist"
+      }
+    ]
+  },
+  {
+    "id": "k-止",
+    "kana": "止",
+    "romaji": "シ",
+    "meanings": [
+      "stop",
+      "halt"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "と.まる",
+      "と.める",
+      "とど.める"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "止む",
+        "reading": "やむ",
+        "meaning": "to stop"
+      },
+      {
+        "word": "止まる",
+        "reading": "とまる",
+        "meaning": "to come to a halt"
+      },
+      {
+        "word": "止める",
+        "reading": "とめる",
+        "meaning": "to stop something"
+      }
+    ]
+  },
+  {
+    "id": "k-字",
+    "kana": "字",
+    "romaji": "ジ",
+    "meanings": [
+      "character",
+      "letter",
+      "word"
+    ],
+    "level": "N4",
+    "on": [
+      "ジ"
+    ],
+    "kun": [
+      "あざ",
+      "あざな"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "字",
+        "reading": "じ",
+        "meaning": "character"
+      },
+      {
+        "word": "漢字",
+        "reading": "かんじ",
+        "meaning": "Chinese character"
+      },
+      {
+        "word": "字引",
+        "reading": "じびき",
+        "meaning": "dictionary"
+      }
+    ]
+  },
+  {
+    "id": "k-工",
+    "kana": "工",
+    "romaji": "コウ",
+    "meanings": [
+      "craft",
+      "construction",
+      "katakana e radical (no. 48)"
+    ],
+    "level": "N4",
+    "on": [
+      "コウ",
+      "ク",
+      "グ"
+    ],
+    "kun": [],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "工場",
+        "reading": "こうじょう",
+        "meaning": "factory"
+      },
+      {
+        "word": "工業",
+        "reading": "こうぎょう",
+        "meaning": "the manufacturing industry"
+      }
+    ]
+  },
+  {
+    "id": "k-急",
+    "kana": "急",
+    "romaji": "キュウ",
+    "meanings": [
+      "hurry",
+      "emergency",
+      "sudden"
+    ],
+    "level": "N4",
+    "on": [
+      "キュウ"
+    ],
+    "kun": [
+      "いそ.ぐ",
+      "いそ.ぎ",
+      "せ.く"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "急",
+        "reading": "きゅう",
+        "meaning": "urgent, steep"
+      },
+      {
+        "word": "特急",
+        "reading": "とっきゅう",
+        "meaning": "limited express train (faster than an express train)"
+      },
+      {
+        "word": "急行",
+        "reading": "きゅうこう",
+        "meaning": "speedy, express"
+      }
+    ]
+  },
+  {
+    "id": "k-図",
+    "kana": "図",
+    "romaji": "ズ",
+    "meanings": [
+      "map",
+      "drawing",
+      "plan"
+    ],
+    "level": "N4",
+    "on": [
+      "ズ",
+      "ト"
+    ],
+    "kun": [
+      "え",
+      "はか.る"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "地図",
+        "reading": "ちず",
+        "meaning": "map"
+      },
+      {
+        "word": "図書館",
+        "reading": "としょかん",
+        "meaning": "library"
+      }
+    ]
+  },
+  {
+    "id": "k-黒",
+    "kana": "黒",
+    "romaji": "コク",
+    "meanings": [
+      "black"
+    ],
+    "level": "N4",
+    "on": [
+      "コク"
+    ],
+    "kun": [
+      "くろ",
+      "くろ.ずむ",
+      "くろ.い"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "黒",
+        "reading": "くろ",
+        "meaning": "black"
+      },
+      {
+        "word": "黒い",
+        "reading": "くろい",
+        "meaning": "black"
+      }
+    ]
+  },
+  {
+    "id": "k-花",
+    "kana": "花",
+    "romaji": "カ",
+    "meanings": [
+      "flower"
+    ],
+    "level": "N4",
+    "on": [
+      "カ",
+      "ケ"
+    ],
+    "kun": [
+      "はな"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "花",
+        "reading": "はな",
+        "meaning": "flower"
+      },
+      {
+        "word": "花瓶",
+        "reading": "かびん",
+        "meaning": "a vase"
+      },
+      {
+        "word": "花見",
+        "reading": "はなみ",
+        "meaning": "cherry-blossom viewing"
+      }
+    ]
+  },
+  {
+    "id": "k-英",
+    "kana": "英",
+    "romaji": "エイ",
+    "meanings": [
+      "England",
+      "English",
+      "hero"
+    ],
+    "level": "N4",
+    "on": [
+      "エイ"
+    ],
+    "kun": [
+      "はなぶさ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "英語",
+        "reading": "えいご",
+        "meaning": "English language"
+      }
+    ]
+  },
+  {
+    "id": "k-走",
+    "kana": "走",
+    "romaji": "ソウ",
+    "meanings": [
+      "run"
+    ],
+    "level": "N4",
+    "on": [
+      "ソウ"
+    ],
+    "kun": [
+      "はし.る"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "走る",
+        "reading": "はしる",
+        "meaning": "to run"
+      }
+    ]
+  },
+  {
+    "id": "k-青",
+    "kana": "青",
+    "romaji": "セイ",
+    "meanings": [
+      "blue",
+      "green"
+    ],
+    "level": "N4",
+    "on": [
+      "セイ",
+      "ショウ"
+    ],
+    "kun": [
+      "あお",
+      "あお.い"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "青",
+        "reading": "あお",
+        "meaning": "blue"
+      },
+      {
+        "word": "青い",
+        "reading": "あおい",
+        "meaning": "blue"
+      }
+    ]
+  },
+  {
+    "id": "k-答",
+    "kana": "答",
+    "romaji": "トウ",
+    "meanings": [
+      "solution",
+      "answer"
+    ],
+    "level": "N4",
+    "on": [
+      "トウ"
+    ],
+    "kun": [
+      "こた.える",
+      "こた.え"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "答",
+        "reading": "こたえ",
+        "meaning": "response"
+      },
+      {
+        "word": "答える",
+        "reading": "こたえる",
+        "meaning": "to answer"
+      }
+    ]
+  },
+  {
+    "id": "k-紙",
+    "kana": "紙",
+    "romaji": "シ",
+    "meanings": [
+      "paper"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "かみ"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "紙",
+        "reading": "かみ",
+        "meaning": "paper"
+      },
+      {
+        "word": "手紙",
+        "reading": "てがみ",
+        "meaning": "letter"
+      }
+    ]
+  },
+  {
+    "id": "k-歌",
+    "kana": "歌",
+    "romaji": "カ",
+    "meanings": [
+      "song",
+      "sing"
+    ],
+    "level": "N4",
+    "on": [
+      "カ"
+    ],
+    "kun": [
+      "うた",
+      "うた.う"
+    ],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "歌",
+        "reading": "うた",
+        "meaning": "song"
+      },
+      {
+        "word": "歌う",
+        "reading": "うたう",
+        "meaning": "to sing"
+      }
+    ]
+  },
+  {
+    "id": "k-注",
+    "kana": "注",
+    "romaji": "チュウ",
+    "meanings": [
+      "pour",
+      "irrigate",
+      "shed (tears)"
+    ],
+    "level": "N4",
+    "on": [
+      "チュウ"
+    ],
+    "kun": [
+      "そそ.ぐ",
+      "さ.す",
+      "つ.ぐ"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "注射",
+        "reading": "ちゅうしゃ",
+        "meaning": "injection"
+      },
+      {
+        "word": "注意",
+        "reading": "ちゅうい",
+        "meaning": "caution"
+      }
+    ]
+  },
+  {
+    "id": "k-赤",
+    "kana": "赤",
+    "romaji": "セキ",
+    "meanings": [
+      "red"
+    ],
+    "level": "N4",
+    "on": [
+      "セキ",
+      "シャク"
+    ],
+    "kun": [
+      "あか",
+      "あか.い",
+      "あか.らむ"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "赤",
+        "reading": "あか",
+        "meaning": "red"
+      },
+      {
+        "word": "赤い",
+        "reading": "あかい",
+        "meaning": "red"
+      },
+      {
+        "word": "赤ん坊",
+        "reading": "あかんぼう",
+        "meaning": "baby"
+      }
+    ]
+  },
+  {
+    "id": "k-春",
+    "kana": "春",
+    "romaji": "シュン",
+    "meanings": [
+      "springtime",
+      "spring (season)"
+    ],
+    "level": "N4",
+    "on": [
+      "シュン"
+    ],
+    "kun": [
+      "はる"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "春",
+        "reading": "はる",
+        "meaning": "spring"
+      }
+    ]
+  },
+  {
+    "id": "k-館",
+    "kana": "館",
+    "romaji": "カン",
+    "meanings": [
+      "building",
+      "mansion",
+      "large building"
+    ],
+    "level": "N4",
+    "on": [
+      "カン"
+    ],
+    "kun": [
+      "やかた",
+      "たて"
+    ],
+    "strokes": 16,
+    "examples": [
+      {
+        "word": "旅館",
+        "reading": "りょかん",
+        "meaning": "Japanese hotel"
+      },
+      {
+        "word": "大使館",
+        "reading": "たいしかん",
+        "meaning": "embassy"
+      },
+      {
+        "word": "映画館",
+        "reading": "えいがかん",
+        "meaning": "cinema"
+      }
+    ]
+  },
+  {
+    "id": "k-旅",
+    "kana": "旅",
+    "romaji": "リョ",
+    "meanings": [
+      "trip",
+      "travel"
+    ],
+    "level": "N4",
+    "on": [
+      "リョ"
+    ],
+    "kun": [
+      "たび"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "旅行",
+        "reading": "りょこう",
+        "meaning": "travel"
+      },
+      {
+        "word": "旅館",
+        "reading": "りょかん",
+        "meaning": "Japanese hotel"
+      }
+    ]
+  },
+  {
+    "id": "k-験",
+    "kana": "験",
+    "romaji": "ケン",
+    "meanings": [
+      "verification",
+      "effect",
+      "testing"
+    ],
+    "level": "N4",
+    "on": [
+      "ケン",
+      "ゲン"
+    ],
+    "kun": [
+      "あかし",
+      "しるし",
+      "ため.す"
+    ],
+    "strokes": 18,
+    "examples": [
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "examination"
+      },
+      {
+        "word": "経験",
+        "reading": "けいけん・する",
+        "meaning": "to experience"
+      }
+    ]
+  },
+  {
+    "id": "k-写",
+    "kana": "写",
+    "romaji": "シャ",
+    "meanings": [
+      "copy",
+      "be photographed",
+      "describe"
+    ],
+    "level": "N4",
+    "on": [
+      "シャ",
+      "ジャ"
+    ],
+    "kun": [
+      "うつ.す",
+      "うつ.る",
+      "うつ.し"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "写真",
+        "reading": "しゃしん",
+        "meaning": "photograph"
+      },
+      {
+        "word": "写す",
+        "reading": "うつす",
+        "meaning": "to copy or photograph"
+      }
+    ]
+  },
+  {
+    "id": "k-去",
+    "kana": "去",
+    "romaji": "キョ",
+    "meanings": [
+      "gone",
+      "past",
+      "quit"
+    ],
+    "level": "N4",
+    "on": [
+      "キョ",
+      "コ"
+    ],
+    "kun": [
+      "さ.る"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "去年",
+        "reading": "きょねん",
+        "meaning": "last year"
+      }
+    ]
+  },
+  {
+    "id": "k-研",
+    "kana": "研",
+    "romaji": "ケン",
+    "meanings": [
+      "polish",
+      "study of",
+      "sharpen"
+    ],
+    "level": "N4",
+    "on": [
+      "ケン"
+    ],
+    "kun": [
+      "と.ぐ"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "研究",
+        "reading": "けんきゅう",
+        "meaning": "research"
+      },
+      {
+        "word": "研究室",
+        "reading": "けんきゅうしつ",
+        "meaning": "study room, laboratory"
+      }
+    ]
+  },
+  {
+    "id": "k-飲",
+    "kana": "飲",
+    "romaji": "イン",
+    "meanings": [
+      "drink",
+      "smoke",
+      "take"
+    ],
+    "level": "N4",
+    "on": [
+      "イン",
+      "オン"
+    ],
+    "kun": [
+      "の.む"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "飲む",
+        "reading": "のむ",
+        "meaning": "to drink"
+      },
+      {
+        "word": "飲み物",
+        "reading": "のみもの",
+        "meaning": "a drink"
+      }
+    ]
+  },
+  {
+    "id": "k-肉",
+    "kana": "肉",
+    "romaji": "ニク",
+    "meanings": [
+      "meat"
+    ],
+    "level": "N4",
+    "on": [
+      "ニク"
+    ],
+    "kun": [
+      "しし"
+    ],
+    "strokes": 6,
+    "examples": [
+      {
+        "word": "肉",
+        "reading": "にく",
+        "meaning": "meat"
+      },
+      {
+        "word": "豚肉",
+        "reading": "ぶたにく",
+        "meaning": "pork"
+      },
+      {
+        "word": "牛肉",
+        "reading": "ぎゅうにく",
+        "meaning": "beef"
+      }
+    ]
+  },
+  {
+    "id": "k-服",
+    "kana": "服",
+    "romaji": "フク",
+    "meanings": [
+      "clothing",
+      "admit",
+      "obey"
+    ],
+    "level": "N4",
+    "on": [
+      "フク"
+    ],
+    "kun": [],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "服",
+        "reading": "ふく",
+        "meaning": "clothes"
+      },
+      {
+        "word": "洋服",
+        "reading": "ようふく",
+        "meaning": "western-style clothes"
+      }
+    ]
+  },
+  {
+    "id": "k-銀",
+    "kana": "銀",
+    "romaji": "ギン",
+    "meanings": [
+      "silver"
+    ],
+    "level": "N4",
+    "on": [
+      "ギン"
+    ],
+    "kun": [
+      "しろがね"
+    ],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "銀行",
+        "reading": "ぎんこう",
+        "meaning": "bank"
+      }
+    ]
+  },
+  {
+    "id": "k-茶",
+    "kana": "茶",
+    "romaji": "チャ",
+    "meanings": [
+      "tea"
+    ],
+    "level": "N4",
+    "on": [
+      "チャ",
+      "サ"
+    ],
+    "kun": [],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "お茶",
+        "reading": "おちゃ",
+        "meaning": "green tea"
+      },
+      {
+        "word": "茶色",
+        "reading": "ちゃいろ",
+        "meaning": "brown"
+      },
+      {
+        "word": "紅茶",
+        "reading": "こうちゃ",
+        "meaning": "black tea"
+      }
+    ]
+  },
+  {
+    "id": "k-究",
+    "kana": "究",
+    "romaji": "キュウ",
+    "meanings": [
+      "research",
+      "study"
+    ],
+    "level": "N4",
+    "on": [
+      "キュウ",
+      "ク"
+    ],
+    "kun": [
+      "きわ.める"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "研究",
+        "reading": "けんきゅう",
+        "meaning": "research"
+      },
+      {
+        "word": "研究室",
+        "reading": "けんきゅうしつ",
+        "meaning": "study room, laboratory"
+      }
+    ]
+  },
+  {
+    "id": "k-洋",
+    "kana": "洋",
+    "romaji": "ヨウ",
+    "meanings": [
+      "ocean",
+      "sea",
+      "foreign"
+    ],
+    "level": "N4",
+    "on": [
+      "ヨウ"
+    ],
+    "kun": [],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "洋服",
+        "reading": "ようふく",
+        "meaning": "western-style clothes"
+      },
+      {
+        "word": "西洋",
+        "reading": "せいよう",
+        "meaning": "western countries"
+      }
+    ]
+  },
+  {
+    "id": "k-兄",
+    "kana": "兄",
+    "romaji": "ケイ",
+    "meanings": [
+      "elder brother",
+      "big brother"
+    ],
+    "level": "N4",
+    "on": [
+      "ケイ",
+      "キョウ"
+    ],
+    "kun": [
+      "あに"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "兄",
+        "reading": "あに",
+        "meaning": "(humble) older brother"
+      },
+      {
+        "word": "兄弟",
+        "reading": "きょうだい",
+        "meaning": "(humble) siblings"
+      },
+      {
+        "word": "お兄さん",
+        "reading": "おにいさん",
+        "meaning": "(honorable) older brother"
+      }
+    ]
+  },
+  {
+    "id": "k-秋",
+    "kana": "秋",
+    "romaji": "シュウ",
+    "meanings": [
+      "autumn"
+    ],
+    "level": "N4",
+    "on": [
+      "シュウ"
+    ],
+    "kun": [
+      "あき",
+      "とき"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "秋",
+        "reading": "あき",
+        "meaning": "autumn"
+      }
+    ]
+  },
+  {
+    "id": "k-堂",
+    "kana": "堂",
+    "romaji": "ドウ",
+    "meanings": [
+      "public chamber",
+      "hall"
+    ],
+    "level": "N4",
+    "on": [
+      "ドウ"
+    ],
+    "kun": [],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "食堂",
+        "reading": "しょくどう",
+        "meaning": "dining hall"
+      },
+      {
+        "word": "講堂",
+        "reading": "こうどう",
+        "meaning": "auditorium"
+      }
+    ]
+  },
+  {
+    "id": "k-週",
+    "kana": "週",
+    "romaji": "シュウ",
+    "meanings": [
+      "week"
+    ],
+    "level": "N4",
+    "on": [
+      "シュウ"
+    ],
+    "kun": [],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "毎週",
+        "reading": "まいしゅう",
+        "meaning": "every week"
+      },
+      {
+        "word": "来週",
+        "reading": "らいしゅう",
+        "meaning": "next week"
+      },
+      {
+        "word": "先週",
+        "reading": "せんしゅう",
+        "meaning": "last week"
+      }
+    ]
+  },
+  {
+    "id": "k-習",
+    "kana": "習",
+    "romaji": "シュウ",
+    "meanings": [
+      "learn"
+    ],
+    "level": "N4",
+    "on": [
+      "シュウ",
+      "ジュ"
+    ],
+    "kun": [
+      "なら.う",
+      "なら.い"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "練習",
+        "reading": "れんしゅうする",
+        "meaning": "to practice"
+      },
+      {
+        "word": "習う",
+        "reading": "ならう",
+        "meaning": "to learn"
+      },
+      {
+        "word": "復習",
+        "reading": "ふくしゅう",
+        "meaning": "revision"
+      }
+    ]
+  },
+  {
+    "id": "k-試",
+    "kana": "試",
+    "romaji": "シ",
+    "meanings": [
+      "test",
+      "try",
+      "attempt"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "こころ.みる",
+      "ため.す"
+    ],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "試合",
+        "reading": "しあい",
+        "meaning": "match, game"
+      },
+      {
+        "word": "試験",
+        "reading": "しけん",
+        "meaning": "examination"
+      }
+    ]
+  },
+  {
+    "id": "k-夏",
+    "kana": "夏",
+    "romaji": "カ",
+    "meanings": [
+      "summer"
+    ],
+    "level": "N4",
+    "on": [
+      "カ",
+      "ガ",
+      "ゲ"
+    ],
+    "kun": [
+      "なつ"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "夏",
+        "reading": "なつ",
+        "meaning": "summer"
+      },
+      {
+        "word": "夏休み",
+        "reading": "なつやすみ",
+        "meaning": "summer holiday"
+      }
+    ]
+  },
+  {
+    "id": "k-弟",
+    "kana": "弟",
+    "romaji": "テイ",
+    "meanings": [
+      "younger brother",
+      "faithful service to elders"
+    ],
+    "level": "N4",
+    "on": [
+      "テイ",
+      "ダイ",
+      "デ"
+    ],
+    "kun": [
+      "おとうと"
+    ],
+    "strokes": 7,
+    "examples": [
+      {
+        "word": "弟",
+        "reading": "おとうと",
+        "meaning": "younger brother"
+      },
+      {
+        "word": "兄弟",
+        "reading": "きょうだい",
+        "meaning": "(humble) siblings"
+      }
+    ]
+  },
+  {
+    "id": "k-鳥",
+    "kana": "鳥",
+    "romaji": "チョウ",
+    "meanings": [
+      "bird",
+      "chicken"
+    ],
+    "level": "N4",
+    "on": [
+      "チョウ"
+    ],
+    "kun": [
+      "とり"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "鳥",
+        "reading": "とり",
+        "meaning": "bird"
+      },
+      {
+        "word": "小鳥",
+        "reading": "ことり",
+        "meaning": "small bird"
+      }
+    ]
+  },
+  {
+    "id": "k-犬",
+    "kana": "犬",
+    "romaji": "ケン",
+    "meanings": [
+      "dog"
+    ],
+    "level": "N4",
+    "on": [
+      "ケン"
+    ],
+    "kun": [
+      "いぬ"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "犬",
+        "reading": "いぬ",
+        "meaning": "dog"
+      }
+    ]
+  },
+  {
+    "id": "k-夕",
+    "kana": "夕",
+    "romaji": "セキ",
+    "meanings": [
+      "evening"
+    ],
+    "level": "N4",
+    "on": [
+      "セキ"
+    ],
+    "kun": [
+      "ゆう"
+    ],
+    "strokes": 3,
+    "examples": [
+      {
+        "word": "夕方",
+        "reading": "ゆうがた",
+        "meaning": "evening"
+      },
+      {
+        "word": "夕飯",
+        "reading": "ゆうはん",
+        "meaning": "dinner"
+      }
+    ]
+  },
+  {
+    "id": "k-魚",
+    "kana": "魚",
+    "romaji": "ギョ",
+    "meanings": [
+      "fish"
+    ],
+    "level": "N4",
+    "on": [
+      "ギョ"
+    ],
+    "kun": [
+      "うお",
+      "さかな"
+    ],
+    "strokes": 11,
+    "examples": [
+      {
+        "word": "魚",
+        "reading": "さかな",
+        "meaning": "fish"
+      }
+    ]
+  },
+  {
+    "id": "k-借",
+    "kana": "借",
+    "romaji": "シャク",
+    "meanings": [
+      "borrow",
+      "rent"
+    ],
+    "level": "N4",
+    "on": [
+      "シャク"
+    ],
+    "kun": [
+      "か.りる"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "借りる",
+        "reading": "かりる",
+        "meaning": "to borrow"
+      }
+    ]
+  },
+  {
+    "id": "k-飯",
+    "kana": "飯",
+    "romaji": "ハン",
+    "meanings": [
+      "meal",
+      "boiled rice"
+    ],
+    "level": "N4",
+    "on": [
+      "ハン"
+    ],
+    "kun": [
+      "めし"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "夕飯",
+        "reading": "ゆうはん",
+        "meaning": "dinner"
+      },
+      {
+        "word": "御飯",
+        "reading": "ごはん",
+        "meaning": "cooked rice, meal"
+      },
+      {
+        "word": "朝御飯",
+        "reading": "あさごはん",
+        "meaning": "breakfast"
+      }
+    ]
+  },
+  {
+    "id": "k-駅",
+    "kana": "駅",
+    "romaji": "エキ",
+    "meanings": [
+      "station"
+    ],
+    "level": "N4",
+    "on": [
+      "エキ"
+    ],
+    "kun": [],
+    "strokes": 14,
+    "examples": [
+      {
+        "word": "駅",
+        "reading": "えき",
+        "meaning": "station"
+      }
+    ]
+  },
+  {
+    "id": "k-昼",
+    "kana": "昼",
+    "romaji": "チュウ",
+    "meanings": [
+      "daytime",
+      "noon"
+    ],
+    "level": "N4",
+    "on": [
+      "チュウ"
+    ],
+    "kun": [
+      "ひる"
+    ],
+    "strokes": 9,
+    "examples": [
+      {
+        "word": "昼",
+        "reading": "ひる",
+        "meaning": "noon, daytime"
+      },
+      {
+        "word": "昼間",
+        "reading": "ひるま",
+        "meaning": "daytime, during the day"
+      },
+      {
+        "word": "昼御飯",
+        "reading": "ひるごはん",
+        "meaning": "midday meal"
+      }
+    ]
+  },
+  {
+    "id": "k-冬",
+    "kana": "冬",
+    "romaji": "トウ",
+    "meanings": [
+      "winter"
+    ],
+    "level": "N4",
+    "on": [
+      "トウ"
+    ],
+    "kun": [
+      "ふゆ"
+    ],
+    "strokes": 5,
+    "examples": [
+      {
+        "word": "冬",
+        "reading": "ふゆ",
+        "meaning": "winter"
+      }
+    ]
+  },
+  {
+    "id": "k-姉",
+    "kana": "姉",
+    "romaji": "シ",
+    "meanings": [
+      "elder sister"
+    ],
+    "level": "N4",
+    "on": [
+      "シ"
+    ],
+    "kun": [
+      "あね",
+      "はは"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "姉",
+        "reading": "あね",
+        "meaning": "(humble) older sister"
+      },
+      {
+        "word": "お姉さん",
+        "reading": "おねえさん",
+        "meaning": "(honorable) older sister"
+      }
+    ]
+  },
+  {
+    "id": "k-曜",
+    "kana": "曜",
+    "romaji": "ヨウ",
+    "meanings": [
+      "weekday"
+    ],
+    "level": "N4",
+    "on": [
+      "ヨウ"
+    ],
+    "kun": [],
+    "strokes": 18,
+    "examples": [
+      {
+        "word": "木曜日",
+        "reading": "もくようび",
+        "meaning": "Thursday"
+      },
+      {
+        "word": "金曜日",
+        "reading": "きんようび",
+        "meaning": "Friday"
+      },
+      {
+        "word": "火曜日",
+        "reading": "かようび",
+        "meaning": "Tuesday"
+      }
+    ]
+  },
+  {
+    "id": "k-漢",
+    "kana": "漢",
+    "romaji": "カン",
+    "meanings": [
+      "Sino-",
+      "China"
+    ],
+    "level": "N4",
+    "on": [
+      "カン"
+    ],
+    "kun": [],
+    "strokes": 13,
+    "examples": [
+      {
+        "word": "漢字",
+        "reading": "かんじ",
+        "meaning": "Chinese character"
+      }
+    ]
+  },
+  {
+    "id": "k-牛",
+    "kana": "牛",
+    "romaji": "ギュウ",
+    "meanings": [
+      "cow"
+    ],
+    "level": "N4",
+    "on": [
+      "ギュウ"
+    ],
+    "kun": [
+      "うし"
+    ],
+    "strokes": 4,
+    "examples": [
+      {
+        "word": "牛肉",
+        "reading": "ぎゅうにく",
+        "meaning": "beef"
+      },
+      {
+        "word": "牛乳",
+        "reading": "ぎゅうにゅう",
+        "meaning": "milk"
+      }
+    ]
+  },
+  {
+    "id": "k-妹",
+    "kana": "妹",
+    "romaji": "マイ",
+    "meanings": [
+      "younger sister"
+    ],
+    "level": "N4",
+    "on": [
+      "マイ"
+    ],
+    "kun": [
+      "いもうと"
+    ],
+    "strokes": 8,
+    "examples": [
+      {
+        "word": "妹",
+        "reading": "いもうと",
+        "meaning": "(humble) younger sister"
+      }
+    ]
+  },
+  {
+    "id": "k-貸",
+    "kana": "貸",
+    "romaji": "タイ",
+    "meanings": [
+      "lend"
+    ],
+    "level": "N4",
+    "on": [
+      "タイ"
+    ],
+    "kun": [
+      "か.す"
+    ],
+    "strokes": 12,
+    "examples": [
+      {
+        "word": "貸す",
+        "reading": "かす",
+        "meaning": "to lend"
+      }
+    ]
+  },
+  {
+    "id": "k-勉",
+    "kana": "勉",
+    "romaji": "ベン",
+    "meanings": [
+      "exertion",
+      "endeavour",
+      "encourage"
+    ],
+    "level": "N4",
+    "on": [
+      "ベン"
+    ],
+    "kun": [
+      "つと.める"
+    ],
+    "strokes": 10,
+    "examples": [
+      {
+        "word": "勉強",
+        "reading": "べんきょうする",
+        "meaning": "to study"
+      }
+    ]
+  }
+]

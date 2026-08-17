@@ -67,9 +67,9 @@ body.light-theme .btn:disabled {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-pink) 0%, rgba(255, 45, 85, 0.8) 100%);
+  background: linear-gradient(135deg, var(--accent-primary) 0%, color-mix(in srgb, var(--accent-primary) 80%, transparent) 100%);
   border: none;
-  box-shadow: 0 4px 15px rgba(255, 45, 85, 0.2);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--accent-primary) 20%, transparent);
 }
 
 body.light-theme .btn-primary {
@@ -81,8 +81,8 @@ body.light-theme .btn-primary {
 
 @media (hover: hover) {
   .btn-primary:hover {
-    background: linear-gradient(135deg, #ff4d73 0%, var(--accent-pink) 100%);
-    box-shadow: 0 6px 20px rgba(255, 45, 85, 0.35);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent-primary) 82%, #fff) 0%, var(--accent-primary) 100%);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-primary) 35%, transparent);
     transform: translateY(-2px);
   }
 
@@ -131,11 +131,6 @@ body.light-theme .btn-primary {
   cursor: pointer;
   text-align: left;
   transition: border-color 0.2s, background 0.2s;
-}
-
-body.light-theme .deck-bar {
-  background: rgba(255, 255, 255, 0.85);
-  border-color: rgba(2, 132, 199, 0.15);
 }
 
 @media (hover: hover) {
@@ -187,7 +182,7 @@ body.light-theme .deck-bar {
   height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: var(--accent-pink);
+  background: var(--accent-primary);
   color: #fff;
   font-size: 0.68rem;
   font-weight: 700;
@@ -451,5 +446,43 @@ body.light-theme .btn-grade {
     font-size: 0.75rem;
     padding: 0.4rem 0.65rem;
     min-height: 44px;
+  }
+}
+
+/* Study Session mode: the deck bar is a read-only count, not a filter
+   control. Drops the box, the summary line and the Filters affordance so it
+   reads as a caption under the card rather than a button that does nothing. */
+.deck-bar.is-static {
+  justify-content: center;
+  min-height: 0;
+  /* A caption about the deck, not part of the start-a-session flow. */
+  padding-top: 0.9rem;
+  padding-bottom: 0.25rem;
+  border-color: transparent;
+  background: none;
+  cursor: default;
+}
+
+.deck-bar.is-static .deck-bar-summary,
+.deck-bar.is-static .deck-bar-action {
+  display: none;
+}
+
+/* The text block grows to fill the bar in its button form, which would keep
+   the count pinned left once the rest is gone. */
+.deck-bar.is-static .deck-bar-text {
+  flex: 0 1 auto;
+  align-items: center;
+}
+
+.deck-bar.is-static .deck-bar-count {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+@media (hover: hover) {
+  .deck-bar.is-static:hover {
+    border-color: transparent;
   }
 }

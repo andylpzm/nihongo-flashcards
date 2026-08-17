@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import {
-  computeRetention,
-  computeReviewsPerDay,
   computeStateCounts,
   computeStreak,
   countLearned,
@@ -28,74 +26,6 @@ function makeFsrsCard(overrides: Partial<FsrsCard> = {}): FsrsCard {
   };
 }
 
-describe('computeRetention', () => {
-  it('is 1.0 when no reviews were graded Again', () => {
-    const now = new Date('2026-06-15T00:00:00Z');
-    const reviews: ReviewRecord[] = [
-      {
-        cardId: 1,
-        card: makeFsrsCard(),
-        log: [
-          { ts: now.getTime() - 1000, rating: Rating.Good, elapsedMs: 0 },
-          { ts: now.getTime() - 2000, rating: Rating.Easy, elapsedMs: 0 },
-        ],
-      },
-    ];
-    expect(computeRetention(reviews, now).retention).toBe(1);
-  });
-
-  it('excludes reviews outside the window', () => {
-    const now = new Date('2026-06-15T00:00:00Z');
-    const wayBack = now.getTime() - 60 * 24 * 60 * 60 * 1000;
-    const reviews: ReviewRecord[] = [
-      { cardId: 1, card: makeFsrsCard(), log: [{ ts: wayBack, rating: Rating.Again, elapsedMs: 0 }] },
-    ];
-    expect(computeRetention(reviews, now, 30).reviewCount).toBe(0);
-  });
-
-  it('counts Again as a lapse in the retention ratio', () => {
-    const now = new Date('2026-06-15T00:00:00Z');
-    const reviews: ReviewRecord[] = [
-      {
-        cardId: 1,
-        card: makeFsrsCard(),
-        log: [
-          { ts: now.getTime() - 1000, rating: Rating.Good, elapsedMs: 0 },
-          { ts: now.getTime() - 2000, rating: Rating.Again, elapsedMs: 0 },
-        ],
-      },
-    ];
-    expect(computeRetention(reviews, now).retention).toBe(0.5);
-  });
-});
-
-describe('computeReviewsPerDay', () => {
-  it('zero-fills every day in the window', () => {
-    const now = new Date('2026-06-15T00:00:00Z');
-    const result = computeReviewsPerDay([], now, 7);
-    expect(result).toHaveLength(7);
-    expect(result.every((r) => r.count === 0)).toBe(true);
-    expect(result[6]!.date).toBe('2026-06-15');
-  });
-
-  it('buckets reviews by their calendar day', () => {
-    const now = new Date('2026-06-15T12:00:00Z');
-    const reviews: ReviewRecord[] = [
-      {
-        cardId: 1,
-        card: makeFsrsCard(),
-        log: [
-          { ts: new Date('2026-06-15T01:00:00Z').getTime(), rating: Rating.Good, elapsedMs: 0 },
-          { ts: new Date('2026-06-15T02:00:00Z').getTime(), rating: Rating.Good, elapsedMs: 0 },
-          { ts: new Date('2026-06-14T01:00:00Z').getTime(), rating: Rating.Good, elapsedMs: 0 },
-        ],
-      },
-    ];
-    const result = computeReviewsPerDay(reviews, now, 7);
-    expect(result.find((r) => r.date === '2026-06-15')?.count).toBe(2);
-    expect(result.find((r) => r.date === '2026-06-14')?.count).toBe(1);
-  });
-});
 
 describe('computeStateCounts', () => {
   it('derives new-card count from total minus reviewed', () => {

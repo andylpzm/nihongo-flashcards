@@ -1,4 +1,4 @@
-import type { VocabCard, KanaCard, StoryChapter } from './types';
+import type { VocabCard, KanaCard, KanjiCard, StoryChapter } from './types';
 
 export interface KanaDataset {
   hiraganaAlphabet: KanaCard[];
@@ -34,4 +34,13 @@ export async function loadStory(): Promise<StoryChapter[]> {
     storyCache = mod.default as StoryChapter[];
   }
   return storyCache;
+}
+
+let kanjiCache: KanjiCard[] | null = null;
+export async function loadKanji(): Promise<KanjiCard[]> {
+  if (!kanjiCache) {
+    const mod = await import('./kanji.json');
+    kanjiCache = mod.default as KanjiCard[];
+  }
+  return kanjiCache;
 }

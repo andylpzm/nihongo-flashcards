@@ -4,7 +4,29 @@ import type { FsrsCard, Grade } from './types';
 
 export { Rating, State };
 
-const f = fsrs(generatorParameters({ enable_fuzz: true, maximum_interval: 365 }));
+/**
+ * No learning steps, deliberately.
+ *
+ * FSRS models retention across days and its optimiser discounts same-day
+ * repeats - they sit largely outside what it predicts. Steps are a carry-over
+ * from SM-2-era scheduling, and here they cost more than they returned: three
+ * of the four grade buttons did not end a card's turn, so a "10 card" session
+ * took 17 answers, the grade history recorded mid-struggle presses as if they
+ * were verdicts, and cards piled up in a Learning state that only existed
+ * because of the steps themselves.
+ *
+ * One answer now sets the real schedule. The second look at a card you failed
+ * is handled by the session queue instead (see session.ts), which targets the
+ * repetition at the cards that actually need it rather than every card.
+ */
+const f = fsrs(
+  generatorParameters({
+    enable_fuzz: true,
+    maximum_interval: 365,
+    learning_steps: [],
+    relearning_steps: [],
+  })
+);
 
 /** A brand-new card, never reviewed. */
 export function newFsrsCard(now: Date = new Date()): FsrsCard {
