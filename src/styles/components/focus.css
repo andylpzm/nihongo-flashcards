@@ -117,7 +117,7 @@ body.light-theme .btn-mark-known.is-known {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 0.6rem);
+  bottom: calc(var(--bottom-nav-space) + 0.6rem);
   z-index: 60;
   width: min(calc(100% - 1.6rem), 460px);
   align-items: center;

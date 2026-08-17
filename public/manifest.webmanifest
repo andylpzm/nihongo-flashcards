@@ -1,0 +1,15 @@
+{
+  "name": "Nihongo Cards for Chris-kun",
+  "short_name": "Nihongo",
+  "description": "Japanese flashcards: vocabulary, hiragana, katakana and kanji.",
+  "start_url": "/nihongo-flashcards/",
+  "scope": "/nihongo-flashcards/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "icons": [
+    { "src": "/nihongo-flashcards/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "/nihongo-flashcards/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "maskable" }
+  ]
+}

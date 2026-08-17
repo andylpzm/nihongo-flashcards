@@ -17,6 +17,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top);
   /* The ground the wash pools on; the blooms above supply the colour. */
   background: linear-gradient(178deg, #0b1626 0%, #122a44 44%, #1f4a6d 78%, #34719c 100%);
   transition: opacity 0.75s ease 0.45s, visibility 0.75s ease 0.45s;

@@ -90,7 +90,7 @@ body.light-theme .forgotten-host {
 
 @media (max-width: 767px) {
   .forgotten-popup {
-    bottom: calc(var(--bottom-nav-height) + 1.5rem);
+    bottom: calc(var(--bottom-nav-space) + 1.5rem);
     left: 1.5rem;
     width: 180px;
     height: 180px;
@@ -151,7 +151,7 @@ body.light-theme .basketball {
 
 @media (max-width: 767px) {
   body.light-theme .shuttlecock {
-    bottom: calc(var(--bottom-nav-height) + 1rem);
+    bottom: calc(var(--bottom-nav-space) + 1rem);
     right: 1.5rem;
     width: 60px;
     height: 60px;

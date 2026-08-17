@@ -68,7 +68,19 @@
   --card-width: clamp(300px, 88vw, 480px);
   --card-height: clamp(240px, 62vw, 320px);
 
+  /* Content height of the tab bar. */
   --bottom-nav-height: 56px;
+  /* Breathing room between the tab buttons and the bottom edge, on top of
+     whatever inset the device reports. Sitting flush against the home
+     indicator meant a thumb on the lower half of a button was a few pixels
+     from the swipe-up zone, so taps kept dismissing the app. It also keeps
+     the buttons off the physical edge on devices that report no inset. */
+  --nav-gesture-clearance: 10px;
+  /* Total vertical space the bar occupies, inset and clearance included.
+     Anything sitting above the bar must offset by this, not by the height. */
+  --bottom-nav-space: calc(
+    var(--bottom-nav-height) + var(--nav-gesture-clearance) + env(safe-area-inset-bottom)
+  );
   --transition-speed: 0.6s;
 
   --font-ui: 'Outfit', 'Klee One', sans-serif;

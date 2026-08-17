@@ -11,8 +11,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: var(--bottom-nav-height);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Height *includes* the inset, because box-sizing is border-box: with a
+       fixed 56px height the 34px home-indicator inset was eaten out of the
+       bar's own content box, leaving ~22px for 44px buttons. They overflowed
+       downward into the gesture strip, so tapping a tab kept catching the
+       swipe-up-to-close gesture instead. */
+    height: var(--bottom-nav-space);
+    padding-bottom: calc(var(--nav-gesture-clearance) + env(safe-area-inset-bottom));
     background: var(--surface-raised);
     border-top: 1px solid var(--border);
     z-index: 1010;

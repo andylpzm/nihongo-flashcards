@@ -420,7 +420,7 @@ body.light-theme .btn-grade {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: var(--bottom-nav-height);
+    bottom: var(--bottom-nav-space);
     z-index: 1030;
     margin: 0;
     padding: 0.6rem max(0.6rem, env(safe-area-inset-left)) 0.6rem max(0.6rem, env(safe-area-inset-right));

@@ -112,7 +112,9 @@ body {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  /* Above the tab bar, not on top of it: --bottom-nav-space already carries
+     the bar height, the gesture clearance and the safe-area inset. */
+  bottom: calc(var(--bottom-nav-space) + 1rem);
   transform: translateX(-50%) translateY(0);
   z-index: 2500;
   max-width: min(90vw, 380px);
