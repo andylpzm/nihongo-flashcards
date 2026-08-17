@@ -255,9 +255,14 @@ body.light-theme .kb-shortcut {
     font-size: 0.95rem;
   }
 
-  /* Space for the fixed hamburger bar (top) and bottom tab bar */
+  /* Space for the fixed hamburger bar (top) and bottom tab bar.
+     The top inset is added rather than absorbed: with black-translucent the
+     page now starts at the physical top of the screen instead of below an
+     opaque status bar, so without it every screen would shift up by the
+     height of the Dynamic Island. The mobile header rule below deliberately
+     drops its own inset so this is counted once. */
   .main-content {
-    padding: 4.5rem 1rem calc(var(--bottom-nav-space) + 1.5rem);
+    padding: calc(4.5rem + env(safe-area-inset-top)) 1rem calc(var(--bottom-nav-space) + 1.5rem);
     padding-left: max(1rem, env(safe-area-inset-left));
     padding-right: max(1rem, env(safe-area-inset-right));
     padding-bottom: calc(var(--bottom-nav-space) + 1rem);

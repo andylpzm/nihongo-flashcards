@@ -9,10 +9,14 @@ import { loadTheme, saveTheme } from '../state/persistence';
 /**
  * Keeps <meta name="theme-color"> matching the theme actually on screen.
  *
- * iOS paints the band behind the status bar and Dynamic Island with this
- * colour in standalone mode. The static tags in index.html only answer the OS
- * preference, so without this a user on the light theme with their phone in
- * dark mode would get a dark island band above a white page.
+ * This drives Safari's own chrome when the app is opened as a normal page. It
+ * has no effect on the installed app's status bar - iOS takes that solely from
+ * apple-mobile-web-app-status-bar-style, which is why the band stayed white in
+ * dark mode no matter what this wrote.
+ *
+ * The static tags in index.html only answer the OS preference, so without this
+ * a user on the light theme with their phone in dark mode would get dark
+ * browser chrome around a white page.
  */
 function syncThemeColor(light: boolean): void {
   const colour = light ? '#ffffff' : '#0b0f19';

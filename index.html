@@ -9,18 +9,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <!-- Paints the band behind the status bar and Dynamic Island. Without it
-       iOS has no colour to use and falls back to black, so the page stopped
-       dead below the island. Two tags because the app is themed; theme.ts
-       also rewrites these live when the theme is toggled. -->
+  <!-- Tints Safari's own chrome when the app is opened as a normal page. It
+       does NOT reach the standalone status bar - that is governed entirely by
+       apple-mobile-web-app-status-bar-style below. Two tags because the app is
+       themed; theme.ts rewrites them live when the theme is toggled. -->
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Nihongo">
-  <!-- "default" keeps the bar opaque and tinted by theme-color, which the
-       light theme needs: "black-translucent" forces white status text, which
-       is unreadable on the white theme. -->
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <!-- "black-translucent" is the only value that lets the page run under the
+       status bar and Dynamic Island; the other two paint an opaque band that
+       theme-color does NOT tint in standalone mode - "default" is literally a
+       white bar with black glyphs, which sat above the dark theme as a white
+       stripe. The trade-off is that the glyphs are always white, so on the
+       light theme (Taiki) the clock and battery are low-contrast. That was a
+       deliberate call: full-bleed in dark mode is worth more here. -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
   <link rel="shortcut icon" href="/apple-touch-icon.png?v=2">
