@@ -32,6 +32,7 @@
      session card is flipped - it already reserves `bottom-nav-height` of
      space via its own `bottom` offset. */
   .bottom-nav-item {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -60,4 +61,74 @@
   body.light-theme .bottom-nav-item.active {
     color: #0284c7;
   }
+}
+
+/* ---- the binder, before it is a binder ---------------------------------
+   A padlock with no name. Something is there; it is not saying what. See
+   ui/binderTab.ts for why the introduction is a tap rather than a notice. */
+.bottom-nav-item.is-sealed {
+  color: var(--text-muted);
+  opacity: 0.55;
+  cursor: default;
+}
+
+.bottom-nav-item.is-sealed span:not(.nav-badge) {
+  /* the label is emptied in JS; this keeps the row's height steady so the
+     other three tabs do not shift when the name arrives */
+  min-height: 1em;
+}
+
+.menu-item.is-sealed {
+  display: none;
+}
+
+/* earned, unopened: the lock stops being furniture and starts asking */
+.bottom-nav-item.is-ready {
+  color: var(--accent-primary);
+  opacity: 1;
+  cursor: pointer;
+  animation: binder-knock 2.6s ease-in-out infinite;
+}
+
+.bottom-nav-item.is-ready svg {
+  filter: drop-shadow(0 0 6px var(--accent-primary-glow));
+}
+
+/* a shift of weight rather than a bounce - it should read as something
+   waiting behind the tab, not as a button demanding attention */
+@keyframes binder-knock {
+  0%, 62%, 100% { transform: none; }
+  70% { transform: translateY(-2px) rotate(-4deg); }
+  78% { transform: translateY(0) rotate(3deg); }
+  86% { transform: none; }
+}
+
+/* the reveal: the lock goes, the binder arrives, once */
+.bottom-nav-item.is-opening {
+  animation: none;
+}
+
+.bottom-nav-item.is-opening svg {
+  animation: binder-open 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bottom-nav-item.is-opening span:not(.nav-badge) {
+  animation: binder-name 0.7s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes binder-open {
+  0% { transform: scale(0.6) rotate(-12deg); opacity: 0; filter: drop-shadow(0 0 14px var(--accent-primary)); }
+  55% { transform: scale(1.25) rotate(4deg); opacity: 1; }
+  100% { transform: none; opacity: 1; filter: none; }
+}
+
+@keyframes binder-name {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav-item.is-ready,
+  .bottom-nav-item.is-opening svg,
+  .bottom-nav-item.is-opening span:not(.nav-badge) { animation: none; }
 }

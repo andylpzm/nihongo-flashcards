@@ -58,7 +58,10 @@ describe('computeStreak', () => {
   it('does not break the streak just because today has no review yet', () => {
     const now = new Date('2026-06-15T08:00:00Z');
     const reviews: ReviewRecord[] = [
-      { cardId: 1, card: makeFsrsCard(), log: [{ ts: new Date('2026-06-14T01:00:00Z').getTime(), rating: Rating.Good, elapsedMs: 0 }] },
+      // midday, so it is yesterday under any timezone the tests might run in.
+      // this used to be 01:00 - which the 6am day boundary now files under the
+      // day BEFORE, making it two days ago rather than one
+      { cardId: 1, card: makeFsrsCard(), log: [{ ts: new Date('2026-06-14T12:00:00Z').getTime(), rating: Rating.Good, elapsedMs: 0 }] },
     ];
     expect(computeStreak(reviews, now)).toBe(1);
   });

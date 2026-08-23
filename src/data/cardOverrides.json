@@ -1,0 +1,72 @@
+{
+  "ch-060": {
+    "layout": "landscape",
+    "tier": "chapter",
+    "rotate": 270
+  },
+  "ch-154": {
+    "layout": "landscape",
+    "tier": "cover",
+    "rotate": 270
+  },
+  "ch-180": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-235": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-236": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-250": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-024": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "ch-025": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "ch-045": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "ch-046": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-056": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-065": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "ch-120": {
+    "layout": "landscape",
+    "tier": "cover"
+  },
+  "ch-129": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "ch-152": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "ch-249": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "bonus-01": {
+    "layout": "landscape",
+    "tier": "arc"
+  }
+}

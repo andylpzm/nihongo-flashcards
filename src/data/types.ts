@@ -43,19 +43,6 @@ export interface KanaCard {
   meanings: string[];
 }
 
-export interface StoryDialogueLine {
-  speaker: string;
-  text: string;
-}
-
-export interface StoryChapter {
-  id: number;
-  title: string;
-  description: string;
-  deck: KanaCard[];
-  dialogue: StoryDialogueLine[];
-}
-
 /** Any card that can appear in state.cards, across all decks. */
 /** A single kanji character. Note there is deliberately no `pos` field: that is
  * what keeps isVocabCard() false, so the vocabulary level/type/topic filters

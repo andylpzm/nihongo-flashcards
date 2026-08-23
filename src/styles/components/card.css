@@ -1,325 +1,347 @@
-/* Flashcard viewport */
-.card-viewport {
-  perspective: 1200px;
-  width: var(--card-width);
-  height: var(--card-height);
-  margin: 0.5rem 0 1.25rem;
-  cursor: pointer;
-  position: relative;
-  /* Swipe navigation (gestures.ts) live-drags this transform independently
-     of .flashcard's own flip rotateY, then springs back through this
-     transition once the pointer lifts. */
-  transition: transform 0.25s ease, opacity 0.25s ease;
-  touch-action: pan-y;
-}
+/* Flashcard component: the flip card and everything printed on its faces.
+ *
+ * RECOVERED 2026-08-23 from dist/assets/index-Bg24JoHH.css, the 22 Aug build,
+ * after this file was overwritten by mistake. The declarations are the built
+ * ones and so are exact, but the formatting and any comments that were here
+ * originally are gone. If the committed version is still available, prefer it:
+ *   git checkout HEAD -- src/styles/components/card.css
+ */
 
 .flashcard {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform var(--transition-speed) cubic-bezier(.175, .885, .32, 1.275);
+  position:relative;
 }
 
 .card-viewport.flipped .flashcard {
-  transform: rotateY(180deg);
+  transform:rotateY(180deg);
 }
 
 .card-face {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 24px;
-  border: 1px solid var(--border);
-  padding: clamp(1.25rem, 5vw, 2.5rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  transition: box-shadow 0.3s, border-color 0.3s, opacity 0.4s ease, visibility 0.4s ease;
+  backface-visibility:hidden;
+  border:1px solid var(--border);
+  text-align:center;
+  border-radius:24px;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+  height:100%;
+  padding:clamp(1.25rem,5vw,2.5rem);
+  transition:box-shadow .3s,border-color .3s,opacity .4s,visibility .4s;
+  display:flex;
+  position:absolute;
+  top:0;
+  left:0;
 }
 
 .card-front {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 20px 40px var(--shadow-color);
-  opacity: 1;
-  visibility: visible;
-  z-index: 2;
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 20px 40px var(--shadow-color);
+  opacity:1;
+  visibility:visible;
+  z-index:2;
+  background:linear-gradient(135deg,#ffffff0a 0%,#ffffff03 100%);
 }
 
 .card-back {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transform: rotateY(180deg);
-  box-shadow: 0 20px 40px var(--shadow-color);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  z-index: 1;
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 20px 40px var(--shadow-color);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:1;
+  background:linear-gradient(135deg,#ffffff0d 0%,#ffffff03 100%);
+  transform:rotateY(180deg);
 }
 
 .card-viewport.flipped .card-front {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
 }
 
 .card-viewport.flipped .card-back {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
 }
 
 body.light-theme .card-face {
-  background: #ffffff;
-  border: 1px solid rgba(2, 132, 199, 0.18);
-  box-shadow: 0 15px 40px rgba(2, 132, 199, 0.08), 0 4px 10px rgba(0, 0, 0, 0.01);
-}
-
-@media (hover: hover) {
-  .card-viewport:hover .card-front {
-    border-color: var(--accent-primary);
-    box-shadow: 0 20px 50px color-mix(in srgb, var(--accent-primary) 15%, transparent), 0 0 20px var(--accent-primary-glow);
-  }
-
-  .card-viewport:hover .card-back {
-    border-color: var(--accent-cyan);
-    box-shadow: 0 20px 50px rgba(6, 182, 212, 0.15), 0 0 20px var(--accent-cyan-glow);
-  }
+  background:#fff;
+  border:1px solid #0284c72e;
+  box-shadow:0 15px 40px #0284c714,0 4px 10px #00000003;
 }
 
 .card-indicator {
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  font-size:.75rem;
+  font-weight:500;
 }
 
 .card-front .card-indicator {
-  color: var(--accent-primary);
+  color:var(--accent-primary);
 }
 
 .card-back .card-indicator {
-  color: var(--accent-cyan);
+  color:var(--accent-cyan);
 }
 
 .level-badge {
-  margin-left: 0.65rem;
-  padding: 0.15rem 0.45rem;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--accent-primary);
-  font-weight: 600;
+  color:var(--accent-primary);
+  background:#ffffff1f;
+  border:1px solid #ffffff14;
+  border-radius:6px;
+  margin-left:.65rem;
+  padding:.15rem .45rem;
+  font-size:.75rem;
+  font-weight:600;
 }
 
 body.light-theme .level-badge {
-  background: rgba(2, 132, 199, 0.08);
-  border-color: rgba(2, 132, 199, 0.15);
+  background:#0284c714;
+  border-color:#0284c726;
 }
 
 .card-main-text {
-  font-size: clamp(1.5rem, 6vw, 2.2rem);
-  font-weight: 600;
-  line-height: 1.2;
+  font-size:clamp(1.5rem,6vw,2.2rem);
+  font-weight:600;
+  line-height:1.2;
 }
 
 body.light-theme .card-main-text {
-  color: #0f4c81;
+  color:#0f4c81;
 }
 
 .japanese-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction:column;
+  gap:.5rem;
+  display:flex;
 }
 
 .hiragana-text {
-  font-size: clamp(2.2rem, 9vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  background: var(--title-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: var(--font-jp);
-  text-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+  letter-spacing:.05em;
+  background:var(--title-gradient);
+  -webkit-text-fill-color:transparent;
+  font-size:clamp(2.2rem,9vw,3.2rem);
+  font-weight:700;
+  font-family:var(--font-jp);
+  text-shadow:0 0 10px #06b6d433;
+  -webkit-background-clip:text;
 }
 
 body.light-theme .hiragana-text {
-  text-shadow: none;
+  text-shadow:none;
 }
 
 .romaji-text {
-  font-size: 1.2rem;
-  color: var(--accent-cyan);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  transition: opacity 0.2s;
+  color:var(--accent-cyan);
+  letter-spacing:.05em;
+  font-size:1.2rem;
+  font-weight:500;
+  transition:opacity .2s;
 }
 
 .romaji-hidden .romaji-text {
-  display: none !important;
+  display:none!important;
 }
 
 .card-disambiguator {
-  font-family: var(--font-jp);
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
+  font-family:var(--font-jp);
+  color:var(--text-muted);
+  letter-spacing:.04em;
+  font-size:1.35rem;
+  font-weight:600;
 }
 
-/* Kanji cards. Front is a single large glyph; back carries readings, example
-   words drawn from the vocabulary deck, and the stroke count. */
 .kanji-glyph {
-  font-family: var(--font-jp);
-  font-size: clamp(4.5rem, 28vw, 8rem);
-  line-height: 1;
-  font-weight: 600;
+  font-family:var(--font-jp);
+  font-size:clamp(4.5rem,28vw,8rem);
+  font-weight:600;
+  line-height:1;
 }
 
 .kanji-readings {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 100%;
-  font-size: 0.9rem;
+  flex-direction:column;
+  gap:.3rem;
+  width:100%;
+  font-size:.9rem;
+  display:flex;
 }
 
 .kanji-reading-row {
-  display: flex;
-  gap: 0.6rem;
-  align-items: baseline;
-  justify-content: center;
+  justify-content:center;
+  align-items:baseline;
+  gap:.6rem;
+  display:flex;
 }
 
 .kanji-reading-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  min-width: 2.2rem;
-  text-align: right;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  color:var(--text-muted);
+  text-align:right;
+  min-width:2.2rem;
+  font-size:.65rem;
 }
 
 .kanji-reading-values {
-  font-family: var(--font-jp);
-  color: var(--accent-cyan);
+  font-family:var(--font-jp);
+  color:var(--accent-cyan);
 }
 
 .kanji-examples {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  border-top: 1px solid var(--border);
-  padding-top: 0.6rem;
+  border-top:1px solid var(--border);
+  flex-direction:column;
+  gap:.35rem;
+  width:100%;
+  padding-top:.6rem;
+  display:flex;
 }
 
 .kanji-example {
-  display: flex;
-  gap: 0.5rem;
-  align-items: baseline;
-  font-size: 0.8rem;
+  align-items:baseline;
+  gap:.5rem;
+  font-size:.8rem;
+  display:flex;
 }
 
 .kanji-example-word {
-  font-family: var(--font-jp);
-  font-weight: 600;
-  white-space: nowrap;
+  font-family:var(--font-jp);
+  white-space:nowrap;
+  font-weight:600;
 }
 
 .kanji-example-reading {
-  color: var(--text-muted);
-  font-size: 0.7rem;
-  white-space: nowrap;
+  color:var(--text-muted);
+  white-space:nowrap;
+  font-size:.7rem;
 }
 
 .kanji-example-meaning {
-  color: var(--text-muted);
-  margin-left: auto;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color:var(--text-muted);
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  margin-left:auto;
+  overflow:hidden;
 }
 
 .kanji-strokes {
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  color:var(--text-muted);
+  font-size:.72rem;
 }
 
 .card-sub-info {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-  max-width: 90%;
-  font-weight: 300;
+  color:var(--text-muted);
+  max-width:90%;
+  font-size:.9rem;
+  font-weight:300;
+  line-height:1.4;
 }
 
-/* Speak audio button */
 .speak-button {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s;
-  z-index: 10;
+  color:#fff;
+  cursor:pointer;
+  z-index:10;
+  background:#ffffff0d;
+  border:1px solid #ffffff1a;
+  border-radius:50%;
+  justify-content:center;
+  align-items:center;
+  width:44px;
+  height:44px;
+  transition:all .3s;
+  display:flex;
 }
 
 body.light-theme .speak-button {
-  background: rgba(2, 132, 199, 0.06);
-  border: 1px solid rgba(2, 132, 199, 0.18);
-  color: #0284c7;
-}
-
-@media (hover: hover) {
-  .speak-button:hover {
-    background: var(--accent-cyan);
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 15px var(--accent-cyan-glow);
-    transform: scale(1.1);
-  }
-
-  body.light-theme .speak-button:hover {
-    background: #0284c7;
-    color: #ffffff;
-    border-color: #0284c7;
-    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
-  }
+  color:#0284c7;
+  background:#0284c70f;
+  border:1px solid #0284c72e;
 }
 
 .speak-button svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
+  fill:currentColor;
+  width:20px;
+  height:20px;
 }
 
-@media (max-width: 767px) {
-  .card-viewport {
-    margin: 0.5rem 0 0.75rem;
+.okurigana {
+  opacity:.5;
+  font-weight:400;
+}
+
+.card-xp {
+  color:var(--accent-primary);
+  opacity:0;
+  margin-top:.6rem;
+  font-size:.85rem;
+  font-weight:700;
+  transition:opacity .4s;
+}
+
+.card-viewport {
+  perspective:1200px;
+  width:var(--card-width);
+  height:var(--card-height);
+  cursor:pointer;
+  touch-action:pan-y;
+  margin:.5rem 0 1.25rem;
+  transition:transform .25s,opacity .25s;
+  position:relative;
+}
+
+.flashcard {
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform var(--transition-speed) cubic-bezier(.175, .885, .32, 1.275);
+  position:relative;
+}
+
+.card-xp.is-shown {
+  opacity:1;
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .flashcard {
+    transition:none!important;
   }
 }
 
-/* Okurigana tail of a kun reading (the べる of た.べる) - the part written in
-   kana rather than covered by the character itself. */
-.okurigana {
-  opacity: 0.5;
-  font-weight: 400;
+@media (hover:hover) {
+  .card-viewport:hover .card-front {
+    border-color:var(--accent-primary);
+    box-shadow:0 20px 50px color-mix(in srgb, var(--accent-primary) 15%, transparent), 0 0 20px var(--accent-primary-glow);
+  }
+
+  .card-viewport:hover .card-back {
+    border-color:var(--accent-cyan);
+    box-shadow:0 20px 50px #06b6d426, 0 0 20px var(--accent-cyan-glow);
+  }
+
+  .speak-button:hover {
+    background:var(--accent-cyan);
+    border-color:var(--accent-cyan);
+    box-shadow:0 0 15px var(--accent-cyan-glow);
+    transform:scale(1.1);
+  }
+
+  body.light-theme .speak-button:hover {
+    color:#fff;
+    background:#0284c7;
+    border-color:#0284c7;
+    box-shadow:0 4px 12px #0284c733;
+  }
+}
+
+@media (width<=767px) {
+  .card-viewport {
+    margin:.5rem 0 .75rem;
+  }
 }

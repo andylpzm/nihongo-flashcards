@@ -348,3 +348,1071 @@ body.light-theme .stat-tile {
 #section-stats .stats-grid {
   margin-bottom: 1rem;
 }
+
+/* profile: name, rank and total xp - moved out of the gallery, which is about
+   the collection rather than about the user */
+body.light-theme /* daily missions, directly under the profile: rank, xp and today in one place */
+.stat-missions {
+  border-color: color-mix(in srgb, var(--accent-primary) 20%, var(--border));
+}
+
+.missions-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.missions-head h4 {
+  margin-bottom: 0;
+}
+
+.missions-count {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.missions-count.is-done {
+  color: var(--accent-primary);
+}
+
+.missions-foot {
+  margin-top: 0.55rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.missions-foot strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.missions-foot.is-done strong {
+  color: var(--accent-primary);
+}
+
+/* nudge on the tab bar while missions are outstanding, so the checklist does
+   not have to be gone looking for */
+/* how much of the day is done, as a ring round the corner of the tab. a bare
+   dot only said "something"; this says how much is left. */
+/* placed with an offset rather than a transform. the seal animation writes
+   transform, and anything positioned that way jumps to the untransformed spot
+   for the duration of it. */
+.bottom-nav-item .nav-ring {
+  position: absolute;
+  /* clear of the bar's top edge - both marks were sitting right on it */
+  top: 5px;
+  right: calc(50% - 23px);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.bottom-nav-item .nav-ring svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  overflow: visible;
+}
+
+.nav-ring-track {
+  stroke: var(--border-hover);
+}
+
+.nav-ring-fill {
+  stroke: var(--accent-primary);
+  transition: stroke-dashoffset 0.55s cubic-bezier(0.3, 0.9, 0.4, 1);
+}
+
+/* xp earned while you were elsewhere. sits on the far side of the icon so it
+   never touches the ring. */
+/* tucked against the icon's left shoulder. it used to sit 46px out, which put
+   it nearer the Gallery tab than the one it belongs to. */
+.bottom-nav-item .nav-pill {
+  position: absolute;
+  top: 5px;
+  right: calc(50% + 11px);
+  height: 15px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 0.56rem;
+  font-weight: 900;
+  line-height: 15px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+/* ---- mission track ------------------------------------------------------
+   four deck nodes on a rail, then the day's bonus past a divider. the bonus
+   has no circle of its own and fills as the four are cleared, so it reads as
+   a reward rather than a fifth task. */
+
+.m-track {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: start;
+  /* headroom so the earned animation never touches the tile edge */
+  padding: 12px 0 2px;
+}
+
+.m-tasks {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: start;
+}
+
+.m-rail {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  top: 18px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--recess-fill);
+  overflow: hidden;
+}
+
+/* one link per gap, lit only when the nodes at both ends are done.
+   z-index 0 against the dots' 1: the link reaches across the node before it,
+   and without the order it painted a bar straight over that circle. */
+.m-node::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 18px;
+  right: 50%;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background-color 0.4s ease;
+}
+
+.m-node:first-child::before {
+  display: none;
+}
+
+/* the plain accent, not a darkened one. mixing toward black was tuned against
+   the dark theme and computed to near-black on the light theme's white sheet.
+   the 4px ring around each dot already punches the gap that keeps the link and
+   the circles from reading as one shape. */
+.m-node.is-linked::before {
+  background: var(--accent-primary);
+}
+
+.m-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.m-dot {
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-jp);
+  font-size: 16px;
+  color: var(--text-muted);
+  position: relative;
+  /* a ring of the tile colour punches a gap so the rail passes behind */
+  box-shadow: 0 0 0 4px var(--surface-raised);
+}
+
+/* :not(.is-done) matters - a bare `body.light-theme .m-dot` outranks
+   `.m-dot.is-done` on specificity and repainted completed nodes white, which
+   put white glyphs on a white circle */
+body.light-theme .m-dot:not(.is-done) {
+  background: #ffffff;
+}
+
+/* the ring has two jobs: mask the rail behind the node, and read as a faint
+   halo. in Chii that falls out for free - the tile has a gradient over
+   --surface-raised while the ring is the flat colour, so it sits a shade
+   darker. Taiki's tile is flat white, so the ring needs its own tint or it
+   disappears entirely. */
+body.light-theme .m-dot {
+  box-shadow: 0 0 0 4px #edf4fa;
+}
+
+body.light-theme .m-tick {
+  border-color: #edf4fa;
+}
+
+.m-dot.is-done {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.m-tick {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  border: 2px solid var(--surface-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: #fff;
+  font-weight: 900;
+}
+
+body.light-theme .m-tick {
+  border-color: #ffffff;
+}
+
+.m-node small {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.m-rule {
+  width: 1px;
+  height: 42px;
+  background: var(--border);
+  margin: 0 12px;
+}
+
+/* three states, and the prize is faint for two of them: it is not yours until
+   you collect it. the fade sits on the artwork, never on the button - the
+   badge lives inside and must stay at full strength. */
+.m-bonus small {
+  color: var(--accent-primary);
+}
+
+.m-prize {
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-primary);
+}
+
+.m-prize[disabled] {
+  cursor: default;
+}
+
+.m-bonus .m-prize svg,
+.m-bonus .m-shuttle-wrap,
+.m-bonus small {
+  opacity: 0.3;
+}
+
+/* earned, not collected: faint still, but it asks for the tap */
+.m-bonus.is-ready .m-prize {
+  cursor: pointer;
+  animation: m-wobble 2.4s ease-in-out infinite;
+}
+
+.m-bonus.is-ready .m-prize svg,
+.m-bonus.is-ready .m-shuttle-wrap,
+.m-bonus.is-ready small {
+  opacity: 0.5;
+}
+
+@keyframes m-wobble {
+  0%, 70%, 100% { transform: rotate(0); }
+  76% { transform: rotate(-10deg); }
+  82% { transform: rotate(8deg); }
+  88% { transform: rotate(-4deg); }
+  94% { transform: rotate(2deg); }
+}
+
+.m-bang {
+  position: absolute;
+  top: -3px;
+  right: -4px;
+  z-index: 3;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid var(--surface-raised);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.m-bonus.is-ready .m-bang {
+  display: flex;
+  animation: m-bang-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes m-bang-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* collected */
+.m-bonus.is-claimed .m-prize svg,
+.m-bonus.is-claimed .m-shuttle-wrap,
+.m-bonus.is-claimed small {
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+.m-burst {
+  position: absolute;
+  left: 50%;
+  top: 22px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.m-burst i {
+  position: absolute;
+  width: 5px;
+  height: 9px;
+  border-radius: 1px;
+  opacity: 0;
+}
+
+.m-flyxp {
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--accent-primary);
+  pointer-events: none;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.m-prize {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+}
+
+.m-ball,
+.m-shuttle {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.m-liquid {
+  transition: y 0.6s cubic-bezier(0.3, 0.9, 0.4, 1);
+}
+
+/* each theme shows the sport it already decorates with */
+.m-shuttle-wrap {
+  display: none;
+}
+
+body.light-theme .m-ball {
+  display: none;
+}
+
+body.light-theme .m-shuttle-wrap {
+  display: block;
+}
+
+/* Chii: the ball bounces. 10px rise against 12px of headroom. */
+.m-bonus.is-claimed .m-ball {
+  animation: m-bounce 1.6s cubic-bezier(0.3, 0.7, 0.4, 1) infinite;
+  transform-origin: 50% 92%;
+}
+
+@keyframes m-bounce {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  10% { transform: translateY(0) scale(1.08, 0.88); }
+  42% { transform: translateY(-10px) scale(0.97, 1.04); }
+  72% { transform: translateY(0) scale(1.05, 0.94); }
+  86% { transform: translateY(-3px) scale(1, 1); }
+}
+
+/* Taiki: the shuttlecock hangs in still air - three motions on mismatched
+   clocks so the loop never visibly repeats */
+.m-bonus.is-claimed .m-shuttle-wrap {
+  animation: m-drift 4.1s ease-in-out infinite;
+}
+
+.m-bonus.is-claimed .m-shuttle-bob {
+  display: block;
+  animation: m-bob 2.6s ease-in-out infinite;
+}
+
+.m-bonus.is-claimed .m-shuttle {
+  animation: m-tilt 3.4s ease-in-out infinite;
+  transform-origin: 50% 80%;
+}
+
+@keyframes m-drift {
+  0%, 100% { transform: translateX(-1.5px); }
+  50% { transform: translateX(1.5px); }
+}
+
+@keyframes m-bob {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(2px); }
+}
+
+@keyframes m-tilt {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-bonus.is-claimed .m-ball,
+  .m-bonus.is-claimed .m-shuttle-wrap,
+  .m-bonus.is-claimed .m-shuttle-bob,
+  .m-bonus.is-claimed .m-shuttle,
+  .m-bonus.is-ready .m-prize,
+  .m-bonus.is-ready .m-bang {
+    animation: none;
+  }
+}
+
+/* ---- player card --------------------------------------------------------
+   the banner art reaches down behind the name and the progress bar, then
+   dissolves before the stat pills. going further - art behind the numbers -
+   makes them hard to read, and with 276 possible banners no single scrim
+   works for both pale skies and dark interiors. */
+
+.player-card {
+  position: relative;
+  grid-column: 1 / -1;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 34px var(--shadow-color);
+}
+
+body.light-theme .player-card {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.18);
+}
+
+.pc-art {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 270px;
+  overflow: hidden;
+  background: var(--recess-fill);
+}
+
+.pc-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+}
+
+.pc-art::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 18%,
+    color-mix(in srgb, var(--surface-raised) 55%, transparent) 55%,
+    color-mix(in srgb, var(--surface-raised) 94%, transparent) 82%,
+    var(--surface-raised)
+  );
+}
+
+body.light-theme .pc-art::after {
+  background: linear-gradient(
+    180deg,
+    transparent 18%,
+    rgba(255, 255, 255, 0.55) 55%,
+    rgba(255, 255, 255, 0.94) 82%,
+    #ffffff
+  );
+}
+
+.pc-banner-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pc-banner-btn svg {
+  width: 11px;
+  height: 11px;
+  fill: #fff;
+}
+
+.pc-inner {
+  position: relative;
+  padding: 130px 14px 14px;
+}
+
+.pc-avatar {
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  border-radius: 50%;
+  overflow: visible;
+  border: 3px solid var(--surface-raised);
+  background: var(--surface);
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+body.light-theme .pc-avatar {
+  border-color: #ffffff;
+  background: var(--recess-fill);
+}
+
+/* the avatar itself cannot clip - the pen badge hangs outside it - so the
+   picture gets its own round window to sit in. without this a positioned
+   image overflows the circle and renders as an oval. */
+.pc-avatar-clip {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.pc-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pc-silhouette {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-silhouette svg {
+  width: 34px;
+  height: 34px;
+  fill: var(--text-muted);
+}
+
+.pc-pen {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  border: 2px solid var(--surface-raised);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.light-theme .pc-pen {
+  border-color: #ffffff;
+}
+
+.pc-pen svg {
+  width: 11px;
+  height: 11px;
+  fill: #fff;
+}
+
+.pc-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.pc-id {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.pc-id h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.pc-rank {
+  border: 0;
+  cursor: pointer;
+  flex: none;
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent-primary);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.pc-xp {
+  position: relative;
+  flex: none;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the gain rises off the total while it climbs, then is gone - it says what
+   changed, which the number alone cannot */
+.pc-ghost {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 2;
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: var(--accent-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.pc-xp span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+/* a bright head on the fill, so the bar reads as being drawn rather than as
+   having simply changed width */
+.pc-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #fff);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pc-bar {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--recess-fill);
+  overflow: hidden;
+  margin-top: 0.55rem;
+}
+
+.pc-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  transition: width 0.5s ease;
+}
+
+.pc-next {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+.pc-pills {
+  display: flex;
+  gap: 6px;
+  margin-top: 0.7rem;
+}
+
+.pc-pill {
+  flex: 1;
+  background: var(--recess-fill);
+  border-radius: 9px;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.pc-pill b {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.pc-pill span {
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---- what the rank chip opens ------------------------------------------- */
+
+.rank-body {
+  padding: 0.25rem 1.5rem 1.5rem;
+}
+
+.rk-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+
+.rk-lead {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.9rem;
+}
+
+.rk-lead b {
+  color: var(--accent-primary);
+  font-weight: 800;
+}
+
+/* the bonus as xp, because a percentage of an unstated number means nothing */
+.rk-sum {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  background: var(--recess-fill);
+  border: 1px solid transparent;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+body.light-theme .rk-sum {
+  border-color: var(--border);
+}
+
+.rk-sum .rk-plus {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.rk-sum b {
+  margin-left: auto;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.rk-note {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0.5rem 0 1.1rem;
+}
+
+/* the ladder as a road: a dashed run down a fixed lane with a stop on it.
+   the lane is its own grid column, so every node sits on one centre line and
+   the numbers stay in their columns however long a rank name gets. */
+
+.rk-road {
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0;
+}
+
+.rk-stop {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr auto 3rem;
+  align-items: center;
+  gap: 0.7rem;
+  height: 52px;
+  padding-right: 0.15rem;
+}
+
+/* the run to the next stop: from this node's centre to the next one's */
+.rk-stop::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  height: 100%;
+  width: 3px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background-image: linear-gradient(to bottom, var(--border-hover) 55%, transparent 0);
+  background-size: 3px 9px;
+}
+
+.rk-stop:last-child::before {
+  display: none;
+}
+
+/* road already travelled */
+.rk-stop.is-done::before {
+  background-image: linear-gradient(to bottom, var(--accent-primary) 55%, transparent 0);
+}
+
+/* the leg being travelled. tinted rather than grey, so the direction of travel
+   is legible even at the start of a rank when nothing has filled yet. */
+.rk-stop.is-now::before {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--accent-primary) 38%, transparent) 55%,
+    transparent 0
+  );
+}
+
+/* and the part of the current run already earned */
+.rk-run {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  z-index: 1;
+  background-image: linear-gradient(to bottom, var(--accent-primary) 55%, transparent 0);
+  background-size: 3px 9px;
+}
+
+.rk-node {
+  position: relative;
+  z-index: 2;
+  justify-self: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: var(--surface-raised);
+  border: 2px solid var(--border-hover);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-node svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.rk-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.rk-at {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rk-bonus {
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* four states, each clearly not the others:
+   done - filled and ticked; now - filled, haloed and accented;
+   next - outlined in the accent, so it reads as reachable rather than reached;
+   sealed - dashed, dimmed and padlocked. */
+
+.rk-stop.is-done .rk-node {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.rk-stop.is-next .rk-node {
+  border-color: color-mix(in srgb, var(--accent-primary) 55%, transparent);
+  color: color-mix(in srgb, var(--accent-primary) 80%, transparent);
+}
+
+/* pending, not arrived: lighter than the ranks behind it so the eye reads
+   current -> next as a direction rather than as two equal rows */
+.rk-stop.is-next .rk-name {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.rk-stop.is-next .rk-bonus {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.rk-tag {
+  margin-left: 0.45rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  vertical-align: 1px;
+  color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+}
+
+.rk-stop.is-now .rk-node {
+  width: 34px;
+  height: 34px;
+  font-size: 0.8rem;
+  background: var(--accent-primary);
+  border-color: var(--surface-raised);
+  color: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-primary) 22%, transparent);
+}
+
+.rk-stop.is-now .rk-node svg {
+  width: 15px;
+  height: 15px;
+}
+
+.rk-stop.is-now .rk-name,
+.rk-stop.is-now .rk-bonus,
+.rk-stop.is-now .rk-at {
+  color: var(--accent-primary);
+}
+
+.rk-stop.is-now .rk-name {
+  font-weight: 800;
+}
+
+.rk-stop.is-sealed .rk-node svg {
+  fill: var(--accent-primary);
+}
+
+.rk-stop.is-sealed .rk-node {
+  border-style: dashed;
+  border-color: var(--border-hover);
+  background: transparent;
+}
+
+.rk-stop.is-sealed .rk-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.rk-stop.is-sealed .rk-name,
+.rk-stop.is-sealed .rk-at,
+.rk-stop.is-sealed .rk-bonus,
+.rk-stop.is-sealed .rk-node {
+  color: var(--text-muted);
+  opacity: 0.62;
+}
+
+.rk-next {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+
+/* count of pictures unlocked but not yet looked at. a number rather than the
+   Progress tab's bare dot: "you have three waiting" is worth the walk over,
+   where "something happened" is not. */
+.bottom-nav-item .nav-badge {
+  position: absolute;
+  top: 5px;
+  right: calc(50% - 22px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 900;
+  line-height: 16px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* the itemised session reward */
+.card-xp span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.card-xp span i {
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.card-xp span b {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.card-xp span b em {
+  font-style: normal;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 0.22rem;
+}
+
+.card-xp .xp-rank i {
+  color: var(--accent-primary);
+  font-weight: 800;
+}

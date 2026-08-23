@@ -1,0 +1,811 @@
+/* the gallery card. settled design - see gallery-source/CARD-SPEC.html and the
+   tier files SHIP-chapter / SHIP-cover / card-arc-land.
+
+   every measurement is a share of ONE unit. portrait --u is 1cqw; landscape
+   divides by 88/63 so the frame keeps the same weight against the card's SHORT
+   edge, otherwise the border and rule get visibly chunkier when it turns. */
+
+.gc-frame {
+  container-type: inline-size;
+  width: 100%;
+  perspective: 900px;
+}
+
+.gc {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 63 / 88;
+  --u: 1cqw;
+  --gap: calc(9.048 * var(--u));
+  --brk: calc(1.905 * var(--u));
+  --inset: calc(4.762 * var(--u));
+  --cell: calc(9 * var(--u));
+  --hair: calc(0.714 * var(--u));
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --foil-x: 50%;
+  --foil-y: 50%;
+  --card-opacity: 0;
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --pointer-from-center: 0;
+  border-radius: calc(5.714 * var(--u));
+  padding: calc(3.81 * var(--u));
+  overflow: hidden;
+  background: #7fc4e8;
+  touch-action: none;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
+}
+.gc.is-land {
+  aspect-ratio: 88 / 63;
+  --u: 0.7159cqw;
+}
+
+/* the watercolour edge */
+.gc-wash {
+  position: absolute;
+  inset: -24%;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  filter: blur(15px) saturate(150%);
+  background:
+    radial-gradient(40% 28% at 20% 16%, rgb(31 92 168 / 95%), transparent 68%),
+    radial-gradient(32% 24% at 80% 12%, rgb(46 140 196 / 90%), transparent 70%),
+    radial-gradient(44% 32% at 52% 88%, rgb(28 104 176 / 92%), transparent 66%);
+}
+.gc-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.42;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* the edge catching the light. z-index 1 puts it UNDER the illustration, so it
+   is visible only in the border ring and needs no masking. */
+.gc-rim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.85);
+  background:
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgb(255 255 255 / 90%) 0%, rgb(190 230 255 / 50%) 22%, transparent 46%),
+    radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x)) calc(100% - var(--pointer-y)),
+      rgb(120 200 255 / 35%) 0%, transparent 40%);
+}
+
+.gc-win {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  border-radius: calc(2.857 * var(--u));
+  overflow: hidden;
+  transform-style: preserve-3d;
+  /* what shows for the instant before the artwork paints. near-white, because
+     these are manga pages: a dark window read as a hole punched in the card. */
+  background: #f4f8fc;
+}
+.gc-art {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  max-width: none;
+  transform-origin: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gc-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  transform: translateZ(1.41px);
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.82);
+  background-image: radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
+    hsl(0 0% 100% / 80%) 10%, hsl(0 0% 100% / 65%) 20%, hsl(0 0% 0% / 50%) 90%);
+}
+
+/* ---- foil, per tier ---------------------------------------------------- */
+.gc-foil,
+.gc-foil2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* chapter: no foil at all. measured across all 250 pages - they average
+   150-220 mean brightness with up to 51% of pixels already at full white, so a
+   dodge or screen foil has no headroom and only flattens the page. */
+
+/* cover: sunpillar. vertical colour pillars blended by HUE onto a narrow
+   diagonal streak - the hue blend is what stops it reading as stripes. */
+.gc[data-tier='cover'] .gc-foil {
+  z-index: 4;
+  transform: translateZ(1px);
+  mix-blend-mode: lighten;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.44);
+  background-image:
+    repeating-linear-gradient(0deg,
+      #ff7b9c 6%, #ffe57b 12%, #7bff9c 18%, #7be5ff 24%, #c07bff 30%, #ff7b9c 36%),
+    repeating-linear-gradient(120deg,
+      #0e152e 0%, hsl(180 10% 55%) 3.8%, hsl(180 29% 66%) 4.5%,
+      hsl(180 10% 55%) 5.2%, #0e152e 10%, #0e152e 12%);
+  background-size: 200% 700%, 300% 100%;
+  background-position: 0% var(--foil-y), var(--foil-x) var(--foil-y);
+  background-blend-mode: hue;
+}
+
+/* arc: cosmos. rainbow waves in overlay - dodge returns white on these bright
+   spreads and erases the pattern - plus a starfield sliding the other way. */
+.gc[data-tier='arc'] .gc-foil {
+  z-index: 4;
+  transform: translateZ(1px);
+  mix-blend-mode: overlay;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.85);
+  background-image: repeating-linear-gradient(105deg,
+    #ff5a5a 0%, #ffd84a 8%, #4aff86 16%, #4ac8ff 24%, #a85aff 32%, #ff5a5a 40%);
+  background-size: 300% 300%;
+  background-position: var(--foil-x) var(--foil-y);
+}
+.gc[data-tier='arc'] .gc-foil2 {
+  z-index: 5;
+  transform: translateZ(1.2px);
+  mix-blend-mode: color-dodge;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
+  /* stars: feTurbulence is PREMULTIPLIED, so thresholding its red channel gives
+     a fully transparent plate. luminanceToAlpha then a steep alpha ramp,
+     composited into a solid fill, is what works. ~1.2% coverage. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='580' color-interpolation-filters='sRGB'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='luminanceToAlpha'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='30' intercept='-20'/%3E%3C/feComponentTransfer%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23fff' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size: 150% 150%;
+  background-position: calc(100% - var(--foil-x)) calc(100% - var(--foil-y));
+}
+/* the arc tier carries its finish out onto the frame too */
+.gc[data-tier='arc'] .gc-rim {
+  mix-blend-mode: overlay;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
+  background-image: repeating-linear-gradient(105deg,
+    #ff5a5a 0%, #ffd84a 8%, #4aff86 16%, #4ac8ff 24%, #a85aff 32%, #ff5a5a 40%);
+  background-size: 300% 300%;
+  background-position: var(--foil-x) var(--foil-y);
+}
+
+/* ---- the frame drawn inside the illustration --------------------------- */
+.gc-kl {
+  position: absolute;
+  z-index: 7;
+  pointer-events: none;
+  left: var(--gap);
+  right: var(--gap);
+  top: var(--gap);
+  bottom: var(--gap);
+  border: var(--hair) solid rgb(255 255 255 / 95%);
+  border-bottom: 0;
+  filter: drop-shadow(0 1px 2px rgb(0 45 80 / 50%));
+}
+/* the bottom rule turns both corners, then stops short of each label rather
+   than running behind it. widths are measured from the rendered labels. */
+.gc-klb {
+  position: absolute;
+  z-index: 7;
+  pointer-events: none;
+  height: var(--hair);
+  background: rgb(255 255 255 / 95%);
+  bottom: var(--gap);
+  filter: drop-shadow(0 1px 2px rgb(0 45 80 / 50%));
+}
+.gc-klb.s1 { left: var(--gap); width: var(--seg1, 0); }
+.gc-klb.s2 { left: var(--seg2l, 0); width: var(--seg2w, 0); }
+.gc-klb.s3 { right: var(--gap); width: var(--seg3, 0); }
+
+.gc-side {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-size: calc(3.333 * var(--u));
+  font-weight: 800;
+  letter-spacing: 0.38em;
+  color: #fff;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgb(0 45 80 / 75%);
+}
+.gc-side.l { left: calc(var(--gap) / 2 + 1px); transform: translateY(-50%) rotate(180deg); }
+.gc-side.r { right: calc(var(--gap) / 2 + 1px); }
+
+.gc-num {
+  position: absolute;
+  z-index: 9;
+  left: calc(var(--gap) + var(--inset));
+  bottom: calc(var(--gap) - 3.81 * var(--u));
+  display: flex;
+}
+.gc-num i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cell);
+  height: var(--cell);
+  flex: none;
+  font-style: normal;
+  font-family: 'Klee One', serif;
+  font-weight: 600;
+  line-height: 1;
+  font-size: calc(var(--cell) * 0.619);
+  color: #12456e;
+  background: rgb(255 255 255 / 90%);
+  border: calc(var(--cell) * 0.0667) solid #4c9bd0;
+  margin-left: calc(var(--cell) * -0.0667);
+}
+.gc-num i:first-child { margin-left: 0; }
+/* one band sweeping all three boxes as a single stroke. screen leaves the white
+   fill alone and lifts only the blue borders - and it must overhang by the
+   border width, since inset:0 stops at the padding box and misses them. */
+.gc-num::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--cell) * -0.0667);
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
+  background-image: linear-gradient(100deg, transparent 40%, rgb(255 255 255 / 95%) 50%, transparent 60%);
+  background-size: 260% 100%;
+  background-position-x: calc(230% - var(--pointer-x) * 2.6);
+}
+
+.gc-auth {
+  position: absolute;
+  z-index: 9;
+  right: calc(var(--gap) + var(--inset));
+  bottom: calc(var(--gap) - 3.81 * var(--u));
+  font-family: 'Klee One', serif;
+  font-size: calc(5.476 * var(--u));
+  font-weight: 600;
+  line-height: var(--cell);
+  height: var(--cell);
+  color: #fff;
+  text-shadow: 0 1px 3px rgb(0 45 80 / 90%), 0 0 7px rgb(0 45 80 / 60%);
+}
+
+/* the wordmark comes out of the pack as a blob url (state/vault.ts). in the
+   repo the loose file is still there, so this falls back to it and dev looks
+   the same as production. */
+:root {
+  --card-logo: url('/nihongo-flashcards/gallery/logo.png');
+}
+
+.gc-logo {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+  left: calc(var(--gap) + var(--inset));
+  top: var(--gap);
+  transform: translate(0, -50%);
+  width: calc(34 * var(--u));
+  height: calc(11.6 * var(--u));
+  background: var(--card-logo) center / contain no-repeat;
+  filter: drop-shadow(0 1px 3px rgb(0 45 80 / 55%));
+}
+/* the logo takes the same sweep as the number boxes, masked to the wordmark's
+   own alpha so the band lights the logo and nothing around it */
+.gc-logo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mask: var(--card-logo) center / contain no-repeat;
+  mix-blend-mode: screen;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
+  background-image: linear-gradient(100deg, transparent 40%, rgb(255 255 255 / 95%) 50%, transparent 60%);
+  background-size: 260% 100%;
+  background-position-x: calc(230% - var(--pointer-x) * 2.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc { transition: none; }
+}
+
+/* ---- the card inside the full-screen viewer ---------------------------- */
+.g-viewer-stage .gc-frame {
+  width: min(88vw, 62vh * 63 / 88);
+  margin: 0 auto;
+}
+.g-viewer-stage.is-land .gc-frame {
+  width: min(94vw, 62vh * 88 / 63);
+  transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* turned upright: a landscape card lying flat in a portrait screen uses barely
+   a third of the glass. rotated, its long edge runs down the screen and the
+   picture roughly doubles - so the width here is driven by the viewport's
+   HEIGHT, since after the quarter turn that is what the card's width becomes. */
+.g-viewer.is-turned .g-viewer-stage.is-land .gc-frame {
+  /* flex: none or the stage shrinks it back to the screen's width - the frame
+     is 500px wide once turned, and only its rotated box is narrow */
+  flex: none;
+  width: min(82vh, 92vw * 88 / 63);
+  transform: rotate(90deg);
+}
+
+/* ---- the binder --------------------------------------------------------
+   slots hold the card's SHAPE whether or not the picture is earned, so the
+   page reads as a binder with empty pockets rather than a grid of holes. */
+.g-slot {
+  position: relative;
+  border: 0;
+  padding: 0;
+  background: none;
+  display: block;
+  cursor: pointer;
+  aspect-ratio: 63 / 88;
+}
+/* a landscape pocket covers the whole two-wide space. its height comes from a
+   hidden sizer shaped like ONE portrait pocket, not from align-self:stretch -
+   an arc reward is often the last card in its arc and so sits alone in its row,
+   where there is nothing to stretch against and the pocket collapses.
+   sizer and card share one grid cell: the sizer sets the height, the card fills
+   it. the card is driven from HEIGHT with its own ratio, because width:100%
+   overflows - the pocket is proportionally wider than a card is. */
+.g-slot.is-land {
+  grid-column: span 2;
+  aspect-ratio: auto;
+  display: grid;
+  place-items: center;
+}
+.g-slot.is-land::before {
+  content: '';
+  grid-area: 1 / 1;
+  width: calc(
+    (100% + 2 * var(--pocket-pb, 4px) - var(--binder-gap, 8px)) / 2
+    - 2 * var(--pocket-pb, 4px) * 63 / 88);
+  aspect-ratio: 63 / 88;
+}
+.g-slot.is-land .gc-frame,
+.g-slot.is-land .g-empty {
+  grid-area: 1 / 1;
+  height: 100%;
+  width: auto;
+  aspect-ratio: 88 / 63;
+}
+.g-slot.is-land .gc {
+  height: 100%;
+}
+.g-slot .gc-frame,
+.g-slot .gc,
+.g-slot .g-empty {
+  width: 100%;
+}
+.g-slot:active .gc {
+  transform: scale(0.96);
+  transition: transform 0.1s ease;
+}
+
+/* an empty pocket: the card's shape, recessed.
+   the recess is the INNER element, never the slot. putting it on the slot meant
+   `display: flex` landed on .g-slot.is-locked, which - same specificity, later
+   in the file - beat .g-slot.is-land's `display: grid` and took the landscape
+   sizer out of play, leaving a blob 0.95 wide-to-tall where a landscape card is
+   1.4. an empty pocket has to be shaped like the card that will fill it. */
+.g-slot.is-locked {
+  cursor: default;
+}
+.g-slot.is-locked .g-empty {
+  position: relative;
+  /* the dashed edge counts inside the pocket: added outside it, the empty
+     pocket came out 2px taller than the card that will replace it */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  /* shaped like the card, not like the pocket. the pocket is inset 4px on every
+     side, and taking height from it made the empty 3px taller than the card
+     that replaces it - subtracting the same inset from two unequal sides does
+     not preserve a ratio. */
+  aspect-ratio: 63 / 88;
+  border-radius: 8px;
+  background: var(--recess-fill);
+  border: 1px dashed var(--border);
+  box-shadow: inset 0 1px 6px var(--recess-shadow);
+  overflow: hidden;
+}
+/* landscape wins over the portrait shape above: same specificity, and the
+   landscape rule sits earlier in the file */
+.g-slot.is-land.is-locked .g-empty {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 88 / 63;
+}
+/* no outline on the reward pocket: "8 more" already says what it is, and an
+   orange frame on the biggest empty pocket read as the loudest thing on a page
+   of things you cannot open yet */
+/* the pocket you are currently earning. the old rules for this were written
+   against .g-tile, which nothing in the binder is any more, so the next pocket
+   had been drawing as an ordinary empty one. */
+.g-slot.is-next .g-empty {
+  border-color: var(--accent-primary);
+  border-style: solid;
+}
+.g-slot.is-next .g-num {
+  color: var(--text);
+  opacity: 0.75;
+}
+.g-slot.is-next .g-need {
+  opacity: 1;
+}
+.g-slot .g-num,
+.g-slot .g-need,
+.g-slot .g-next-tag,
+.g-slot .g-veil-mark,
+.g-slot .g-veil-label,
+.g-slot .g-veil-count {
+  position: relative;
+  z-index: 1;
+}
+/* the mini has no moving layers at all - it is a still card, for reading */
+.gc.is-mini {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 35%);
+  transform: none;
+}
+.gc.is-mini .gc-rim,
+.gc.is-mini .gc-foil,
+.gc.is-mini .gc-foil2,
+.gc.is-mini .gc-glare,
+.gc.is-mini .gc-num::after,
+.gc.is-mini .gc-logo::after {
+  display: none;
+}
+/* AO NO HAKO down the sides turns to mush below about 120px */
+@container (max-width: 120px) {
+  .gc.is-mini .gc-side { display: none; }
+}
+
+/* the arc reward: a card in the binder, two pockets wide */
+/* ---- the binder page ----------------------------------------------------
+   a stitched sleeve: a dashed seam around each pocket and one around the page.
+   drawn, not an image, so it costs nothing and follows the theme. */
+.g-grid {
+  --seam: rgb(255 255 255 / 13%);
+  --binder-gap: 8px;
+  /* one pocket's padding + border, per side. the sizer maths needs it because
+     a portrait pocket's aspect-ratio applies to its BORDER box while a child's
+     100% is the content box - ignoring it left the rows 2px out. */
+  --pocket-pb: 4px;
+  position: relative;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--recess-fill);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+.g-grid::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed var(--seam);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.g-slot {
+  border: 1px dashed var(--seam);
+  border-radius: 7px;
+  padding: 3px;
+}
+/* the app themes with body.light-theme - see themes.css. a dashed white seam
+   is invisible on a white page, so light gets the accent blue and a tinted
+   sleeve to sit the pockets on. */
+body.light-theme .g-grid {
+  --seam: rgb(2 132 199 / 30%);
+  background: rgb(2 132 199 / 5%);
+  box-shadow: inset 0 1px 3px rgb(2 132 199 / 10%);
+}
+
+/* ---- resting finish -----------------------------------------------------
+   nothing here follows a finger: a binder page is looked at, not handled. one
+   band crosses the whole card, border included, so the blue edge lights up as
+   it passes - the edge is part of the card, not a strip stuck around it.
+   chapter gets nothing at all. */
+@keyframes gc-sweep {
+  from { background-position-x: 230%; }
+  to { background-position-x: -30%; }
+}
+
+/* cover: a still warm rim, and one white band */
+.gc.is-mini[data-tier='cover'] {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 35%), 0 0 0 1px rgb(255 225 170 / 35%);
+}
+.gc.is-mini[data-tier='cover']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 55%) 50%, transparent 62%);
+  background-size: 260% 100%;
+  animation: gc-sweep 7s linear infinite;
+}
+
+/* arc: the same band and the same 7s, tinted through the logo's own greens,
+   blues and violets. overlay, NEVER screen - screen over bright artwork climbs
+   to white whatever colour you feed it, and the band reads as plain glare. */
+.gc.is-mini[data-tier='arc']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: overlay;
+  background: linear-gradient(100deg, transparent 36%,
+    rgb(0 225 150 / 42%) 44%, rgb(0 190 255 / 55%) 49%, rgb(70 120 255 / 55%) 54%,
+    rgb(170 80 255 / 42%) 59%, transparent 66%);
+  background-size: 260% 100%;
+  animation: gc-sweep 7s linear infinite;
+}
+/* a second, fainter pass half a cycle behind, so the card keeps some life
+   between sweeps instead of going dead for seven seconds */
+.gc.is-mini[data-tier='arc']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: soft-light;
+  background: linear-gradient(100deg, transparent 42%, rgb(120 220 255 / 42%) 50%, transparent 58%);
+  background-size: 300% 100%;
+  animation: gc-sweep 7s linear infinite;
+  animation-delay: -3.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc.is-mini::before,
+  .gc.is-mini::after {
+    animation: none;
+  }
+}
+
+/* ---- the wrapped picture ------------------------------------------------
+   a card that has not been opened lies FACE DOWN in its pocket. it is painted
+   with the same watercolour blooms as the card's own blue edge, so the back and
+   the front are made of the same stuff rather than merely matching.
+   the artwork is not built at all until the reveal starts - there is nothing
+   underneath to leak. */
+.g-slot.is-wrapped {
+  overflow: hidden;
+}
+.g-back {
+  position: absolute;
+  inset: 3px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7fc4e8;
+  /* the wiggle lives on the CARD, not on the slot. the slot carries the
+     pocket's stitched seam, and a sleeve sewn into the page does not rock
+     about - only the card inside it does. */
+  animation: g-wiggle 2.8s ease-in-out infinite;
+}
+@keyframes g-wiggle {
+  0%, 72%, 100% { transform: rotate(0); }
+  78% { transform: rotate(-2.2deg); }
+  84% { transform: rotate(1.8deg); }
+  90% { transform: rotate(-1deg); }
+}
+.g-back-wash {
+  position: absolute;
+  inset: -24%;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  filter: blur(13px) saturate(150%);
+  background:
+    radial-gradient(40% 28% at 20% 16%, rgb(31 92 168 / 90%), transparent 68%),
+    radial-gradient(32% 24% at 80% 12%, rgb(46 140 196 / 85%), transparent 70%),
+    radial-gradient(44% 32% at 52% 88%, rgb(28 104 176 / 90%), transparent 66%);
+}
+.g-back-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size: 110px 110px;
+}
+.g-back-ring {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 3px;
+  pointer-events: none;
+}
+.g-back-logo {
+  position: relative;
+  z-index: 2;
+  width: 64%;
+  height: 23%;
+  background: var(--card-logo) center / contain no-repeat;
+  filter: drop-shadow(0 1px 2px rgb(0 45 80 / 45%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .g-back { animation: none; }
+}
+
+/* tapping a wrapped card fades the pocket and hands over to the viewer. it
+   uncovers nothing here: the first sight of the picture should be full screen,
+   not a 100px thumbnail. */
+.g-slot.is-opening {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+  animation: none;
+}
+
+/* ---- the reveal, full screen -------------------------------------------
+   the card arrives whole - border, rule, number, logo - with only the ARTWORK
+   under a sheet of light. it holds there and shines for a beat, then the light
+   draws slowly off it and what is left is an ordinary card. */
+/* the veil is a plain sheet of light over the window. it does NOT try to hide
+   the art by painting over it - .gc-win is preserve-3d, children sort by depth
+   rather than z-index, and the artwork carries a transform for its framing, so
+   it kept winning whatever z-index the veil was given. the ARTWORK is clipped
+   away instead, which no stacking rule can override. */
+.gc-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 55% at 45% 45%, #ffffff 0%, rgb(255 255 255 / 88%) 42%, rgb(226 244 255 / 70%) 72%),
+    linear-gradient(100deg, #f4fbff 0%, #ffffff 46%, #dcf0ff 100%);
+}
+.gc-veil::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg,
+    transparent 26%, rgb(255 255 255 / 62%) 46%, rgb(200 236 255 / 50%) 54%, transparent 74%);
+  background-size: 260% 100%;
+  animation: gc-shine 2.6s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes gc-shine {
+  from { background-position-x: 190%; }
+  to { background-position-x: -60%; }
+}
+
+/* the GLASS fades, not the picture.
+   fading the artwork up behind an opaque white sheet meant 20% of an image over
+   solid white is still solid white - nothing showed until it passed ~70%, and
+   then the picture arrived all at once. the artwork sits at full strength the
+   whole time and the sheet of light thins off it, so every frame in between is
+   a real, progressively clearer picture. */
+.gc-veil {
+  /* in FRONT of the artwork - .gc-win is flattened during the reveal (below),
+     so z-index decides rather than the 3d depth sort */
+  transform: none;
+}
+.gc.is-veiled .gc-art,
+.gc.is-unveiling .gc-art {
+  opacity: 1;
+  animation: none;
+}
+.gc.is-unveiling .gc-veil {
+  animation: gc-burnoff 3.4s ease-in-out forwards;
+}
+@keyframes gc-burnoff {
+  /* the glare climbs with the swell, then the sheet thins away. the picture is
+     at full strength underneath, so every step of the thinning shows more of a
+     real image rather than more of a pale ghost. */
+  0%   { opacity: 1;    filter: brightness(1.25) saturate(0.9); }
+  9%   { opacity: 1;    filter: brightness(1.5)  saturate(0.8); }
+  18%  { opacity: 1;    filter: brightness(1.85) saturate(0.7); }
+  28%  { opacity: 1;    filter: brightness(2.2)  saturate(0.6); }
+  38%  { opacity: 0.94; filter: brightness(1.9)  saturate(0.72); }
+  52%  { opacity: 0.72; filter: brightness(1.55); }
+  68%  { opacity: 0.44; filter: brightness(1.3); }
+  85%  { opacity: 0.18; filter: brightness(1.1); }
+  100% { opacity: 0;    filter: brightness(1); }
+}
+
+/* the whole card catches the light, not just the window. without this the
+   border, the rule, the number and the logo sit dark and untouched while the
+   picture area blazes, and the card reads as two separate objects. */
+.gc.is-unveiling {
+  animation: gc-cardlight 3.4s ease-in-out forwards;
+}
+@keyframes gc-cardlight {
+  /* the card is LIT by the glow, so it follows the same single swell at a
+     fraction of the depth. 2.05x bleached the border and the number to paper. */
+  0%   { filter: brightness(1.04) saturate(0.96); }
+  9%   { filter: brightness(1.14) saturate(0.9); }
+  18%  { filter: brightness(1.3)  saturate(0.8); }
+  28%  { filter: brightness(1.44) saturate(0.74); }
+  38%  { filter: brightness(1.32) saturate(0.82); }
+  55%  { filter: brightness(1.18); }
+  78%  { filter: brightness(1.06); }
+  100% { filter: brightness(1); }
+}
+
+/* the card blooms while the light is on it and settles as it leaves */
+/* the light coming off the card at you. it sits outside .gc, which clips its
+   own children - a glow added inside can only ever look like a halo behind the
+   card. screen blend on the dark viewer backdrop is what makes it flood. */
+.gc-bloom {
+  position: absolute;
+  inset: -45%;
+  z-index: 3;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(closest-side circle at 50% 50%,
+      rgb(255 255 255 / 90%) 0%, rgb(222 243 255 / 72%) 22%,
+      rgb(165 214 255 / 46%) 44%, rgb(120 180 255 / 18%) 66%, transparent 84%);
+  filter: blur(30px);
+  opacity: 0;
+}
+/* the flash: it arrives fast and hard, then falls away. the scale is what
+   sells "toward you" - a glow that only fades reads as a lamp behind the card,
+   one that expands past the frame first reads as light hitting your eye. */
+.gc-frame.is-unveiling .gc-bloom {
+  animation: gc-flash 3.4s ease-in-out forwards;
+}
+/* ONE swell. two beats read as nervous - the eye reads the dip as a stutter
+   rather than as rhythm. this builds steadily for about a second, holds the
+   crest, and falls away; the picture comes through on the fall. */
+@keyframes gc-flash {
+  0%   { opacity: 0;    transform: scale(0.85); }
+  9%   { opacity: 0.24; transform: scale(0.96); }
+  18%  { opacity: 0.58; transform: scale(1.1); }
+  28%  { opacity: 1;    transform: scale(1.3); }
+  38%  { opacity: 0.78; transform: scale(1.22); }
+  55%  { opacity: 0.44; transform: scale(1.13); }
+  75%  { opacity: 0.18; transform: scale(1.05); }
+  100% { opacity: 0;    transform: scale(1); }
+}
+.gc.is-veiled {
+  box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
+}
+/* .gc-win is preserve-3d so the foil layers can sit at different depths, and
+   inside it children sort by DEPTH rather than z-index - the artwork carries a
+   transform for its framing and so kept painting over the veil whatever z-index
+   it was given. flattening the window for the duration of the reveal puts
+   z-index back in charge; the foil parallax is not wanted mid-reveal anyway. */
+.gc.is-veiled .gc-win,
+.gc.is-unveiling .gc-win {
+  transform-style: flat;
+}
+.gc.is-unveiling {
+  box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-veil,
+  .gc-veil::after,
+  .gc-bloom,
+  .gc.is-veiled {
+    animation: none;
+    transition: opacity 0.4s ease;
+  }
+  .gc.is-unveiling .gc-veil { opacity: 0; }
+}

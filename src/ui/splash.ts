@@ -1,17 +1,28 @@
 // Opening screen.
 //
-// The counter is not pure theatre: it eases toward 90% on its own, then only
+// The counter is not theatre: it eases toward 90% on its own, then only
 // completes once init() actually resolves (deck loaded, migration done). So
 // the number never claims to be finished while the app is still working, and
 // on a slow phone the screen holds instead of flashing past. A floor of
 // MIN_MS stops it flickering on a fast reload, where init finishes in ~40ms
 // and an instant splash would read as a glitch.
+//
+// It also does the one thing loading cannot finish without: the pictures live
+// in a file of their own, and if it has never been connected the screen stops
+// here and asks for it. That is why the ask lives on the opening screen rather
+// than in a welcome sheet - it is not a greeting, it is a missing piece.
 
 const MIN_MS = 1500;
 /** Where the self-driven ease parks until real readiness lands. */
 const CREEP_CEILING = 90;
 
 export interface SplashHandle {
+  /**
+   * Hold the screen and ask for the picture pack. Resolves once it is
+   * connected. There is no way past it: the app is a gift wrapped around those
+   * pictures, and starting without them is not the experience.
+   */
+  askForPack: () => Promise<void>;
   /** Run the counter to 100, play the exit, and remove the element. */
   finish: () => Promise<void>;
 }
@@ -22,7 +33,7 @@ export function startSplash(): SplashHandle {
   const fillEl = document.getElementById('splash-fill');
 
   if (!el || !pctEl || !fillEl) {
-    return { finish: () => Promise.resolve() };
+    return { askForPack: () => Promise.resolve(), finish: () => Promise.resolve() };
   }
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -77,5 +88,37 @@ export function startSplash(): SplashHandle {
     document.body.classList.remove('splash-open');
   };
 
-  return { finish };
+  const askForPack = (): Promise<void> =>
+    new Promise((resolve) => {
+      cancelAnimationFrame(raf);
+      el.classList.add('is-asking');
+
+      const ask = document.createElement('div');
+      ask.className = 'splash-ask';
+      ask.innerHTML =
+        '<p class="splash-ask-lead">Connect the Aonohako package for the full experience.</p>' +
+        '<button class="splash-ask-go">Choose the file</button>' +
+        '<p class="splash-ask-note"></p>';
+      el.appendChild(ask);
+
+      const note = ask.querySelector<HTMLElement>('.splash-ask-note')!;
+      const done = (): void => {
+        ask.remove();
+        el.classList.remove('is-asking');
+        resolve();
+      };
+
+      ask.querySelector('.splash-ask-go')!.addEventListener('click', () => {
+        void import('./packPanel').then(({ pickPack }) =>
+          pickPack(
+            (msg) => {
+              note.textContent = msg;
+            },
+            () => setTimeout(done, 700),
+          ),
+        );
+      });
+    });
+
+  return { askForPack, finish };
 }

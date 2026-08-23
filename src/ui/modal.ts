@@ -1,4 +1,4 @@
-// Shared modal shell used by the story dialogue and the filter drawer
+// shared modal shell used by the filter drawer
 // (index.html + styles/components/modal.css). Handles the mechanics every
 // modal needs: focus trap, Escape to close, iOS-safe body scroll lock,
 // focus restored to the trigger on close, and drag-to-dismiss on the
@@ -91,7 +91,7 @@ export function createModal(overlay: HTMLElement, opts: { onClose?: () => void }
   // title bar is the more natural gesture, and the header never scrolls, so
   // claiming its vertical drag costs nothing.
   if (sheet) {
-    const header = overlay.querySelector<HTMLElement>('.drawer-header, .story-modal-header');
+    const header = overlay.querySelector<HTMLElement>('.drawer-header');
     for (const zone of [dragHandle, header]) {
       if (zone) setupDragToDismiss(zone, sheet, close);
     }

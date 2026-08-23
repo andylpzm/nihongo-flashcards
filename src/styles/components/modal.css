@@ -1,7 +1,7 @@
-/* Shared modal shell (src/ui/modal.ts) used by both the story dialogue and
+/* shared modal shell (src/ui/modal.ts) used by
    the filter drawer. `.modal-overlay` is the backdrop; `.modal-sheet` is
    the box - centered dialog on desktop, bottom sheet with a drag handle on
-   mobile. Content-specific classes (.story-modal-content, .filter-drawer)
+   mobile. content-specific classes (.filter-drawer)
    only add their own internal layout / max-width on top of this shell. */
 .modal-overlay {
   position: fixed;
@@ -104,38 +104,14 @@ body.light-theme .modal-sheet {
     background: var(--border-hover);
   }
 
-  .modal-sheet .drawer-header,
-  .modal-sheet .story-modal-header {
+  /* the header drags the sheet, so the browser must not claim the drag as a
+     scroll (see the drag-handle note above) */
+  .modal-sheet .drawer-header {
     touch-action: none;
   }
 }
 
-/* Story dialogue content */
-.story-modal-content {
-  padding: 1.75rem;
-  gap: 1.5rem;
-  box-sizing: border-box;
-}
-
-.story-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.75rem;
-}
-
-.story-modal-header h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #fff;
-}
-
-body.light-theme .story-modal-header h3 {
-  color: #0f4c81;
-}
-
-.btn-close {
+body.light-theme .btn-close {
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -150,13 +126,6 @@ body.light-theme .story-modal-header h3 {
   .btn-close:hover {
     color: #fff;
   }
-}
-
-.story-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid var(--border);
-  padding-top: 0.75rem;
 }
 
 /* Filter drawer content */
@@ -229,9 +198,11 @@ body.light-theme .drawer-header h3 {
 }
 
 .drawer-body {
-  padding: 1.5rem;
+  padding: 1.25rem 1.1rem;
   overflow-y: auto;
-  max-height: 50vh;
+  /* the sheet caps itself at 85vh; 50 here left the settings list cut off
+     mid-row with room going spare below it */
+  max-height: 64vh;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -438,4 +409,208 @@ body.light-theme .filter-chip-btn.active {
   body.light-theme .btn-quick-toggle:hover {
     background: rgba(0, 0, 0, 0.02);
   }
+}
+
+/* Settings rows.
+   Grouped-list layout, the shape every phone settings app uses: a quiet label
+   over a single card, rows inside it divided by hairlines, the control on the
+   right. The card is what makes it read as one setting group rather than as
+   loose text floating on a sheet. */
+.set-group {
+  border-radius: 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+body.light-theme .set-group {
+  background: #fff;
+  border-color: rgba(2, 132, 199, 0.14);
+  box-shadow: 0 1px 2px rgba(2, 132, 199, 0.06);
+}
+
+/* a group whose content is not a row stack - the theme chips sit in one */
+.set-group.is-pad {
+  padding: 0.7rem;
+}
+
+.set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0.95rem;
+  min-height: 56px;
+}
+
+/* the divider is inset from the left the way ios insets its own, so the rows
+   read as a stack rather than as separate boxes */
+.set-row + .set-row {
+  border-top: 1px solid var(--border);
+}
+
+.set-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.set-row-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.set-row-note {
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* the control column never shrinks below its label, or "Choose file" wraps to
+   two lines and the row grows a step taller than its neighbour */
+.btn-quiet {
+  flex: none;
+  padding: 0.44rem 0.85rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--recess-fill);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--accent-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+@media (hover: hover) {
+  .btn-quiet:hover {
+    background: var(--recess-shadow);
+  }
+}
+
+.btn-quiet:active {
+  transform: scale(0.97);
+}
+
+/* A real switch for the one setting that is genuinely on or off. Reading as a
+   switch is the point: a button labelled "Turn off" makes you work out which
+   state you are looking at, a switch just shows you. */
+.set-switch {
+  flex: none;
+  position: relative;
+  width: 51px;
+  height: 31px;
+  border: 0;
+  padding: 0;
+  border-radius: 999px;
+  background: var(--recess-fill);
+  box-shadow: inset 0 0 0 1px var(--border);
+  cursor: pointer;
+  transition: background 0.22s ease;
+}
+
+.set-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.set-switch[aria-checked='true'] {
+  background: var(--accent-primary);
+  box-shadow: none;
+}
+
+.set-switch[aria-checked='true']::after {
+  transform: translateX(20px);
+}
+
+/* Restoring writes over what is on the phone, so it gets a described,
+   confirmed step rather than happening on the tap that picked the file. */
+.set-confirm {
+  padding: 0.85rem 0.95rem;
+  border-top: 1px solid var(--border);
+  background: var(--recess-fill);
+}
+
+.set-confirm p {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text);
+  margin-bottom: 0.7rem;
+}
+
+.set-confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.set-confirm-actions .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+/* What the gallery shows when there is no pack. */
+.pack-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6rem;
+  padding: 2.4rem 1.4rem;
+  margin: 0 auto;
+  max-width: 380px;
+}
+
+.pack-gate-art {
+  width: 84px;
+  height: 118px;
+  margin-bottom: 0.6rem;
+  border-radius: 8px;
+  border: 3px solid var(--accent-primary);
+  background:
+    linear-gradient(160deg, rgba(127, 196, 232, 0.35), rgba(90, 169, 216, 0.15));
+  box-shadow: 0 10px 24px var(--shadow-color);
+  /* a card face-down: the thing that is missing, drawn as the thing you get */
+  transform: rotate(-4deg);
+}
+
+.pack-gate h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.pack-gate p {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.pack-gate .btn {
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.4rem;
+}
+
+.pack-gate-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-height: 1.1em;
+}
+
+.pack-gate-note.is-bad {
+  color: var(--accent-red);
 }

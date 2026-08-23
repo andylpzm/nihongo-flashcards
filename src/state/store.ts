@@ -1,5 +1,5 @@
 import type { AppState } from './types';
-import { loadStoryUnlockedChapter, loadFilters } from './persistence';
+import { loadFilters } from './persistence';
 
 const DEFAULT_VOCAB_TYPES = ['nouns', 'verbs', 'adjectives', 'misc'];
 const DEFAULT_VOCAB_TOPICS = [
@@ -29,9 +29,6 @@ export const state: AppState = {
   showRomaji: true,
   activeDeck: 'vocabulary',
 
-  isStoryModeActive: false,
-  activeStoryChapterId: null,
-  storyUnlockedChapter: loadStoryUnlockedChapter(),
 
   activeHiraganaTab: 'basic',
   activeKatakanaTab: 'basic',

@@ -6,13 +6,12 @@ import { FeedbackAudio } from '../audio/feedback';
 import { speakJapanese } from '../audio/tts';
 import { state } from '../state/store';
 import type { Card, FilterMode, LevelFilter, StudyMode } from '../state/types';
-import { saveFilters, saveStoryUnlockedChapter } from '../state/persistence';
+import { saveFilters } from '../state/persistence';
 import {
   ensureReviewsLoaded,
   getReviewsSnapshot,
   getReview,
   recordGrade,
-  isCardMastered,
 } from '../state/reviews';
 import { Rating, newFsrsCard, previewIntervals } from '../srs/scheduler';
 import type { RecordLogItem } from 'ts-fsrs';
@@ -21,11 +20,16 @@ import { StudySession } from '../srs/session';
 import { loadSettings, saveSettings, SESSION_SIZES, type StudySettings } from '../srs/settings';
 import { saveActiveSession, loadActiveSession, clearActiveSession } from '../srs/sessionStore';
 import { renderSessionBar, clearSessionBar, type SessionBarState } from './sessionBar';
-import type { Grade } from '../srs/types';
+import type { Grade, SessionRecord } from '../srs/types';
 import { computeStreak } from '../srs/stats';
+import { recordSession } from '../state/profile';
+import { loadGallery } from '../data/loader';
+import { announceSessionReward } from './galleryView';
+import { refreshMissionDot } from './statsView';
+import { refreshBinderTab } from './binderTab';
 import { isKnown, toggleKnown, countKnownIn } from '../state/known';
-import { btnBackToStory } from './nav';
-import { showStoryDialogue } from './story';
+import { promotionLabel } from '../srs/points';
+import { markGalleryUnread } from './galleryBadge';
 
 // DOM Elements - Card Workspace
 export const cardViewport = document.getElementById('card-viewport')!;
@@ -124,20 +128,17 @@ function posToTypeBucket(pos: Pos): string {
 // Cards passing the level/type/topic filters (progress filter is Browse-mode
 // only - Study Session mode uses due/new instead of all/learning/mastered).
 function getFilteredCards(applyProgressFilter: boolean): Card[] {
-  // Level/type/topic only exist on the vocabulary deck. Kana and story cards
-  // carry no `level`, so applying a leftover N5/N4 choice to them rejects
-  // every card and empties the deck - guard the whole block, not just the
-  // type/topic half.
-  const vocabScope = state.activeDeck === 'vocabulary' && !state.isStoryModeActive;
+  // Level/type/topic only exist on the vocabulary deck. Kana cards carry no
+  // `level`, so applying a leftover N5/N4 choice to them rejects every card
+  // and empties the deck - guard the whole block, not just the type/topic
+  // half.
+  const vocabScope = state.activeDeck === 'vocabulary';
 
   return state.cards.filter((card) => {
-    // A story chapter is a fixed curriculum reviewed as a whole, and story
-    // mode hides the deck bar - so a leftover "learning" choice would empty a
-    // cleared chapter with no visible control to undo it.
     // Browse-only. "Learned" here is the user's own mark (state/known.ts),
     // not FSRS mastery - which is why marking a word cannot alter a session:
     // session queues are built with applyProgressFilter = false.
-    if (applyProgressFilter && !state.isStoryModeActive) {
+    if (applyProgressFilter) {
       const mastered = isKnown(card.id);
       const matchesProgress =
         state.filterMode === 'all' ||
@@ -185,7 +186,7 @@ function getEyeClosedSVG(): string {
 }
 
 // Build the small "Kanji: X | Level: NX" style sub-info line for vocab cards.
-// Kana/story cards carry no such metadata, so they render nothing here.
+// Kana cards carry no such metadata, so they render nothing here.
 function getCardSubInfo(card: Card): string {
   if (!isVocabCard(card)) return '';
   const parts: string[] = [];
@@ -218,11 +219,9 @@ export function renderCard(): void {
     return;
   }
 
-  // Extract JLPT level or Story Chapter label
+  // JLPT level, where the deck has one.
   let level = '';
-  if (state.isStoryModeActive && state.activeStoryChapterId !== null) {
-    level = `Ch. ${state.activeStoryChapterId}`;
-  } else if (isVocabCard(currentCard) || isKanjiCard(currentCard)) {
+  if (isVocabCard(currentCard) || isKanjiCard(currentCard)) {
     level = currentCard.level;
   }
 
@@ -495,8 +494,8 @@ export function applyDeckFilters(patch: {
  * topic only exist on the vocabulary deck. */
 function deckFilterScope(): { progress: boolean; vocab: boolean } {
   return {
-    progress: state.studyMode === 'browse' && !state.isStoryModeActive,
-    vocab: state.activeDeck === 'vocabulary' && !state.isStoryModeActive,
+    progress: state.studyMode === 'browse',
+    vocab: state.activeDeck === 'vocabulary',
   };
 }
 
@@ -507,13 +506,11 @@ export function updateDeckBar(): void {
   if (!deckBar) return;
   const scope = deckFilterScope();
 
-  // Story chapters are a fixed, pre-built deck - filtering them is meaningless.
-  deckBar.classList.toggle('hidden', state.isStoryModeActive);
+  deckBar.classList.remove('hidden');
   filterSectionProgress?.classList.toggle('hidden', !scope.progress);
   filterSectionLevel?.classList.toggle('hidden', !scope.vocab);
   filterSectionTypes?.classList.toggle('hidden', !scope.vocab);
   filterSectionTopics?.classList.toggle('hidden', !scope.vocab);
-  if (state.isStoryModeActive) return;
 
   const count = getFilteredCards(scope.progress).length;
   if (deckBarCount) deckBarCount.textContent = `${count} card${count === 1 ? '' : 's'}`;
@@ -686,6 +683,7 @@ function finishSession(endedEarly: boolean): void {
   if (!activeSession) return;
   const p = activeSession.progress;
   const elapsedMs = activeSession.elapsedMs;
+  const endedAt = Date.now();
   const elapsedSec = Math.round(elapsedMs / 1000);
   const minutes = Math.floor(elapsedSec / 60);
   const seconds = elapsedSec % 60;
@@ -725,20 +723,69 @@ function finishSession(endedEarly: boolean): void {
     p.done > 0
       ? `${p.done} card${p.done === 1 ? '' : 's'} learned`
       : `${p.answers} card${p.answers === 1 ? '' : 's'} reviewed`;
-  const title = endedEarly ? 'Session ended' : 'Session complete! 🎉';
+  const title = endedEarly ? 'Session ended' : 'Session complete';
 
   // No accuracy figure: grades are self-reported, nothing is marked right or
   // wrong, and the old percentage counted Hard as an error - so pressing Hard
   // honestly lowered your "score" despite being a successful recall.
   const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-  const back = lastBuild?.nextDueAt ? ` · back ${formatWhen(lastBuild.nextDueAt)}` : '';
+  // when the soonest card comes round again - "back" alone did not say what
+  const back = lastBuild?.nextDueAt ? ` · next review ${formatWhen(lastBuild.nextDueAt)}` : '';
 
   cardFront.innerHTML = `
     <span class="card-indicator">${title}</span>
     <div class="card-main-text" style="font-size: 1.6rem;">${headline}</div>
     <div class="card-sub-info">${timeStr}${back}</div>
+    <div class="card-xp" id="session-xp"></div>
   `;
   cardBack.innerHTML = cardFront.innerHTML;
+
+  // the sitting is now a record: xp, ranks and gallery unlocks are all derived
+  // from this store, so this is the single point where progress is earned.
+  void awardSession({
+    startedAt: endedAt - elapsedMs,
+    endedAt,
+    deck: state.activeDeck,
+    answers: p.answers,
+    completed: !endedEarly,
+  });
+}
+
+/** writes the sitting, then reports what it earned on the finished card. */
+async function awardSession(record: SessionRecord): Promise<void> {
+  try {
+    const sagas = await loadGallery();
+    const outcome = await recordSession(record, sagas);
+
+    const slot = document.getElementById('session-xp');
+    if (slot) {
+      // itemised: one lump sum hid the fact that a deck's daily had landed,
+      // which is the part worth coming back tomorrow for
+      const rows = [`<span><i>Session</i><b>+${outcome.sessionPoints}<em>xp</em></b></span>`];
+      if (outcome.missionPoints > 0) {
+        rows.push(`<span><i>Daily workout</i><b>+${outcome.missionPoints}<em>xp</em></b></span>`);
+      }
+      if (outcome.promoted) {
+        rows.push(`<span class="xp-rank"><i>${promotionLabel(outcome.rank)}</i><b></b></span>`);
+      }
+      slot.innerHTML = rows.join('');
+      slot.classList.add('is-shown');
+      cardBack.innerHTML = cardFront.innerHTML;
+    }
+
+    // the gallery gets told, not the session card - a picture is worth walking
+    // over to look at, and a line of text here is easy to miss
+    if (outcome.unlocked.pieces.length > 0) markGalleryUnread(outcome.unlocked.pieces.length);
+
+    announceSessionReward(outcome);
+    // the very first picture turns the padlock on the binder tab into
+    // something worth tapping, without waiting for a reload
+    void refreshBinderTab();
+    void refreshMissionDot();
+  } catch (e) {
+    // never let a rewards failure eat the session summary the user is reading
+    console.warn('could not record session', e);
+  }
 }
 
 /** "in 2 days" / "in 3 hours" - for telling the user when work returns. */
@@ -881,39 +928,7 @@ export async function setStudyMode(mode: StudyMode): Promise<void> {
 
 // Update Proposal Progress
 export function updateStats(): void {
-  // Runs before the story-mode branch below, which returns early - the deck
-  // bar has to be refreshed (and hidden) on that path too.
   updateDeckBar();
-
-  if (state.isStoryModeActive && state.activeStoryChapterId !== null) {
-    // Story Mode: per-chapter completion (unaffected by the global SRS header)
-    const total = state.cards.length;
-    const mastered = state.cards.filter((card) => isCardMastered(card.id)).length;
-    const remaining = total - mastered;
-    const percent = total > 0 ? (mastered / total) * 100 : 0;
-
-    if (countTotalEl) countTotalEl.textContent = String(total);
-    if (countLearnedEl) countLearnedEl.textContent = String(mastered);
-
-    if (proposalRemainingEl) {
-      if (remaining === 0) {
-        proposalRemainingEl.innerHTML = `<strong>Chapter Cleared! Ready to read the Dialogue with Chiyo-chan! 💍❤️</strong>`;
-
-        if (state.activeStoryChapterId === state.storyUnlockedChapter) {
-          state.storyUnlockedChapter = state.activeStoryChapterId + 1;
-          saveStoryUnlockedChapter(state.storyUnlockedChapter);
-          void showStoryDialogue(state.activeStoryChapterId);
-        }
-      } else {
-        proposalRemainingEl.innerHTML = `<strong>${remaining}</strong> card${remaining > 1 ? 's' : ''} remaining in Chapter ${state.activeStoryChapterId} before unlocking the story dialogue!`;
-      }
-    }
-
-    if (proposalBarFillEl) {
-      proposalBarFillEl.style.width = `${percent}%`;
-    }
-    return;
-  }
 
   // Proposal Progress is a Browse-mode journey counter driven by the words
   // you hand-mark as learned. It deliberately does NOT read FSRS state: the
@@ -973,14 +988,12 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana' 
 
   if (deckName === 'vocabulary') {
     state.cards = await loadVocab();
-    if (btnBackToStory) btnBackToStory.classList.add('hidden');
   } else if (deckName === 'kanji') {
     // The JLPT level is chosen by the section's own N5/N4 tabs, not the filter
     // sheet, so slice here rather than going through the level filter.
     const all = await loadKanji();
     state.cards = all.filter((c) => c.level === state.activeKanjiLevel);
     state.levelFilter = 'all';
-    if (btnBackToStory) btnBackToStory.classList.add('hidden');
   } else {
     const kana = await loadKana();
     if (deckName === 'hiragana') {
@@ -1004,7 +1017,6 @@ export async function loadDeck(deckName: 'vocabulary' | 'hiragana' | 'katakana' 
     // hides those sheet sections; reset the level so a leftover N5/N4 choice
     // can't silently empty a kana deck.
     state.levelFilter = 'all';
-    if (btnBackToStory) btnBackToStory.classList.add('hidden');
   }
 
   await ensureReviewsLoaded();

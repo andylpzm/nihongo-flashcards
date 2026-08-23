@@ -35,30 +35,6 @@ export function loadStoryMasteredIds(): Set<CardId> {
   return loadIdSet('nihongo_story_mastered_ids');
 }
 
-export function saveStoryMasteredIds(ids: Set<CardId>): void {
-  saveIdSet('nihongo_story_mastered_ids', ids);
-}
-
-export function loadStoryUnlockedChapter(): number {
-  try {
-    const saved = localStorage.getItem('nihongo_story_unlocked');
-    if (saved) {
-      return parseInt(saved, 10);
-    }
-  } catch {
-    // ignore, fall back to default
-  }
-  return 1;
-}
-
-export function saveStoryUnlockedChapter(chapter: number): void {
-  try {
-    localStorage.setItem('nihongo_story_unlocked', String(chapter));
-  } catch {
-    // ignore
-  }
-}
-
 export type ThemePreference = 'light' | 'dark';
 
 export function loadTheme(): ThemePreference | null {

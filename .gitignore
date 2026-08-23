@@ -15,3 +15,23 @@ tmp-*
 scratch/
 scripts/out/
 *.local.*
+
+# scraped source artwork - copyrighted, kept out of git
+gallery-source/
+public/gallery/
+
+# the picture pack, built by tools/pack-gallery.mjs
+dist-pack/
+
+# JetBrains project settings - per-machine, not part of the app
+.idea/
+
+# snapshots of framing.json taken while reframing all 302 cards. the live file
+# is committed; these are undo points from that one sitting and are large.
+src/data/.backups/
+
+# Authoring tools, mockups and one-off scripts. They build the artwork and the
+# pack from sources that are not in this repo either, so they would be dead
+# weight to anyone who cloned it. Kept on this machine; only the app ships.
+tools/
+scripts/

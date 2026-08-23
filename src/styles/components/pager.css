@@ -314,13 +314,6 @@ body.light-theme .pager-card {
   display: none;
 }
 
-/* A story chapter is a fixed curriculum, not a Study/Browse choice - story
-   mode forces browse, so offering the deck there would misreport the state.
-   Keyed off the visible Return-to-Story button rather than a second flag. */
-#section-vocabulary:has(#btn-back-to-story:not(.hidden)) > .pager-header {
-  display: none;
-}
-
 /* ---- Study deck: the flashcard is a card inside a card -------------------
    Everywhere else the page card is the top of the stack and lifts off the
    background. Here it contains another one, so inverting the light makes the

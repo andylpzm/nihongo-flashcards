@@ -123,33 +123,20 @@ body.light-theme .menu-item.active {
   box-shadow: 0 0 15px rgba(139, 92, 246, 0.05);
 }
 
-.menu-item.active#menu-story {
-  border-color: rgba(236, 72, 153, 0.3);
-  box-shadow: 0 0 15px rgba(236, 72, 153, 0.05);
-}
-
-body.light-theme .menu-item.active#menu-story {
-  background: rgba(236, 72, 153, 0.06);
-  border-color: rgba(236, 72, 153, 0.25);
-  color: var(--accent-primary);
-}
-
-/* Forgotten-things easter egg trigger, sidebar footer (desktop only - on
-   mobile it moves into the drawer, see below) */
-/* The forgotten-things easter egg only exists in light theme (same gating as
-   misc.css's court illustrations), so its trigger stays hidden in dark. */
+/* Sidebar footer, desktop only - it holds Settings. It used to be gated to the
+   light theme, because the only other thing in it was the forgotten-things
+   easter egg; with that gone, hiding Settings in the dark theme would just be
+   a missing button. (The gating was broken anyway: a comment had eaten the
+   middle of the selector, leaving `body.light-theme .sidebar-footer` where a
+   bare `.sidebar-footer` was meant.) */
 .sidebar-footer {
-  display: none;
-}
-
-body.light-theme .sidebar-footer {
   display: block;
   margin-top: auto;
   padding-top: 1.5rem;
   width: 100%;
 }
 
-.btn-forgotten {
+.btn-sidebar {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-muted);
@@ -165,14 +152,14 @@ body.light-theme .sidebar-footer {
   letter-spacing: 0.05em;
 }
 
-body.light-theme .btn-forgotten {
+body.light-theme .btn-sidebar {
   background: transparent;
   border: 1px solid rgba(2, 132, 199, 0.15);
   color: #0f4c81;
 }
 
 @media (hover: hover) {
-  body.light-theme .btn-forgotten:hover {
+  body.light-theme .btn-sidebar:hover {
     background: rgba(2, 132, 199, 0.06);
     border-color: #0284c7;
     color: #0284c7;
@@ -183,9 +170,7 @@ body.light-theme .btn-forgotten {
    The hamburger + slide-in drawer are fully removed below 768px rather than
    duplicating the same destinations in two places; the Hiragana/Katakana
    switcher inside the Kana section (kana.css) covers the one destination the
-   4-slot tab bar can't reach on its own. The forgotten-things trigger is
-   relocated into the Stats section by main.ts, since its sidebar footer
-   no longer renders here. */
+   4-slot tab bar can't reach on its own. */
 .hamburger-menu,
 .sidebar-overlay {
   display: none;

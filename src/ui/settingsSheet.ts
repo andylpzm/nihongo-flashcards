@@ -7,6 +7,8 @@
 import { createModal } from './modal';
 import { setTheme } from './theme';
 import { state } from '../state/store';
+import { setupBackupPanel } from './backupPanel';
+import { motionState, setMotionEnabled, requestMotion } from './motion';
 
 function wrapChipLabel(btn: HTMLElement): void {
   if (btn.querySelector('.chip-label')) return;
@@ -46,9 +48,47 @@ export function setupSettingsSheet(): void {
     themeChips.forEach((b) => b.classList.toggle('active', b === btn));
   });
 
+  // Card tilt. The button says what tapping it will DO, and the line above it
+  // says where things currently stand - a single "Motion: on/off" toggle
+  // cannot express "you said no and iOS will not ask again this session",
+  // which is the state a mis-tap actually leaves you in.
+  const motionLabel = document.getElementById('motion-state');
+  const motionNote = document.getElementById('motion-note');
+  const motionBtn = document.getElementById('btn-motion');
+
+  function syncMotion(): void {
+    if (!motionLabel || !motionNote || !motionBtn) return;
+    const s = motionState();
+    const note = {
+      unsupported: 'No tilt sensor here, or the page is not on https. Cards still tilt to your finger.',
+      off: 'Cards tilt to your finger only.',
+      asking: 'Tap a card once and allow motion access.',
+      live: 'Move the light across a card by tilting.',
+      denied: 'Motion access was declined. Reopen the app to be asked again — iPhone will not ask twice in one visit.',
+    }[s];
+    motionNote.textContent = note;
+    motionBtn.setAttribute('aria-checked', String(s === 'live' || s === 'asking'));
+    // a switch that cannot move is a lie; when there is no sensor at all it
+    // goes flat and stops taking taps
+    motionBtn.toggleAttribute('disabled', s === 'unsupported');
+    motionBtn.style.opacity = s === 'unsupported' ? '0.4' : '';
+  }
+
+  motionBtn?.addEventListener('click', () => {
+    const s = motionState();
+    // 'denied' is worth one more try in case this is a fresh page life; if iOS
+    // is still refusing it comes straight back denied and the note says so
+    if (s === 'denied') void requestMotion().then(syncMotion);
+    else setMotionEnabled(s === 'off');
+    syncMotion();
+  });
+
+  setupBackupPanel();
+
   document.querySelectorAll<HTMLElement>('.btn-open-settings').forEach((btn) => {
     btn.addEventListener('click', () => {
       syncThemeChips();
+      syncMotion();
       modal.open();
     });
   });

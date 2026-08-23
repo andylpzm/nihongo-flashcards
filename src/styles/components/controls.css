@@ -93,12 +93,6 @@ body.light-theme .btn-primary {
   }
 }
 
-#btn-back-to-story {
-  margin-bottom: 1.5rem;
-  border-radius: 12px;
-  padding: 0.65rem 1.25rem;
-}
-
 .btn-nav-circle {
   border-radius: 50%;
   width: 48px;
@@ -485,4 +479,18 @@ body.light-theme .btn-grade {
   .deck-bar.is-static:hover {
     border-color: transparent;
   }
+}
+
+/* xp earned, added to the session summary card once the record is written */
+.card-xp {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-xp.is-shown {
+  opacity: 1;
 }

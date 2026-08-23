@@ -31,37 +31,12 @@
 </head>
 <body class="splash-open">
 
-  <!-- Floating Background & Sports Decorations Container (Clips overflows on iOS) -->
+  <!-- Background glows, clipped so they never cause iOS overflow scroll. The
+       court illustrations that used to sit here - a basketball and a
+       shuttlecock, light theme only - are gone. -->
   <div class="decorations-container" aria-hidden="true">
-    <!-- Floating Background Glows -->
     <div class="glow-orb orb-pink"></div>
     <div class="glow-orb orb-cyan"></div>
-
-    <!-- Background Sports Illustrations (Light Mode Only) -->
-    <svg class="court-illustration shuttlecock" viewBox="0 0 100 100">
-      <!-- Cork base -->
-      <path d="M45,75 C45,82 55,82 55,75 Z" fill="#ffffff" stroke="#38bdf8" stroke-width="2.5"/>
-      <path d="M45,75 L55,75" stroke="#38bdf8" stroke-width="2.5"/>
-      <!-- Feathers -->
-      <path d="M30,30 L45,75 L55,75 L70,30 Z" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
-      <!-- Ribs -->
-      <path d="M40,30 L47,75" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
-      <path d="M50,30 L50,75" stroke="#38bdf8" stroke-width="1.5"/>
-      <path d="M60,30 L53,75" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,2"/>
-      <!-- Bands -->
-      <path d="M36,45 L64,45" stroke="#38bdf8" stroke-width="2"/>
-      <path d="M41,60 L59,60" stroke="#38bdf8" stroke-width="2"/>
-    </svg>
-
-    <svg class="court-illustration basketball" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="45" fill="#ffffff" stroke="#f97316" stroke-width="3"/>
-      <!-- Ribs -->
-      <path d="M5,50 L95,50" stroke="#f97316" stroke-width="2.5"/>
-      <path d="M50,5 L50,95" stroke="#f97316" stroke-width="2.5"/>
-      <!-- Curves -->
-      <path d="M19,17 C37,30 37,70 19,83" fill="none" stroke="#f97316" stroke-width="2.5"/>
-      <path d="M81,17 C63,30 63,70 81,83" fill="none" stroke="#f97316" stroke-width="2.5"/>
-    </svg>
   </div>
 
   <!-- Mobile Hamburger Menu Button -->
@@ -114,9 +89,9 @@
       <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">あ</text></svg>
       <span>Kana</span>
     </button>
-    <button class="bottom-nav-item" id="bottom-nav-story" aria-label="Story Mode">
-      <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-      <span>Story</span>
+    <button class="bottom-nav-item" id="bottom-nav-gallery" aria-label="Binder">
+      <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14zM8.5 12.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg>
+      <span>Binder</span>
     </button>
     <button class="bottom-nav-item" id="bottom-nav-stats" aria-label="Progress">
       <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
@@ -146,9 +121,9 @@
           <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">ア</text></svg>
           Learn Katakana
         </li>
-        <li class="menu-item" id="menu-story" role="menuitem" tabindex="0">
-          <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          💍 Story Mode
+        <li class="menu-item" id="menu-gallery" role="menuitem" tabindex="0">
+          <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14zM8.5 12.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg>
+          Binder
         </li>
         <li class="menu-item" id="menu-stats" role="menuitem" tabindex="0">
           <svg viewBox="0 0 24 24" style="fill: currentColor;"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
@@ -156,8 +131,7 @@
         </li>
       </ul>
       <div class="sidebar-footer">
-        <button class="btn-forgotten btn-open-settings">Settings</button>
-        <button class="btn-forgotten" id="btn-forgotten-things">forgotten things</button>
+        <button class="btn-sidebar btn-open-settings">Settings</button>
       </div>
     </aside>
 
@@ -182,11 +156,6 @@
                keeps its own next/previous swipe (see pager's ignoreFrom). -->
           <div class="pager-stage">
             <div class="pager-content" id="study-pages">
-          <!-- Return to Story button (Only visible in story study mode) -->
-          <button class="btn hidden" id="btn-back-to-story">
-            ← Return to Story Roadmap
-          </button>
-
           <!-- Study Mode Toggle + Session Status Bar -->
 
           <!-- 3D Flippable Card Viewport -->
@@ -298,16 +267,14 @@
         </main>
       </section>
 
-      <!-- Mode 1B: Story Quest Map Workspace -->
-      <section class="section hidden" id="section-story">
-        <div class="kana-section" style="max-width: 800px; width: 100%;">
-          <div class="kana-section-header">
-            <h2>💍 Quest to Propose to Chiyo-chan</h2>
-            <p>Master themed chapters sequentially to unlock story dialogues and win Chiyo-chan's hand in marriage!</p>
-          </div>
-          
-          <div class="story-roadmap" id="story-roadmap">
-            <!-- Programmatically populated quest nodes -->
+      <!-- gallery: pieces unlocked by points -->
+      <section class="section hidden" id="section-gallery">
+        <div class="pager-stage">
+          <div class="pager-content">
+            <div class="pager-card">
+              <div class="gallery-summary" id="gallery-summary"></div>
+              <div id="gallery-body"></div>
+            </div>
           </div>
         </div>
       </section>
@@ -387,10 +354,6 @@
             <span class="settings-row-chevron" aria-hidden="true">&rsaquo;</span>
           </button>
 
-          <!-- On mobile the sidebar (and its footer) is gone, so main.ts moves
-               the forgotten-things trigger in here -->
-          <div class="forgotten-host" id="forgotten-host"></div>
-
         </div>
       </section>
 
@@ -417,36 +380,11 @@
     </div>
   </div>
 
-  <!-- Story Dialogue Modal Overlay -->
-  <div class="modal-overlay hidden" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-modal-title">
-    <div class="modal-sheet story-modal-content">
-      <div class="modal-drag-handle"></div>
-      <div class="story-modal-header">
-        <h3 id="story-modal-title">Story Dialogue</h3>
-        <button class="btn-close" id="btn-close-story-modal" aria-label="Close story">&times;</button>
-      </div>
-      <div class="story-dialogue-body" id="story-dialogue-body" aria-live="polite">
-        <!-- Dialog items injected dynamically -->
-      </div>
-      <div class="story-modal-footer">
-        <button class="btn btn-primary" id="btn-close-story-modal-footer">Close Dialogue</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Immersive Sky Transition Overlay -->
   <div class="sky-transition-overlay hidden" id="sky-transition" aria-hidden="true"></div>
 
   <!-- Toast Notification (replaces alert()) -->
   <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
-
-  <!-- Forgotten Things Popup (Light Mode Only) -->
-  <div class="forgotten-popup" id="forgotten-popup" aria-label="Forgotten memory" aria-hidden="true">
-    <picture>
-      <source srcset="/forgotten_things.webp" type="image/webp">
-      <img src="/forgotten_things.png" alt="Chiyo smiling and pointing to her cheeks" class="forgotten-popup-image">
-    </picture>
-  </div>
 
   <!-- Kanji detail sheet -->
   <div class="modal-overlay hidden" id="kanji-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="kanji-sheet-title">
@@ -536,6 +474,22 @@
   </div>
 
   <!-- Study Settings Sheet -->
+  <!-- What the rank chip on the profile card opens. -->
+  <div class="modal-overlay hidden" id="rank-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="rank-sheet-title">
+    <div class="modal-sheet filter-drawer" id="rank-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="rank-body"></div>
+    </div>
+  </div>
+
+  <!-- Avatar / banner picker. One sheet serves both; imagePicker.ts fills it. -->
+  <div class="modal-overlay hidden" id="picker-modal-overlay" role="dialog" aria-modal="true" aria-label="Choose a picture">
+    <div class="modal-sheet filter-drawer" id="picker-sheet">
+      <div class="modal-drag-handle"></div>
+      <div class="picker-body"></div>
+    </div>
+  </div>
+
   <div class="modal-overlay hidden" id="settings-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
     <div class="modal-sheet filter-drawer" id="settings-drawer">
       <div class="modal-drag-handle"></div>
@@ -552,9 +506,69 @@
              page title on any scroll. Applies immediately, not on Save. -->
         <div class="filter-section">
           <h4 class="filter-section-title">Theme</h4>
-          <div class="filter-grid progress-grid" id="settings-theme-grid">
-            <button class="filter-chip-btn" data-theme-choice="dark" aria-label="Chii, dark theme">Chii</button>
-            <button class="filter-chip-btn" data-theme-choice="light" aria-label="Taiki, light theme">Taiki</button>
+          <div class="set-group is-pad">
+            <div class="filter-grid" id="settings-theme-grid">
+              <button class="filter-chip-btn" data-theme-choice="dark" aria-label="Chii, dark theme">Chii</button>
+              <button class="filter-chip-btn" data-theme-choice="light" aria-label="Taiki, light theme">Taiki</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- iOS asks once, from inside a tap, and never asks again once it has
+             been answered no. That makes a mis-tap permanent for the life of
+             the page, so this row has to be able to ask again. -->
+        <div class="filter-section">
+          <h4 class="filter-section-title">Card tilt</h4>
+          <div class="set-group">
+            <div class="set-row">
+              <div class="set-row-text">
+                <span class="set-row-title" id="motion-state">Tilt the phone</span>
+                <span class="set-row-note" id="motion-note"></span>
+              </div>
+              <button class="set-switch" id="btn-motion" role="switch" aria-checked="true"
+                      aria-label="Tilt the phone to light the card"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h4 class="filter-section-title">Pictures</h4>
+          <div class="set-group">
+            <div class="set-row">
+              <div class="set-row-text">
+                <span class="set-row-title" id="pack-state">Not connected</span>
+                <span class="set-row-note" id="pack-note"></span>
+              </div>
+              <button class="btn-quiet" id="btn-pack">Connect</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h4 class="filter-section-title">Your progress</h4>
+          <div class="set-group">
+            <div class="set-row">
+              <div class="set-row-text">
+                <span class="set-row-title">Save a copy</span>
+                <span class="set-row-note" id="backup-note">Every review, session and card you have found.</span>
+              </div>
+              <button class="btn-quiet" id="btn-backup-export">Save</button>
+            </div>
+            <div class="set-row">
+              <div class="set-row-text">
+                <span class="set-row-title">Restore from a copy</span>
+                <span class="set-row-note" id="restore-note">Adds anything the copy knows that this phone does not.</span>
+              </div>
+              <button class="btn-quiet" id="btn-backup-import">Choose file</button>
+            </div>
+            <input type="file" id="backup-file" accept="application/json,.json" hidden>
+            <div class="set-confirm hidden" id="restore-confirm">
+              <p id="restore-summary"></p>
+              <div class="set-confirm-actions">
+                <button class="btn btn-quiet" id="btn-restore-cancel">Cancel</button>
+                <button class="btn btn-primary" id="btn-restore-go">Restore</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

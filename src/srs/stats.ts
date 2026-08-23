@@ -2,13 +2,10 @@ import { Rating, State } from './scheduler';
 import type { ReviewRecord } from './types';
 import type { Card, CardId } from '../state/types';
 import { isVocabCard } from '../data/types';
+import { dateKey } from './dates';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MASTERED_STABILITY_DAYS = 21;
-
-function dateKey(ts: number): string {
-  return new Date(ts).toISOString().slice(0, 10);
-}
 
 export interface StateCounts {
   new: number;
@@ -38,6 +35,42 @@ export function computeStateCounts(reviews: ReviewRecord[], totalCardCount: numb
   }
   counts.new = Math.max(0, totalCardCount - reviews.length);
   return counts;
+}
+
+/** distinct days that saw at least one answer, ever */
+export function computeDaysStudied(reviews: ReviewRecord[]): number {
+  const days = new Set<string>();
+  for (const record of reviews) {
+    for (const entry of record.log) days.add(dateKey(entry.ts));
+  }
+  return days.size;
+}
+
+/**
+ * longest run of consecutive days ever studied.
+ *
+ * deliberately strict, unlike the live streak in points.ts which forgives one
+ * day a week: a personal best should be a real unbroken run, not one that a
+ * grace day quietly inflated.
+ */
+export function computeBestStreak(reviews: ReviewRecord[]): number {
+  const days = new Set<string>();
+  for (const record of reviews) {
+    for (const entry of record.log) days.add(dateKey(entry.ts));
+  }
+  if (days.size === 0) return 0;
+
+  const sorted = [...days].sort();
+  let best = 1;
+  let run = 1;
+  for (let i = 1; i < sorted.length; i++) {
+    const gap = Math.round(
+      (new Date(`${sorted[i]!}T00:00:00`).getTime() - new Date(`${sorted[i - 1]!}T00:00:00`).getTime()) / DAY_MS
+    );
+    run = gap === 1 ? run + 1 : 1;
+    if (run > best) best = run;
+  }
+  return best;
 }
 
 export interface TopicLapses {

@@ -1,4 +1,5 @@
-import type { VocabCard, KanaCard, KanjiCard, StoryChapter } from './types';
+import type { VocabCard, KanaCard, KanjiCard } from './types';
+import type { GallerySaga } from '../srs/gallery';
 
 export interface KanaDataset {
   hiraganaAlphabet: KanaCard[];
@@ -27,13 +28,13 @@ export async function loadKana(): Promise<KanaDataset> {
   return kanaCache;
 }
 
-let storyCache: StoryChapter[] | null = null;
-export async function loadStory(): Promise<StoryChapter[]> {
-  if (!storyCache) {
-    const mod = await import('./story.json');
-    storyCache = mod.default as StoryChapter[];
+let galleryCache: GallerySaga[] | null = null;
+export async function loadGallery(): Promise<GallerySaga[]> {
+  if (!galleryCache) {
+    const mod = await import('./gallery.json');
+    galleryCache = (mod.default as { sagas: GallerySaga[] }).sagas;
   }
-  return storyCache;
+  return galleryCache;
 }
 
 let kanjiCache: KanjiCard[] | null = null;

@@ -148,7 +148,7 @@ body.splash-open {
   font-family: var(--font-jp);
   font-size: 0.9rem;
   letter-spacing: 0.55em;
-  /* letter-spacing adds a trailing gap; the indent re-centres the word. */
+  /* letter-spacing adds a trailing gap; the indent re-centers the word. */
   text-indent: 0.55em;
   color: rgba(214, 236, 255, 0.72);
   margin-bottom: 1.4rem;
@@ -219,4 +219,58 @@ body.splash-open {
   .splash {
     transition: none;
   }
+}
+
+/* The pack prompt, on the opening screen.
+   While it is up the loading furniture stands down: a percentage climbing
+   behind a question makes the app look like it is ignoring you. */
+.splash.is-asking .splash-status,
+.splash.is-asking .splash-rail {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.splash-ask {
+  position: absolute;
+  left: 50%;
+  bottom: max(3.5rem, calc(env(safe-area-inset-bottom) + 2.5rem));
+  transform: translateX(-50%);
+  width: min(22rem, calc(100vw - 2.5rem));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  z-index: 3;
+  animation: splash-ask-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes splash-ask-in {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.splash-ask-lead {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  text-wrap: pretty;
+}
+
+.splash-ask-go {
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0f4c81;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.splash-ask-note {
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.85);
+  min-height: 1.1em;
 }
