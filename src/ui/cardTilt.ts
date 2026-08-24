@@ -64,10 +64,21 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     put('--pointer-y', `${round(S.gy.x, 1)}%`);
     put('--card-opacity', String(round(S.go.x, 2)));
     put('--pointer-from-center', String(round(S.fc.x, 2)));
-    put('--foil-x', `${round(37 + S.gx.x * 0.26, 1)}%`);
-    put('--foil-y', `${round(33 + S.gy.x * 0.34, 1)}%`);
   };
+  let pendingX: number | null = null;
+  let pendingY: number | null = null;
+
   const tick = (): void => {
+    if (pendingX !== null && pendingY !== null) {
+      const r = card.getBoundingClientRect();
+      point(
+        clamp(round((100 / r.width) * (pendingX - r.left))),
+        clamp(round((100 / r.height) * (pendingY - r.top)))
+      );
+      pendingX = null;
+      pendingY = null;
+    }
+
     for (const k of Object.keys(S) as (keyof typeof S)[]) {
       const s = S[k];
       s.v += (s.t - s.x) * 0.066;
@@ -114,18 +125,19 @@ export function mountTilt(card: HTMLElement): TiltHandle {
   };
 
   let dragging = false;
-  const aim = (e: PointerEvent): void => {
-    const r = card.getBoundingClientRect();
-    point(clamp(round((100 / r.width) * (e.clientX - r.left))), clamp(round((100 / r.height) * (e.clientY - r.top))));
-  };
-
   const onDown = (e: PointerEvent): void => {
     dragging = true;
     card.setPointerCapture(e.pointerId);
-    aim(e);
+    pendingX = e.clientX;
+    pendingY = e.clientY;
+    wake();
   };
   const onMove = (e: PointerEvent): void => {
-    if (dragging) aim(e);
+    if (dragging) {
+      pendingX = e.clientX;
+      pendingY = e.clientY;
+      wake();
+    }
   };
   const onUp = (): void => {
     dragging = false;
