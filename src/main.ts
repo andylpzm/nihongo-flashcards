@@ -220,6 +220,45 @@ async function connectLocalPack(): Promise<void> {
  * number. two chrome tabs running this same app moved the reading by ten frames
  * a second, which was wider than the differences being measured.
  */
+/**
+ * dev only: ?bake draws the card's ground the cheap way, to compare the look.
+ *
+ * the watercolour edge and the paper grain are two separate layers that are
+ * painted on every card whether or not anything is happening, and both carry a
+ * blend mode - which is the one thing poke-holo's card never does. its idle
+ * card is a single flat image.
+ *
+ * they are also identical on every card, over a constant background, so they
+ * can be folded into .gc's OWN background instead. `background-blend-mode`
+ * blends layers within one element: no extra compositing layer, no reading of
+ * whatever is behind, nothing for the engine to keep in sync.
+ *
+ * two things a background layer cannot carry, baked in by hand here: the wash's
+ * `saturate(150%)` (folded into the colours) and the grain's 0.42 opacity
+ * (folded into the svg's own alpha).
+ */
+function bakeCardGround(): void {
+  const grain =
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E\")";
+  const style = document.createElement('style');
+  style.textContent = `
+    .gc-wash, .gc-grain { display: none !important; }
+    .gc {
+      background-color: #7fc4e8;
+      background-image:
+        ${grain},
+        radial-gradient(44% 31% at 20% 16%, rgb(4 96 210 / 95%), rgb(4 96 210 / 34%) 46%, transparent 76%),
+        radial-gradient(36% 27% at 80% 12%, rgb(7 148 232 / 90%), rgb(7 148 232 / 30%) 48%, transparent 78%),
+        radial-gradient(48% 35% at 52% 88%, rgb(0 110 218 / 92%), rgb(0 110 218 / 32%) 46%, transparent 74%);
+      /* 148% centred reproduces the wash's inset:-24% box exactly */
+      background-size: 140px 140px, 148% 148%, 148% 148%, 148% 148%;
+      background-position: 0 0, center, center, center;
+      background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+      background-blend-mode: overlay, multiply, multiply, multiply;
+    }`;
+  document.head.appendChild(style);
+}
+
 function showProbe(): void {
   const flags = new URLSearchParams(location.search);
   const off = (flags.get('off') ?? '').split(',').filter(Boolean);
@@ -326,6 +365,7 @@ async function init(): Promise<void> {
     }
     if (flags.has('pack')) await connectLocalPack();
     if (flags.has('probe')) showProbe();
+    if (flags.has('bake')) bakeCardGround();
   }
 
   // Started before any work so the counter reflects the real boot, and

@@ -168,7 +168,6 @@ export function buildCard(pic: CardPicture, mini = false): HTMLElement {
   // a sharpening, not a jump.
   const src = readyUrl(pic.thumb ?? pic.image);
   card.innerHTML =
-    '<span class="gc-wash"></span><span class="gc-grain"></span>' +
     (mini ? '' : '<span class="gc-rim"></span>') +
     '<div class="gc-win">' +
     `<img class="gc-art" alt=""${mini ? ' loading="lazy"' : ''}${src ? ` src="${src}"` : ''}>` +

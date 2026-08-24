@@ -37,7 +37,34 @@
      - clipping here quietly took the card's drop shadow away. overflow alone
      holds the watercolour edge in on both engines. */
   overflow: hidden;
-  background: #7fc4e8;
+  /* the card's ground - the watercolour edge and the paper grain - is painted
+     HERE, as this element's own background layers, rather than by two child
+     elements sitting on top.
+     it used to be `.gc-wash` (multiply, and until today a 15px blur) and
+     `.gc-grain` (overlay). those are the only two layers on the card that are
+     painted whether or not anything is happening, and a blended layer cannot be
+     cached: the engine re-composites it whenever anything near it changes. two
+     of them, on every card on screen, forever. poke-holo - where this card's
+     tilt and glare come from - has no such layer at all; its resting card is a
+     single flat image, and everything it does on top is `opacity: 0` until you
+     touch it. that gating we already had; this was the piece we did not.
+     `background-blend-mode` blends layers WITHIN one element: no extra
+     compositing layer, nothing behind to read, nothing to keep in sync.
+     verified identical - the old and new grounds differenced against each other
+     and amplified 25x are pure black but for a pixel of corner antialiasing.
+     two things a background layer cannot carry, so they are folded in by hand:
+     the wash's saturate(150%) (into the colours) and the grain's 0.42 (into the
+     svg's own alpha). 148% centred reproduces the wash's old inset:-24% box. */
+  background-color: #7fc4e8;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E"),
+    radial-gradient(44% 31% at 20% 16%, rgb(4 96 210 / 95%), rgb(4 96 210 / 34%) 46%, transparent 76%),
+    radial-gradient(36% 27% at 80% 12%, rgb(7 148 232 / 90%), rgb(7 148 232 / 30%) 48%, transparent 78%),
+    radial-gradient(48% 35% at 52% 88%, rgb(0 110 218 / 92%), rgb(0 110 218 / 32%) 46%, transparent 74%);
+  background-size: 140px 140px, 148% 148%, 148% 148%, 148% 148%;
+  background-position: 0 0, center, center, center;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-blend-mode: overlay, multiply, multiply, multiply;
   touch-action: none;
   transform-style: preserve-3d;
   transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
@@ -48,51 +75,6 @@
   --u: 0.7159cqw;
 }
 
-/* the watercolour edge.
-   drawn a quarter bigger than the card on every side so the blur has material
-   to work with, then clipped back to the card's own rounded rectangle.
-   the clip belongs HERE and not on .gc, and that distinction is the whole
-   thing: this is the layer that paints past the corners, and .gc is the layer
-   that carries the drop shadow. clip-path clips everything an element paints,
-   a box-shadow included - put it on .gc and the shadow goes with it. put it on
-   the wash and the corners come back for free.
-   `overflow: hidden` on .gc is supposed to handle this and does on blink, but
-   webkit does not apply it to this layer once the card is composited, which is
-   what filled the corners in square on the phone.
-   16.216% is where the card's edge falls inside the wash: the wash is 148% of
-   the card, so 24/148 of the way in on every side. */
-.gc-wash {
-  position: absolute;
-  inset: -24%;
-  z-index: 0;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  clip-path: inset(16.216% round calc(5.714 * var(--u)));
-  /* NO blur. this is the one layer on the card that is painted whether or not
-     anything is happening, so a convolution here is paid on every card in the
-     binder, forever. these are radial gradients - already soft - and the blur
-     was only rounding off where they overlap. extra stops do that for free.
-     (poke-holo, which this card's effects come from, has no blur anywhere in
-     its card css at all; its idle card is a single flat image.) */
-  background:
-    radial-gradient(44% 31% at 20% 16%, rgb(31 92 168 / 95%), rgb(31 92 168 / 34%) 46%, transparent 76%),
-    radial-gradient(36% 27% at 80% 12%, rgb(46 140 196 / 90%), rgb(46 140 196 / 30%) 48%, transparent 78%),
-    radial-gradient(48% 35% at 52% 88%, rgb(28 104 176 / 92%), rgb(28 104 176 / 32%) 46%, transparent 74%);
-  filter: saturate(150%);
-}
-.gc-grain {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.42;
-  /* rounds itself rather than trusting the card to round it, same reason as the
-     wash above - it covers the full border box, corners included */
-  border-radius: inherit;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 140px 140px;
-}
 
 /* the edge catching the light. z-index 1 puts it UNDER the illustration, so it
    is visible only in the border ring and needs no masking. */
@@ -654,7 +636,19 @@ body.light-theme .g-grid {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #7fc4e8;
+  /* same fold as .gc above: the back's wash and grain are this element's own
+     background layers, blended within it, instead of two always-painted
+     blended children. */
+  background-color: #7fc4e8;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)' opacity='.32'/%3E%3C/svg%3E"),
+    radial-gradient(44% 31% at 20% 16%, rgb(4 96 210 / 90%), rgb(4 96 210 / 32%) 46%, transparent 76%),
+    radial-gradient(36% 27% at 80% 12%, rgb(7 148 232 / 85%), rgb(7 148 232 / 28%) 48%, transparent 78%),
+    radial-gradient(48% 35% at 52% 88%, rgb(0 110 218 / 90%), rgb(0 110 218 / 30%) 46%, transparent 74%);
+  background-size: 110px 110px, 148% 148%, 148% 148%, 148% 148%;
+  background-position: 0 0, center, center, center;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-blend-mode: overlay, multiply, multiply, multiply;
   /* the wiggle lives on the CARD, not on the slot. the slot carries the
      pocket's stitched seam, and a sleeve sewn into the page does not rock
      about - only the card inside it does. */
@@ -665,26 +659,6 @@ body.light-theme .g-grid {
   78% { transform: rotate(-2.2deg); }
   84% { transform: rotate(1.8deg); }
   90% { transform: rotate(-1deg); }
-}
-.g-back-wash {
-  position: absolute;
-  inset: -24%;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-  filter: blur(13px) saturate(150%);
-  background:
-    radial-gradient(40% 28% at 20% 16%, rgb(31 92 168 / 90%), transparent 68%),
-    radial-gradient(32% 24% at 80% 12%, rgb(46 140 196 / 85%), transparent 70%),
-    radial-gradient(44% 32% at 52% 88%, rgb(28 104 176 / 90%), transparent 66%);
-}
-.g-back-grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.32;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23f)'/%3E%3C/svg%3E");
-  background-size: 110px 110px;
 }
 .g-back-ring {
   position: absolute;

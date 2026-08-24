@@ -88,7 +88,6 @@ function thumb(entry: GalleryEntry, itemIndex: number, next: NextUp | null): str
 function frostPane(): string {
   return (
     '<span class="g-back">' +
-    '<span class="g-back-wash"></span><span class="g-back-grain"></span>' +
     '<span class="g-back-ring"></span><span class="g-back-logo"></span>' +
     '</span>'
   );
