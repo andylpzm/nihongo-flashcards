@@ -245,9 +245,11 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     aim(e);
   };
   const onMove = (e: PointerEvent): void => {
-    // a mouse leans the card on hover, the way his site behaves; a finger only
-    // while it is down
-    if (dragging || e.pointerType === 'mouse') aim(e);
+    // press to tilt. a mouse used to lean the card on hover, the way his site
+    // does, but the card is handled here rather than browsed past - a pointer
+    // crossing it on the way somewhere else lit it up and left it leaning.
+    // mouse and finger now behave the same: nothing moves until you press.
+    if (dragging) aim(e);
   };
   const onUp = (): void => {
     if (!dragging) return;
