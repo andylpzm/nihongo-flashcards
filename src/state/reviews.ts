@@ -3,10 +3,13 @@ import { State } from '../srs/scheduler';
 import type { ReviewRecord, Grade, FsrsCard } from '../srs/types';
 import type { Card, CardId } from './types';
 import { loadDailyProgress, saveDailyProgress, type DailyProgress } from './persistence';
+import { dateKey } from '../srs/dates';
 
-function todayKey(now: Date): string {
-  return now.toISOString().slice(0, 10);
-}
+// the day turns at 6am local (srs/dates.ts), and the new-card allowance has to
+// turn with it. this used to bucket by UTC, which meant two different days ran
+// at once: east of greenwich the allowance reset somewhere around 2am while
+// the streak and the missions still called it last night.
+const todayKey = (now: Date): string => dateKey(now.getTime());
 
 function todayProgress(now: Date): DailyProgress {
   const progress = loadDailyProgress();

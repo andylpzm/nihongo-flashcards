@@ -98,10 +98,9 @@ export default defineConfig({
   // reachable from a phone on the same wifi. this is a study app for a phone,
   // and a desktop pointer cannot tell you what a thumb will do.
   server: { host: true },
-  // HTTPS=1 npm run dev - only needed to test on a real phone: the motion
-  // sensors are absent outside a secure context, so plain http over the local
-  // network can never report a tilt. the cert is self-signed, so the phone
-  // asks once before it will load the page.
+  // HTTPS=1 npm run dev - for anything a phone will only do in a secure
+  // context. the cert is self-signed, so the phone asks once before it will
+  // load the page.
   plugins: [
     jsonStore('/__framing', FRAMING, 'framing-store'),
     jsonStore('/__overrides', OVERRIDES, 'overrides-store'),

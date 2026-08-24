@@ -36,6 +36,11 @@ body {
   width: 100%;
   overflow-x: hidden;
   position: relative;
+  /* no rubber band. added to the home screen this is meant to read as an app,
+     and an enthusiastic swipe that bounces the whole page to show grey behind
+     it is the single clearest tell that it is a web page. the page still
+     scrolls normally - only the overscroll at either end is stopped. */
+  overscroll-behavior-y: none;
 }
 
 body {

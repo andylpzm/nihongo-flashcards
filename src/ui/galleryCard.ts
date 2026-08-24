@@ -21,9 +21,23 @@ const BASE = import.meta.env.BASE_URL;
 // public/ - but the built app ships no artwork at all, so there the card gets
 // no src and shows its empty window rather than a broken-image glyph.
 const loose = (path: string): string | null => (import.meta.env.DEV ? `${BASE}${path}` : null);
-const readyUrl = (path: string): string | null => (isConnected() ? thumbUrl(path) : loose(path));
-const openUrl = async (path: string): Promise<string | null> =>
+export const readyUrl = (path: string): string | null =>
+  isConnected() ? thumbUrl(path) : loose(path);
+export const openUrl = async (path: string): Promise<string | null> =>
   isConnected() ? await fullUrl(path) : loose(path);
+
+/**
+ * a gallery path as stored in a profile, turned back into something an <img>
+ * can show. the profile keeps the path (`gallery/ch-001.jpg`), never the blob:
+ * a blob url dies with the tab, and the pack it came from is re-opened every
+ * boot under a new one.
+ */
+export const profilePicUrl = async (stored: string): Promise<string> => {
+  if (!stored) return '';
+  // a photo the user took is already a data url, and belongs to nothing else
+  if (stored.startsWith('data:') || stored.startsWith('blob:')) return stored;
+  return (await openUrl(stored.replace(BASE, ''))) ?? '';
+};
 
 export type Tier = 'chapter' | 'cover' | 'arc';
 

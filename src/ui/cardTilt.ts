@@ -5,7 +5,6 @@
 // the whole effect - two layers sliding at different rates read as a surface,
 // one layer moving alone reads as a sticker.
 
-import { onTilt, resetBase } from './motion';
 
 interface Spring {
   v: number;
@@ -31,7 +30,43 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     fc: spring(),
   };
 
+  // the loop STOPS when the springs have arrived.
+  //
+  // it used to run for as long as the card was on screen, writing eight custom
+  // properties a frame whether or not anything had moved. four of those feed
+  // gradients - the glare, both foils - so a card lying perfectly still was
+  // repainting several blended full-card layers sixty times a second. free on a
+  // laptop; on an iphone it is the choppiness, and it is also the battery.
+  // anything that moves a target calls wake().
   let raf = 0;
+  const settled = (): boolean => {
+    for (const k of Object.keys(S) as (keyof typeof S)[]) {
+      const s = S[k];
+      if (Math.abs(s.t - s.x) > 0.01 || Math.abs(s.v) > 0.01) return false;
+    }
+    return true;
+  };
+  // every one of these is a gradient stop or an opacity, so a write is a repaint
+  // of a blended, card-sized layer. written only when the value actually
+  // changes, and rounded no finer than the screen can show: the glare was being
+  // nudged by a thousandth of a percent on a gyro that never sits perfectly
+  // still, and paying a full repaint for it.
+  const last = new Map<string, string>();
+  const put = (name: string, value: string): void => {
+    if (last.get(name) === value) return;
+    last.set(name, value);
+    card.style.setProperty(name, value);
+  };
+  const paint = (): void => {
+    put('--rotate-x', `${round(S.rx.x, 2)}deg`);
+    put('--rotate-y', `${round(S.ry.x, 2)}deg`);
+    put('--pointer-x', `${round(S.gx.x, 1)}%`);
+    put('--pointer-y', `${round(S.gy.x, 1)}%`);
+    put('--card-opacity', String(round(S.go.x, 2)));
+    put('--pointer-from-center', String(round(S.fc.x, 2)));
+    put('--foil-x', `${round(37 + S.gx.x * 0.26, 1)}%`);
+    put('--foil-y', `${round(33 + S.gy.x * 0.34, 1)}%`);
+  };
   const tick = (): void => {
     for (const k of Object.keys(S) as (keyof typeof S)[]) {
       const s = S[k];
@@ -39,17 +74,23 @@ export function mountTilt(card: HTMLElement): TiltHandle {
       s.v *= 0.75;
       s.x += s.v;
     }
-    card.style.setProperty('--rotate-x', `${round(S.rx.x, 2)}deg`);
-    card.style.setProperty('--rotate-y', `${round(S.ry.x, 2)}deg`);
-    card.style.setProperty('--pointer-x', `${round(S.gx.x, 1)}%`);
-    card.style.setProperty('--pointer-y', `${round(S.gy.x, 1)}%`);
-    card.style.setProperty('--card-opacity', String(round(S.go.x, 3)));
-    card.style.setProperty('--pointer-from-center', String(round(S.fc.x, 3)));
-    card.style.setProperty('--foil-x', `${round(37 + S.gx.x * 0.26, 1)}%`);
-    card.style.setProperty('--foil-y', `${round(33 + S.gy.x * 0.34, 1)}%`);
+    if (settled()) {
+      // land exactly on the target, so the last frame is not a fraction short
+      for (const k of Object.keys(S) as (keyof typeof S)[]) {
+        S[k].x = S[k].t;
+        S[k].v = 0;
+      }
+      paint();
+      raf = 0;
+      return;
+    }
+    paint();
     raf = requestAnimationFrame(tick);
   };
-  raf = requestAnimationFrame(tick);
+  const wake = (): void => {
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+  paint();
 
   const point = (px: number, py: number): void => {
     S.rx.t = round(-((px - 50) / 3.5));
@@ -60,6 +101,7 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     // a .35 floor so a card held flat still has some life in it, blooming to 1
     // as it leans - a foil at full strength from the first pixel looks painted on
     S.fc.t = round(0.35 + Math.min(1, Math.hypot(px - 50, py - 50) / 50) * 0.65, 3);
+    wake();
   };
   const rest = (): void => {
     S.rx.t = 0;
@@ -68,6 +110,7 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     S.gy.t = 50;
     S.go.t = 0;
     S.fc.t = 0;
+    wake();
   };
 
   let dragging = false;
@@ -76,17 +119,6 @@ export function mountTilt(card: HTMLElement): TiltHandle {
     point(clamp(round((100 / r.width) * (e.clientX - r.left))), clamp(round((100 / r.height) * (e.clientY - r.top))));
   };
 
-  // the phone's own tilt, when it is allowed to tell us. the finger outranks
-  // it: while a thumb is down the card follows the thumb, because a hand
-  // resting on the glass is a clearer statement of intent than the wrist.
-  let gyro = false;
-  // whatever angle the phone is at as this card arrives is its flat
-  resetBase();
-  const stopTilt = onTilt(({ x, y }) => {
-    if (dragging) return;
-    gyro = true;
-    point(clamp(50 + x * 50), clamp(50 + y * 50));
-  });
   const onDown = (e: PointerEvent): void => {
     dragging = true;
     card.setPointerCapture(e.pointerId);
@@ -97,9 +129,7 @@ export function mountTilt(card: HTMLElement): TiltHandle {
   };
   const onUp = (): void => {
     dragging = false;
-    // with the sensor live the card should not fall flat - the next reading is
-    // a frame away and will pick it back up
-    if (!gyro) rest();
+    rest();
   };
 
   card.addEventListener('pointerdown', onDown);
@@ -113,7 +143,6 @@ export function mountTilt(card: HTMLElement): TiltHandle {
   return {
     release(): void {
       cancelAnimationFrame(raf);
-      stopTilt();
       card.removeEventListener('pointerdown', onDown);
       card.removeEventListener('pointermove', onMove);
       card.removeEventListener('pointerup', onUp);
