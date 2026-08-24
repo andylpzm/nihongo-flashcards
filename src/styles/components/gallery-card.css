@@ -77,22 +77,10 @@
 }
 
 
-/* the edge catching the light. z-index 1 puts it UNDER the illustration, so it
-   is visible only in the border ring and needs no masking. */
-.gc-rim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: inherit;
-  mix-blend-mode: screen;
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.85);
-  background:
-    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      rgb(255 255 255 / 90%) 0%, rgb(190 230 255 / 50%) 22%, transparent 46%),
-    radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x)) calc(100% - var(--pointer-y)),
-      rgb(120 200 255 / 35%) 0%, transparent 40%);
-}
+/* the edge, the glare and the foils used to live here - .gc-rim, .gc-glare,
+   .gc-foil and .gc-foil2. they are replaced by his .card__shine and
+   .card__glare, mounted at card size in holo.css and driven by cardTilt.ts.
+   which finish a card gets is decided by finishOf() in galleryCard.ts. */
 
 /* the window is placed against the card's edges rather than sized at 100% of
    it. the card's height comes from `aspect-ratio`, and a percentage height
@@ -114,7 +102,11 @@
      each picture was authored with went with it. clip-path is applied to the
      layer, so it holds. */
   clip-path: inset(0 round calc(2.857 * var(--u)));
-  transform-style: preserve-3d;
+  /* NO preserve-3d any more. it was here so .gc-foil and .gc-foil2 could sit at
+     different translateZ depths inside the window; his shine and glare replaced
+     them and sit outside it, sorted by z-index. a preserve-3d element is
+     promoted to its own compositing layer and its children are depth-sorted -
+     both wasted on a box that now holds one image. */
   /* what shows for the instant before the artwork paints. near-white, because
      these are manga pages: a dark window read as a hole punched in the card. */
   background: #f4f8fc;
@@ -128,83 +120,6 @@
   transform-origin: center;
   user-select: none;
   -webkit-user-drag: none;
-}
-
-.gc-glare {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  transform: translateZ(1.41px);
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.82);
-  background-image: radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
-    hsl(0 0% 100% / 80%) 10%, hsl(0 0% 100% / 65%) 20%, hsl(0 0% 0% / 50%) 90%);
-}
-
-/* ---- foil, per tier ---------------------------------------------------- */
-.gc-foil,
-.gc-foil2 {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-}
-
-/* chapter: no foil at all. measured across all 250 pages - they average
-   150-220 mean brightness with up to 51% of pixels already at full white, so a
-   dodge or screen foil has no headroom and only flattens the page. */
-
-/* cover: sunpillar. vertical colour pillars blended by HUE onto a narrow
-   diagonal streak - the hue blend is what stops it reading as stripes. */
-.gc[data-tier='cover'] .gc-foil {
-  z-index: 4;
-  transform: translateZ(1px);
-  mix-blend-mode: lighten;
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.44);
-  background-image:
-    repeating-linear-gradient(0deg,
-      #ff7b9c 6%, #ffe57b 12%, #7bff9c 18%, #7be5ff 24%, #c07bff 30%, #ff7b9c 36%),
-    repeating-linear-gradient(120deg,
-      #0e152e 0%, hsl(180 10% 55%) 3.8%, hsl(180 29% 66%) 4.5%,
-      hsl(180 10% 55%) 5.2%, #0e152e 10%, #0e152e 12%);
-  background-size: 200% 700%, 300% 100%;
-  background-position: 0% var(--foil-y), var(--foil-x) var(--foil-y);
-  background-blend-mode: hue;
-}
-
-/* arc: cosmos. rainbow waves in overlay - dodge returns white on these bright
-   spreads and erases the pattern - plus a starfield sliding the other way. */
-.gc[data-tier='arc'] .gc-foil {
-  z-index: 4;
-  transform: translateZ(1px);
-  mix-blend-mode: overlay;
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.85);
-  background-image: repeating-linear-gradient(105deg,
-    #ff5a5a 0%, #ffd84a 8%, #4aff86 16%, #4ac8ff 24%, #a85aff 32%, #ff5a5a 40%);
-  background-size: 300% 300%;
-  background-position: var(--foil-x) var(--foil-y);
-}
-.gc[data-tier='arc'] .gc-foil2 {
-  z-index: 5;
-  transform: translateZ(1.2px);
-  mix-blend-mode: color-dodge;
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
-  /* stars: feTurbulence is PREMULTIPLIED, so thresholding its red channel gives
-     a fully transparent plate. luminanceToAlpha then a steep alpha ramp,
-     composited into a solid fill, is what works. ~1.2% coverage. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='580' color-interpolation-filters='sRGB'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='luminanceToAlpha'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='30' intercept='-20'/%3E%3C/feComponentTransfer%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23fff' filter='url(%23f)'/%3E%3C/svg%3E");
-  background-size: 150% 150%;
-  background-position: calc(100% - var(--foil-x)) calc(100% - var(--foil-y));
-}
-/* the arc tier carries its finish out onto the frame too */
-.gc[data-tier='arc'] .gc-rim {
-  mix-blend-mode: overlay;
-  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.9);
-  background-image: repeating-linear-gradient(105deg,
-    #ff5a5a 0%, #ffd84a 8%, #4aff86 16%, #4ac8ff 24%, #a85aff 32%, #ff5a5a 40%);
-  background-size: 300% 300%;
-  background-position: var(--foil-x) var(--foil-y);
 }
 
 /* ---- the frame drawn inside the illustration --------------------------- */
@@ -229,7 +144,12 @@
   height: var(--hair);
   background: rgb(255 255 255 / 95%);
   bottom: var(--gap);
-  filter: drop-shadow(0 1px 2px rgb(0 45 80 / 50%));
+  /* box-shadow, not drop-shadow. these three are solid rectangles, so a shadow
+     traced round the border box is the same picture as one traced round the
+     alpha - and it costs no filter pass. .gc-kl above keeps drop-shadow: it is
+     a three-sided border, and a box-shadow would draw an edge along the open
+     bottom that isn't there. */
+  box-shadow: 0 1px 2px rgb(0 45 80 / 50%);
 }
 .gc-klb.s1 { left: var(--gap); width: var(--seg1, 0); }
 .gc-klb.s2 { left: var(--seg2l, 0); width: var(--seg2w, 0); }
@@ -482,7 +402,6 @@
 }
 .g-slot .g-num,
 .g-slot .g-need,
-.g-slot .g-next-tag,
 .g-slot .g-veil-mark,
 .g-slot .g-veil-label,
 .g-slot .g-veil-count {
@@ -493,11 +412,16 @@
 .gc.is-mini {
   box-shadow: 0 2px 6px rgb(0 0 0 / 35%);
   transform: none;
+  /* the mini has no foil, glare or rim - they are display:none below - so there
+     is nothing left at a depth and nothing that moves. preserve-3d and
+     will-change were still promoting every pocket to its own layer and sorting
+     it in 3d for no picture at all. flat also puts z-index back in charge of
+     the sweep pseudos below, rather than the 3d depth sort. */
+  transform-style: flat;
+  will-change: auto;
 }
-.gc.is-mini .gc-rim,
-.gc.is-mini .gc-foil,
-.gc.is-mini .gc-foil2,
-.gc.is-mini .gc-glare,
+/* a pocket is looked at, not handled, so a mini gets no moving layer at all -
+   the builder emits neither his shine and glare nor these sweeps. */
 .gc.is-mini .gc-num::after,
 .gc.is-mini .gc-logo::after {
   display: none;
@@ -548,70 +472,23 @@ body.light-theme .g-grid {
 }
 
 /* ---- resting finish -----------------------------------------------------
-   nothing here follows a finger: a binder page is looked at, not handled. one
-   band crosses the whole card, border included, so the blue edge lights up as
-   it passes - the edge is part of the card, not a strip stuck around it.
-   chapter gets nothing at all. */
-@keyframes gc-sweep {
-  from { background-position-x: 230%; }
-  to { background-position-x: -30%; }
-}
+   nothing. a binder page is looked at, not handled, and a pocket carries no
+   moving layer at all.
 
-/* cover: a still warm rim, and one white band */
+   the three tiers used to sweep a tinted band across the card here, on a 7s
+   infinite loop. it was the last of the pre-holo finish still running, and it
+   was also the most expensive thing the app did while idle: the band moved by
+   animating `background-position-x`, which no compositor can accelerate, so
+   every frame repainted the whole mini AND re-blended it through screen,
+   overlay or soft-light. an arc pocket ran two of them at once, forever.
+
+   the finish now lives on the full card, driven by a finger - see holo.css.
+   the tier still reads in the binder from the card itself and, for a cover,
+   from the warm rim below. */
+
+/* cover: a still warm rim */
 .gc.is-mini[data-tier='cover'] {
   box-shadow: 0 2px 6px rgb(0 0 0 / 35%), 0 0 0 1px rgb(255 225 170 / 35%);
-}
-.gc.is-mini[data-tier='cover']::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  border-radius: inherit;
-  mix-blend-mode: screen;
-  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 55%) 50%, transparent 62%);
-  background-size: 260% 100%;
-  animation: gc-sweep 7s linear infinite;
-}
-
-/* arc: the same band and the same 7s, tinted through the logo's own greens,
-   blues and violets. overlay, NEVER screen - screen over bright artwork climbs
-   to white whatever colour you feed it, and the band reads as plain glare. */
-.gc.is-mini[data-tier='arc']::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 10;
-  pointer-events: none;
-  border-radius: inherit;
-  mix-blend-mode: overlay;
-  background: linear-gradient(100deg, transparent 36%,
-    rgb(0 225 150 / 42%) 44%, rgb(0 190 255 / 55%) 49%, rgb(70 120 255 / 55%) 54%,
-    rgb(170 80 255 / 42%) 59%, transparent 66%);
-  background-size: 260% 100%;
-  animation: gc-sweep 7s linear infinite;
-}
-/* a second, fainter pass half a cycle behind, so the card keeps some life
-   between sweeps instead of going dead for seven seconds */
-.gc.is-mini[data-tier='arc']::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 11;
-  pointer-events: none;
-  border-radius: inherit;
-  mix-blend-mode: soft-light;
-  background: linear-gradient(100deg, transparent 42%, rgb(120 220 255 / 42%) 50%, transparent 58%);
-  background-size: 300% 100%;
-  animation: gc-sweep 7s linear infinite;
-  animation-delay: -3.5s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gc.is-mini::before,
-  .gc.is-mini::after {
-    animation: none;
-  }
 }
 
 /* ---- the wrapped picture ------------------------------------------------
@@ -819,12 +696,25 @@ body.light-theme .g-grid {
   z-index: 3;
   pointer-events: none;
   mix-blend-mode: screen;
+  opacity: 0;
+}
+/* the blur sits on a STILL child, not on the element that moves.
+   filter runs before transform, so both ways draw scale(blur(gradient)) - the
+   same picture. the difference is what has to be recomputed: a blur on the
+   animating element cannot be cached, so a 30px radius over a box inset -45%
+   of the card was re-blurred from scratch on every one of the 3.4s of frames.
+   blurred once on a child that never moves, the parent's flash is an ordinary
+   composited transform over a finished texture. same fix as .glow-orb in
+   base.css, same reason. */
+.gc-bloom::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
     radial-gradient(closest-side circle at 50% 50%,
       rgb(255 255 255 / 90%) 0%, rgb(222 243 255 / 72%) 22%,
       rgb(165 214 255 / 46%) 44%, rgb(120 180 255 / 18%) 66%, transparent 84%);
   filter: blur(30px);
-  opacity: 0;
 }
 /* the flash: it arrives fast and hard, then falls away. the scale is what
    sells "toward you" - a glow that only fades reads as a lamp behind the card,

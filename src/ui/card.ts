@@ -688,6 +688,21 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
 /** @param endedEarly true when the user pressed "End session" rather than
  * working the queue down to empty. The two are different events and must
  * not both be reported as "complete". */
+/* a sitting has ended, however it ended.
+ *
+ * a kana or kanji sitting is started from the Kana section but runs on the
+ * study screen, and when it ends the study chrome comes back - so whoever
+ * sent the user here needs to know to take them back. finishSession is the
+ * single funnel for both endings, the natural one and endSessionEarly. */
+type SessionEndListener = () => void;
+const sessionEndListeners: SessionEndListener[] = [];
+export function onSessionEnd(fn: SessionEndListener): void {
+  sessionEndListeners.push(fn);
+}
+function notifySessionEnd(): void {
+  for (const fn of sessionEndListeners) fn();
+}
+
 function finishSession(endedEarly: boolean): void {
   if (!activeSession) return;
   const p = activeSession.progress;
@@ -710,6 +725,7 @@ function finishSession(endedEarly: boolean): void {
     updateStats();
     refreshSessionBar();
     renderCard();
+    notifySessionEnd();
     return;
   }
 
@@ -758,6 +774,8 @@ function finishSession(endedEarly: boolean): void {
     answers: p.answers,
     completed: !endedEarly,
   });
+
+  notifySessionEnd();
 }
 
 /** writes the sitting, then reports what it earned on the finished card. */

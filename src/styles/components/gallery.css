@@ -138,53 +138,6 @@
   align-items: stretch;
 }
 
-.g-tile {
-  position: relative;
-  aspect-ratio: 2 / 3;
-  border: 0;
-  padding: 0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--surface-raised);
-  display: block;
-  cursor: pointer;
-}
-
-.g-tile img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.g-tile:active img {
-  transform: scale(0.96);
-  transition: transform 0.1s ease;
-}
-
-.g-badge {
-  position: absolute;
-  left: 3px;
-  bottom: 3px;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-
-.g-tile.is-locked {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background: var(--recess-fill);
-  border: 1px dashed var(--border);
-  box-shadow: inset 0 1px 6px var(--recess-shadow);
-}
-
 .g-num {
   font-size: 0.85rem;
   font-weight: 800;
@@ -197,29 +150,6 @@
   font-weight: 700;
   color: var(--accent-primary);
   opacity: 0.75;
-}
-
-/* arc payoff */
-
-.g-payoff {
-  position: relative;
-  display: block;
-  width: 100%;
-  margin-top: 0.55rem;
-  padding: 0;
-  border: 1px solid var(--accent-primary);
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 1087 / 792;
-  background: var(--surface-raised);
-  cursor: pointer;
-}
-
-.g-payoff img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 /* viewer */
@@ -504,34 +434,6 @@ body.light-theme .g-viewer-nav button[disabled] {
   height: 18px;
 }
 
-/* volume covers sit in the sequence like any other piece, but are colour art
-   and worth marking so they don't read as just another title page */
-.g-tile.is-cover {
-  border: 1px solid var(--accent-primary);
-}
-
-.g-tile.is-cover .g-badge {
-  background: var(--accent-primary);
-}
-
-.g-tile.is-locked.is-cover {
-  border-style: dashed;
-  border-color: color-mix(in srgb, var(--accent-primary) 45%, transparent);
-}
-
-.g-tile.is-locked .g-num {
-  font-size: 0.72rem;
-}
-
-
-/* the next tile up: same fill as the header bar, so the points number and the
-   picture it buys read as one thing */
-.g-tile.is-next {
-  border: 1px solid var(--accent-primary);
-  border-style: solid;
-  overflow: hidden;
-}
-
 .g-tile-fill {
   position: absolute;
   left: 0;
@@ -542,31 +444,6 @@ body.light-theme .g-viewer-nav button[disabled] {
   pointer-events: none;
 }
 
-.g-tile.is-next .g-num {
-  color: var(--text);
-  opacity: 0.75;
-  position: relative;
-}
-
-.g-tile.is-next .g-need {
-  opacity: 1;
-  position: relative;
-  font-size: 0.55rem;
-}
-
-.g-next-tag {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  font-size: 0.5rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: #fff;
-  background: var(--accent-primary);
-  padding: 1px 4px;
-  border-radius: 3px;
-}
-
 /* everything past the current arc, as one strip - no names, no counts */
 
 .g-lock {
@@ -575,27 +452,6 @@ body.light-theme .g-viewer-nav button[disabled] {
   height: 15px;
   fill: var(--accent-primary);
   opacity: 0.6;
-}
-
-
-/* ---- locked arc reward: a veiled frame ---- */
-
-.g-payoff.is-locked {
-  aspect-ratio: 1087 / 500;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.15rem;
-  border: 1px solid color-mix(in srgb, var(--accent-primary) 35%, transparent);
-  background:
-    repeating-linear-gradient(
-      -45deg,
-      transparent 0 7px,
-      color-mix(in srgb, var(--accent-primary) 7%, transparent) 7px 8px
-    ),
-    var(--recess-fill);
-  box-shadow: inset 0 2px 14px var(--recess-shadow);
 }
 
 .g-veil-mark {
@@ -620,7 +476,6 @@ body.light-theme .g-viewer-nav button[disabled] {
 }
 
 /* ---- spoiler edge: ghost tiles receding ---- */
-
 
 /* ---- spoiler edge: the grid continues, then dissolves ---- */
 

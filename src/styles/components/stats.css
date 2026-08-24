@@ -42,22 +42,6 @@ body.light-theme .stat-tile {
   font-weight: 700;
 }
 
-.reviews-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 80px;
-  margin-top: 0.5rem;
-}
-
-.reviews-chart-bar {
-  flex: 1;
-  min-height: 2px;
-  background: var(--accent-cyan);
-  border-radius: 3px 3px 0 0;
-  opacity: 0.85;
-}
-
 .topic-lapse-row {
   display: flex;
   justify-content: space-between;
@@ -229,24 +213,6 @@ body.light-theme .stat-tile {
   display: inline-block;
 }
 
-.deck-split {
-  display: flex;
-  justify-content: space-between;
-  text-align: center;
-  gap: 0.4rem;
-}
-
-.deck-split strong {
-  display: block;
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.deck-split span {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-}
-
 /* Deck make-up. The bar carries the proportion (which is the honest story -
    most of the deck is untouched), the rows carry the plain-language meaning
    of each state, because "new / learning / review" is scheduler vocabulary
@@ -289,7 +255,6 @@ body.light-theme .stat-tile {
 }
 
 .deck-rotation { background: var(--accent-green); }
-.deck-learning { background: var(--accent-primary); }
 .deck-new { background: color-mix(in srgb, var(--text-muted) 40%, transparent); }
 
 /* Pace: the number and its delta share a baseline, with six weekly medians
@@ -1360,7 +1325,6 @@ body.light-theme .rk-sum {
   font-weight: 700;
   color: var(--text-muted);
 }
-
 
 /* count of pictures unlocked but not yet looked at. a number rather than the
    Progress tab's bare dot: "you have three waiting" is worth the walk over,

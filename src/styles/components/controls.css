@@ -295,26 +295,6 @@ body.light-theme .session-bar .toggle-group {
   color: var(--text-muted);
 }
 
-/* Study Settings sheet number inputs (reuses .filter-chip-btn conventions
-   from the filter drawer for the session-length chip group above it). */
-.settings-number-input {
-  width: 100%;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 0.6rem 0.85rem;
-  border-radius: 10px;
-  font-family: var(--font-ui);
-  font-size: 0.95rem;
-  min-height: 44px;
-}
-
-body.light-theme .settings-number-input {
-  background: rgba(255, 255, 255, 0.85);
-  color: #334155;
-  border-color: rgba(2, 132, 199, 0.2);
-}
-
 /* SRS grade buttons (Again / Hard / Good / Easy) */
 .grade-buttons {
   display: grid;

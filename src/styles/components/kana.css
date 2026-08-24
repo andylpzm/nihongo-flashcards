@@ -1,63 +1,6 @@
-/* Hiragana / Katakana switcher. On mobile the bottom tab bar has one "Kana"
-   slot, so this is the only way between the two syllabaries - it therefore
-   has to be present on every viewport, not just small ones. */
-.kana-switch {
-  display: inline-flex;
-  gap: 0.35rem;
-  padding: 0.3rem;
-  margin-bottom: 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--glass);
-}
 
-body.light-theme .kana-switch {
-  background: rgba(255, 255, 255, 0.85);
-}
-
-.btn-kana-switch {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.05rem;
-  min-width: 104px;
-  min-height: 44px;
-  padding: 0.4rem 1.1rem;
-  border: none;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-muted);
-  font-family: var(--font-jp);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.btn-kana-switch span {
-  font-family: var(--font-ui);
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.75;
-}
 
 @media (hover: hover) {
-  .btn-kana-switch:hover:not(.active) {
-    color: var(--text);
-  }
-}
-
-.btn-kana-switch.active {
-  background: linear-gradient(135deg, var(--accent-primary) 0%, color-mix(in srgb, var(--accent-primary) 80%, transparent) 100%);
-  color: #fff;
-  box-shadow: 0 4px 12px var(--accent-primary-glow);
-}
-
-body.light-theme .btn-kana-switch.active {
-  background: linear-gradient(135deg, #0284c7 0%, rgba(2, 132, 199, 0.85) 100%);
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
 }
 
 /* Both syllabaries use the identical primary-button treatment - the katakana

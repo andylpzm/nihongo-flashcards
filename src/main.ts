@@ -3,6 +3,22 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/components/card.css';
 import './styles/components/gallery-card.css';
+// the holographic finish: his stylesheets verbatim, then ours meeting them.
+//
+// the order is HIS load order, narrowed to the finishes we use. it matters
+// within a rarity: three files style `rare holo vmax` and they layer -
+// v-max lays down the shine (the rippled plate), rainbow-alt overrides it for
+// trainer-gallery cards, and trainer-gallery-v-max replaces the glare. drop
+// v-max and the cover tier loses its texture and keeps only the sparkle.
+import './styles/holo/base.css';
+import './styles/holo/vars.css';
+import './styles/holo/cosmos-holo.css';
+import './styles/holo/v-max.css';
+import './styles/holo/rainbow-alt.css';
+import './styles/holo/trainer-gallery-v-max.css';
+import './styles/holo/shiny-rare.css';
+// ours last: it overrides base.css's clips, sizing and pointer-events
+import './styles/components/holo.css';
 import './styles/components/controls.css';
 import './styles/components/sidebar.css';
 import './styles/components/bottom-nav.css';
@@ -42,6 +58,7 @@ import {
   gradeCurrentCard,
   setStudyMode,
   endSessionEarly,
+  onSessionEnd,
   getActiveCard,
 } from './ui/card';
 import { Rating } from './srs/scheduler';
@@ -63,7 +80,7 @@ import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
 import { runMigrationIfNeeded } from './srs/migration';
 import { onSwipe } from './ui/gestures';
-import { createPager, type PagerController } from './ui/pager';
+import { createPager, type PagerController, type PagerPage } from './ui/pager';
 import { startSplash } from './ui/splash';
 import { setupSettingsSheet } from './ui/settingsSheet';
 import { setupPackPanel } from './ui/packPanel';
@@ -106,11 +123,55 @@ type KanaPage = 'hiragana' | 'katakana' | 'kanji';
 let kanaPager: PagerController | null = null;
 let studyPager: PagerController | null = null;
 
+/* the study screen's own pages. held here rather than inline at createPager so
+   the session page can be retitled: a kana or kanji sitting runs on this screen
+   but is not "Study", and leaving the heading saying so was the other half of
+   what made starting one feel like being moved somewhere else.
+   the pager re-reads pages[i].title on refresh(), so mutating is enough. */
+const STUDY_PAGES: PagerPage[] = [
+  { id: 'session', title: 'Study', label: 'Study session' },
+  { id: 'browse', title: 'Browse' },
+];
+const DECK_TITLE: Record<'vocabulary' | 'hiragana' | 'katakana' | 'kanji', string> = {
+  vocabulary: 'Study',
+  hiragana: 'Hiragana',
+  katakana: 'Katakana',
+  kanji: 'Kanji',
+};
+/** name the study screen after the deck it is currently working through */
+function setStudyTitle(deck: keyof typeof DECK_TITLE): void {
+  STUDY_PAGES[0]!.title = DECK_TITLE[deck];
+  studyPager?.refresh();
+}
+
 /** point the study deck at whatever mode the app is in, without animating -
  *  entering the section is not a swipe. */
 function syncStudyPager(): void {
   const mode = state.studyMode === 'browse' ? 'browse' : 'session';
   if (studyPager && studyPager.getActive() !== mode) studyPager.goTo(mode, false);
+}
+
+/* where the current sitting was started from.
+ *
+ * a kana or kanji sitting runs on the study screen - the deck machinery, the
+ * card and the session bar all live in #section-vocabulary - but it is started
+ * from the Kana section, and it should not feel like leaving it. the tab bar
+ * stays on Kana for the duration, and this is what takes the user back to the
+ * right chart when the sitting ends. null means the sitting started on Study,
+ * where ending it already leaves you in the right place. */
+let sessionOrigin: KanaPage | null = null;
+
+/** start a kana or kanji sitting without leaving the Kana section behind */
+function startKanaPractice(deck: 'hiragana' | 'katakana' | 'kanji', page: KanaPage): void {
+  sessionOrigin = page;
+  void loadDeck(deck);
+  // the study SCREEN, but still the Kana TAB: `session-active` hides the study
+  // chrome for the duration, so what is on screen is a card rather than a
+  // section, and saying "Study" here was the jarring part - the tab jumped
+  // under the finger that had just pressed Practice.
+  switchSection('vocabulary', page === 'kanji' ? 'katakana' : page);
+  syncBottomNav('kana');
+  setStudyTitle(deck);
 }
 
 /** Show one kana page's content and render its grid. Called by the pager. */
@@ -456,9 +517,12 @@ function setupEventListeners(): void {
 
   // Sidebar Menu triggers
   menuVocabulary.addEventListener('click', () => {
+    // going to Study on purpose gives up the kana return trip
+    sessionOrigin = null;
     switchSection('vocabulary');
     syncBottomNav('study');
     syncStudyPager();
+    setStudyTitle('vocabulary');
     void loadDeck('vocabulary');
   });
 
@@ -478,17 +542,8 @@ function setupEventListeners(): void {
   });
 
   // Dynamic Learning workspace hooks to Study deck mode
-  btnPracticeHiragana.addEventListener('click', () => {
-    void loadDeck('hiragana');
-    switchSection('vocabulary', 'hiragana');
-    syncBottomNav('study');
-  });
-
-  btnPracticeKatakana.addEventListener('click', () => {
-    void loadDeck('katakana');
-    switchSection('vocabulary', 'katakana');
-    syncBottomNav('study');
-  });
+  btnPracticeHiragana.addEventListener('click', () => startKanaPractice('hiragana', 'hiragana'));
+  btnPracticeKatakana.addEventListener('click', () => startKanaPractice('katakana', 'katakana'));
 
   // Bottom Tab Bar triggers (mobile) - mirror the equivalent sidebar item
   bottomNavButtons.study?.addEventListener('click', () => menuVocabulary.click());
@@ -506,10 +561,7 @@ function setupEventListeners(): void {
     studyPager = createPager(studyHost, {
       content: studyContent,
       initial: 'session',
-      pages: [
-        { id: 'session', title: 'Study', label: 'Study session' },
-        { id: 'browse', title: 'Browse' },
-      ],
+      pages: STUDY_PAGES,
       // A running session must not be swiped away - "End session" is the
       // intended exit, and paging would silently discard the queue.
       isLocked: () => document.body.classList.contains('session-active'),
@@ -522,8 +574,24 @@ function setupEventListeners(): void {
   // vocabulary would swap the cards out from under it. The session lives in
   // card.ts and survives section changes, so returning the view is enough.
   document.getElementById('btn-resume-session')?.addEventListener('click', () => {
-    switchSection('vocabulary');
-    syncBottomNav('study');
+    // a kana sitting keeps the Kana tab when you come back to it, the same way
+    // it kept it when it started - otherwise resuming re-introduces the jump
+    // that starting no longer makes.
+    if (sessionOrigin) {
+      switchSection('vocabulary', sessionOrigin === 'kanji' ? 'katakana' : sessionOrigin);
+      syncBottomNav('kana');
+    } else {
+      switchSection('vocabulary');
+      syncBottomNav('study');
+    }
+  });
+
+  // a sitting started from Kana hands the user back to the chart they came
+  // from. on Study it is already where it should be, so nothing happens.
+  onSessionEnd(() => {
+    const from = sessionOrigin;
+    sessionOrigin = null;
+    if (from) showKanaSection(from);
   });
 
   // The three charts are pages of one deck: big title, dots, long swipe.
@@ -558,11 +626,9 @@ function setupEventListeners(): void {
     });
   });
 
-  document.getElementById('btn-practice-kanji')?.addEventListener('click', () => {
-    void loadDeck('kanji');
-    switchSection('vocabulary', 'katakana');
-    syncBottomNav('study');
-  });
+  document.getElementById('btn-practice-kanji')?.addEventListener('click', () =>
+    startKanaPractice('kanji', 'kanji')
+  );
 
   // Hiragana Tab Event Listeners
   const hiraganaTabBtns = document.querySelectorAll<HTMLElement>('#hiragana-tabs .btn-chart-tab');

@@ -1,0 +1,229 @@
+/* the holographic finish, from simeydotme/pokemon-cards-css (GPL-3.0).
+   his stylesheets sit in src/styles/holo/ and are verbatim; everything that
+   makes them meet our card is here, so an upstream update never has to be
+   merged by hand.
+
+   the finish a card gets is decided in rarityOf() - see galleryCard.ts:
+     chapter, black and white -> plain glare      (his base.css only)
+     chapter, colour          -> rare shiny       (shiny-rare.css)
+     cover                    -> TG v-max         (rainbow-alt + tg-v-max)
+     arc reward and bonus     -> rare holo cosmos (cosmos-holo.css) */
+
+
+/* ---- 1. the finish covers the whole card ------------------------------- */
+/* his clips carve out a pokemon card's art window - --clip is
+   inset(9.85% 8% 52.85% 8%), so a finish lives between 10% and 47% down and
+   stops dead. right for a real card, where only that panel is foiled; our
+   artwork is full bleed, so the finish has to cross the whole thing, border
+   included. every clip in every rarity file resolves through one of these, so
+   redefining them here reaches all of them without touching his css.
+   --clip-trainer-invert is referenced by reverse-holo but never defined
+   upstream; listed so the set is complete if we ever add that finish. */
+.gc-holo {
+  --clip:                inset(0 round var(--card-radius));
+  --clip-invert:         inset(0 round var(--card-radius));
+  --clip-stage:          inset(0 round var(--card-radius));
+  --clip-stage-invert:   inset(0 round var(--card-radius));
+  --clip-trainer:        inset(0 round var(--card-radius));
+  --clip-trainer-invert: inset(0 round var(--card-radius));
+  --clip-borders:        inset(0 round var(--card-radius));
+}
+
+
+/* ---- 2. the scope element --------------------------------------------- */
+/* his effects select as `.card[data-rarity] .card__shine`, so a `.card` has to
+   be an ancestor. it WRAPS .gc rather than being it: base.css gives .card its
+   own transform, pointer-events and aspect-ratio, and putting those on .gc
+   would overwrite the tilt and the 63/88 shape. as a wrapper it only needs
+   neutering. `display: contents` keeps it out of layout entirely, so .gc still
+   sizes against .gc-frame's container query. */
+.gc-holo {
+  display: contents;
+}
+
+/* his base.css sets `.card { pointer-events: none }` and hands it back on
+   `.card__rotator { pointer-events: auto }` - the rotator is the button you
+   actually grab. we have no rotator, so nothing was handing it back, and
+   pointer-events INHERITS: `display: contents` stops the wrapper generating a
+   box, but it does not stop the value reaching .gc. the card was not
+   hit-testable at all - elementFromPoint at its centre returned .gc-frame. */
+.gc.has-holo {
+  pointer-events: auto;
+}
+
+
+/* ---- 3. sizing his layers --------------------------------------------- */
+/* upstream sizes .card__shine and .card__glare through `.card__rotator *`:
+   width 100%, display grid, grid-area 1/1, overflow hidden, backface hidden.
+   we have no rotator, so the parts that matter are reproduced here.
+   inset 0 on the CARD, not on .gc-win: the finish crosses the blue edge too. */
+.gc > .card__shine,
+.gc > .card__glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  /* grid, and NOT block. several of his finishes carry a second layer as a
+     pseudo positioned with `grid-area: 1/1` - cosmos puts one on the glare. as
+     a block child that pseudo is laid out in flow instead of stacked, which is
+     not where he put it. */
+  display: grid;
+  overflow: hidden;
+  /* hidden backfaces are his one blanket gpu hint: it keeps the layer off the
+     paint path when it is turned away, and on webkit it also forces the layer
+     onto the compositor in the first place. nothing here is ever seen from
+     behind, so it costs nothing. */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+/* above the artwork at z2, below the furniture at z7-9 */
+.gc > .card__shine { z-index: 3; }
+.gc > .card__glare { z-index: 4; }
+/* his pseudo layers stack on the parent rather than flowing after it */
+.gc > .card__shine::before,
+.gc > .card__shine::after,
+.gc > .card__glare::after {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* flat, so the furniture's z-index still decides what is on top. .gc was
+   preserve-3d only so OUR foils could sit at different translateZ depths, and
+   those are gone - his layers sort by z-index, and the number and wordmark have
+   to stay above them. flat also stops the card being promoted to its own
+   compositing layer, so this is a small win rather than a cost. */
+.gc.has-holo {
+  transform-style: flat;
+
+  /* the optimisation HE could not take.
+     base.css carries it commented out, twice:
+       overflow: hidden;   <-- improves perf on mobile, but breaks backface
+       isolation: isolate; <-- improves perf, but breaks backface on Chrome
+     both are unavailable to him because his card flips to a printed back and
+     needs backface-visibility to work. ours never flips - the viewer's turn
+     button rotates a landscape card upright, it does not reveal a reverse -
+     so we can take them.
+     it matters most for the blend modes. without isolation every
+     mix-blend-mode layer has to read the backdrop BEHIND the card - the
+     viewer's ground, the drifting orbs, whatever is under it - and webkit
+     cannot composite that layer independently. isolate closes the group at the
+     card, so the blending reads only the card's own stack. */
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* the artwork on its own layer, so the blended layers above do not drag it
+   back through raster every frame. his `.card__rotator img` does the same with
+   translate3d; ours carries a 2d translate from the framing, and a 2d
+   transform earns no layer. applyFraming() writes translate3d for that reason -
+   see galleryCard.ts. */
+.gc.has-holo .gc-art {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
+/* ---- 4. the binder keeps its still cards ------------------------------- */
+/* a pocket is looked at, not handled: nothing in the binder follows a finger,
+   so a mini gets no shine and no glare at all - the builder does not emit them.
+   this is belt and braces in case one ever ends up there. */
+.gc.is-mini > .card__shine,
+.gc.is-mini > .card__glare {
+  display: none;
+}
+
+
+/* ---- 5. reduced motion ------------------------------------------------- */
+/* the tilt is pointer-driven rather than animated, so there is no animation to
+   stop - but a card that does not move should not light up either. */
+@media (prefers-reduced-motion: reduce) {
+  .gc > .card__shine,
+  .gc > .card__glare {
+    opacity: 0 !important;
+  }
+}
+
+
+/* ---- 6. the cover tier keeps its rippled plate ------------------------- */
+/* DELIBERATE divergence from upstream, and the only one that changes a look.
+   `--foil` is normally a per-card texture fetched from his CDN. two of his
+   files disagree about the fallback when there is no CDN:
+
+     v-max.css:21      --foil: url(vmaxbg.jpg);  --imgsize: 60% 30%;
+     rainbow-alt.css:147   --foil: none;         --imgsize: 25% auto;
+
+   his load order puts rainbow-alt last, so on his site a trainer-gallery
+   v-max has no plate - the `::before` that consumes var(--foil) drops its
+   background-image entirely and the card is sparkle without texture.
+
+   the contact sheet Andy chose this finish from loaded the files in
+   alphabetical order, which put rainbow-alt FIRST and let v-max's fallback
+   survive. that was a mistake in the sheet, not a feature of his css - but the
+   rippled version is the one that was picked, so it is re-asserted here on
+   purpose rather than by leaving his files mis-ordered.
+
+   only the `::before` reads var(--foil); the shine and its ::after are built
+   from var(--glitter) and gradients, so nothing else moves. */
+/* the selector has to out-specify rainbow-alt's, which is
+   `.card:not(.masked)[data-rarity][data-trainer-gallery] .card__shine` at
+   (0,5,0). adding our own .gc-holo takes this to (0,6,0). */
+.card.gc-holo:not(.masked)[data-rarity='rare holo vmax'][data-trainer-gallery='true'] .card__shine {
+  --foil: url('/nihongo-flashcards/holo/vmaxbg.jpg');
+  --imgsize: 60% 30%;
+}
+
+
+/* ---- 7. colour chapters: texture inside the window only ---------------- */
+/* the other three finishes cross the whole card, border included. this one
+   does not: a colour chapter page is a printed page, and the illusion plate
+   running out over the blue edge made the edge look like part of the picture.
+   the border still catches the LIGHT - only the texture is held in.
+
+   it works through his own mechanism rather than around it. shiny-rare.css
+   applies `clip-path: var(--clip)` to .card__shine and nothing else; the glare
+   is only ever clipped for rare holo, cosmos and reverse holo, none of which
+   we use. so redefining --clip here confines the shine and its two pseudos -
+   clip-path on a parent clips its children - and leaves .card__glare alone.
+
+   the geometry is the window's own: inset by --pad, with the window's radius.
+   it is declared on .gc and NOT on the scope wrapper, which is where the first
+   attempt went wrong: a var() inside another custom property is resolved at the
+   element that DECLARES it, not at the one that uses it. --pad and --u live on
+   .gc, so on the wrapper above it they resolve to nothing, --clip becomes
+   guaranteed-invalid, and clip-path silently computes to none. declared here it
+   also beats the card-wide value inherited from the wrapper, whatever the
+   specificity, because a declared value always wins over an inherited one. */
+.card.gc-holo[data-rarity='rare shiny'] .gc {
+  --clip: inset(var(--pad) round calc(2.857 * var(--u)));
+  --clip-stage: inset(var(--pad) round calc(2.857 * var(--u)));
+  --clip-trainer: inset(var(--pad) round calc(2.857 * var(--u)));
+}
+
+/* ...and the border gets its light back.
+   his glare for `rare shiny` is `mix-blend-mode: multiply` - it can only take
+   light away. the highlight on that finish comes entirely from .card__shine,
+   which is color-dodge, and clipping that to the window above left the border
+   with only the darkening half. it read as dead.
+
+   this is our own .gc-rim brought back as a pseudo, for this tier only. the
+   trick is its z-index: 1 sits UNDER .gc-win at 2, so it shows in the border
+   ring and nowhere else, and needs no mask to stay off the artwork. */
+.card.gc-holo[data-rarity='rare shiny'] .gc.has-holo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  mix-blend-mode: screen;
+  opacity: calc(var(--card-opacity) * var(--pointer-from-center) * 0.85);
+  background:
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgb(255 255 255 / 90%) 0%, rgb(190 230 255 / 50%) 22%, transparent 46%),
+    radial-gradient(farthest-corner circle at calc(100% - var(--pointer-x)) calc(100% - var(--pointer-y)),
+      rgb(120 200 255 / 35%) 0%, transparent 40%);
+}

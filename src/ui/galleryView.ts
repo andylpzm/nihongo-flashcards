@@ -77,7 +77,7 @@ function thumb(entry: GalleryEntry, itemIndex: number, next: NextUp | null): str
   // an unseen picture stays wrapped. the mini card is NOT built for it - if the
   // art were sitting under a frosted pane it would flash for a frame when the
   // pane cleared, which is the spoiler this whole thing exists to avoid.
-  const unseen = profile ? !hasSeen(profile, entry.id, positionOf(entry.id)) : false;
+  const unseen = !seen(entry.id);
   return `<button class="g-slot${slot}${unseen ? ' is-wrapped' : ''}"
     data-item="${itemIndex}" data-card="${entry.id}"
     aria-label="${unseen ? 'New card, tap to reveal' : pieceLabel(entry)}"
@@ -101,15 +101,30 @@ function frostPane(): string {
  * last piece was paid for the reward became tappable - and you could take it
  * before looking at a single card it was supposed to be the reward for.
  */
+/**
+ * has this picture been opened?
+ *
+ * under ?unlockall the answer is always yes. the switch exists for reviewing
+ * the art, and unlocking by points alone left all 302 cards lying face down -
+ * every one would have to be tapped before it could be looked at, and no arc
+ * reward would ever appear, since a reward waits on its pieces being SEEN and
+ * not merely unlocked. it reads the profile and never writes, so real progress
+ * is untouched.
+ */
+function seen(id: string): boolean {
+  if (previewAll) return true;
+  return !!profile && hasSeen(profile, id, positionOf(id));
+}
+
 function arcFinished(arc: ArcView): boolean {
-  return !!profile && arc.entries.every((e) => e.unlocked && hasSeen(profile!, e.id, positionOf(e.id)));
+  return previewAll || (!!profile && arc.entries.every((e) => e.unlocked && seen(e.id)));
 }
 
 function payoffTile(payoff: PayoffEntry, arc: ArcView, itemIndex: number): string {
   if (!arcFinished(arc)) {
     // a covered frame: the shape the reward will occupy, veiled. reads as a
     // thing waiting to be uncovered rather than a notice.
-    const left = arc.entries.filter((e) => !(e.unlocked && profile && hasSeen(profile, e.id, positionOf(e.id)))).length;
+    const left = arc.entries.filter((e) => !(e.unlocked && seen(e.id))).length;
     return `<div class="g-slot is-locked is-reward${isLandscape(arc.id, payoff.kind) ? ' is-land' : ''}">
       <span class="g-empty">
         <span class="g-veil-mark">◈</span>
@@ -118,7 +133,7 @@ function payoffTile(payoff: PayoffEntry, arc: ArcView, itemIndex: number): strin
       </span>
     </div>`;
   }
-  const unseen = profile ? !hasSeen(profile, arc.id, positionOf(arc.id)) : false;
+  const unseen = !seen(arc.id);
   return `<button class="g-slot g-payoff-slot${isLandscape(arc.id, payoff.kind) ? ' is-land' : ''}${
     unseen ? ' is-wrapped' : ''}"
     data-item="${itemIndex}" data-card="${arc.id}" aria-label="${arc.arc} reward">
@@ -345,7 +360,7 @@ async function revealSlot(slot: HTMLElement): Promise<void> {
   // points that bought it landed. announcing it at the end of the session told
   // you the arc was done while its final card was still sitting there wrapped.
   const arc = arcOfPicture.get(id);
-  if (arc?.payoff && arc.entries.every((e) => e.unlocked && profile && hasSeen(profile, e.id, positionOf(e.id)))) {
+  if (arc?.payoff && arc.entries.every((e) => e.unlocked && seen(e.id))) {
     pendingArc = arc;
   }
 
@@ -653,7 +668,7 @@ let veilNext = false;
  */
 function revealed(i: number): boolean {
   const it = viewerItems[i];
-  return !!it && !!profile && hasSeen(profile, it.id, positionOf(it.id));
+  return !!it && seen(it.id);
 }
 
 /** the nearest opened picture in that direction, or -1 if there is none */
