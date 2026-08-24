@@ -94,6 +94,12 @@ const HABITS: Habit[] = [
   { name: 'keen: nearly every night, usually all four', showsUp: 0.95, grinds: 0.7 },
 ];
 
+// these two replay two years of sittings for three habits and binary-search
+// six milestones through them, which is seconds of real work, not milliseconds.
+// they were sitting just under vitest's 5s default and started timing out the
+// moment the machine had anything else on it.
+const SLOW = 60_000;
+
 describe('how long the collection takes', () => {
   it('prints the curve for realistic habits', () => {
     const lines = ['', 'cards opened after N months (of 302)', ''.padEnd(46, '-')];
@@ -104,7 +110,7 @@ describe('how long the collection takes', () => {
     }
     console.log(lines.join('\n'));
     expect(true).toBe(true);
-  });
+  }, SLOW);
 
   it('prints where the time actually goes', () => {
     const lines = ['', 'xp per active day, and when milestones land', ''.padEnd(64, '-')];
@@ -145,19 +151,19 @@ describe('how long the collection takes', () => {
     }
     console.log(lines.join('\n'));
     expect(true).toBe(true);
-  });
+  }, SLOW);
 
   it('cannot be rushed: three months of keen study is nowhere near done', () => {
     const { cards } = report(HABITS[2]!);
     const atThreeMonths = cards[2]!;
     expect(atThreeMonths).toBeLessThan(TOTAL_CARDS * 0.45);
-  });
+  }, SLOW);
 
   it('rewards a real habit: a year of steady study is well past halfway', () => {
     const { cards } = report(HABITS[1]!);
     const atTwelve = cards[5]!;
     expect(atTwelve).toBeGreaterThan(TOTAL_CARDS * 0.5);
-  });
+  }, SLOW);
 
   it('the last card really costs the advertised total', () => {
     expect(thresholdFor(TOTAL_CARDS - 1, TOTAL_CARDS)).toBe(TOTAL_TARGET);

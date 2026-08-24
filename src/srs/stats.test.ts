@@ -73,6 +73,31 @@ describe('computeStreak', () => {
     ];
     expect(computeStreak(reviews, now)).toBe(0);
   });
+
+  // the streak walks backwards a day at a time. done by subtracting 24h it
+  // skipped a day on the morning the clocks go forward - that day is only 23
+  // hours long, so from just after 6am a flat 24h lands before the previous
+  // 6am boundary and the day in between is never asked about.
+  it('survives the spring clock change', () => {
+    // 2026-03-29 is when european clocks go forward. local times throughout.
+    const local = (y: number, m: number, d: number, h: number): number =>
+      new Date(y, m - 1, d, h, 0, 0, 0).getTime();
+    const days = [
+      local(2026, 3, 27, 22),
+      local(2026, 3, 28, 22),
+      local(2026, 3, 29, 22),
+    ];
+    const reviews: ReviewRecord[] = [
+      {
+        cardId: 1,
+        card: makeFsrsCard(),
+        log: days.map((ts) => ({ ts, rating: Rating.Good, elapsedMs: 0 })),
+      },
+    ];
+    // the hour the flat subtraction fell over in: past 6am, on the short day
+    expect(computeStreak(reviews, new Date(local(2026, 3, 30, 6)))).toBe(3);
+    expect(computeStreak(reviews, new Date(local(2026, 3, 29, 23)))).toBe(3);
+  });
 });
 
 describe('countLearned / countDueToday / countNewAvailable', () => {

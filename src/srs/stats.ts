@@ -2,7 +2,7 @@ import { Rating, State } from './scheduler';
 import type { ReviewRecord } from './types';
 import type { Card, CardId } from '../state/types';
 import { isVocabCard } from '../data/types';
-import { dateKey } from './dates';
+import { dateKey, dayStart, daysBetween } from './dates';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MASTERED_STABILITY_DAYS = 21;
@@ -64,10 +64,9 @@ export function computeBestStreak(reviews: ReviewRecord[]): number {
   let best = 1;
   let run = 1;
   for (let i = 1; i < sorted.length; i++) {
-    const gap = Math.round(
-      (new Date(`${sorted[i]!}T00:00:00`).getTime() - new Date(`${sorted[i - 1]!}T00:00:00`).getTime()) / DAY_MS
-    );
-    run = gap === 1 ? run + 1 : 1;
+    // daysBetween, not midnight subtraction: local midnight belongs to the
+    // PREVIOUS day-key now, so building a date out of one walks a day back
+    run = daysBetween(sorted[i - 1]!, sorted[i]!) === 1 ? run + 1 : 1;
     if (run > best) best = run;
   }
   return best;
@@ -109,17 +108,22 @@ export function computeStreak(reviews: ReviewRecord[], now: Date = new Date()): 
     }
   }
 
-  let cursorMs = now.getTime();
-  if (!daysWithReviews.has(dateKey(cursorMs))) {
-    // No review yet today - that alone shouldn't break the streak, so start
-    // counting from yesterday instead.
-    cursorMs -= DAY_MS;
-  }
+  // stepping back a calendar day, not 24h of milliseconds. on the morning the
+  // clocks go forward that day is 23 hours long, so a flat subtraction from
+  // 06:30 lands at 05:30 the day before - which, with the day turning at 6am,
+  // is the day before THAT. the day in between never got asked about, and the
+  // streak broke itself once a year.
+  let cursor = dateKey(now.getTime());
+  const back = (key: string): string => dateKey(dayStart(key) - DAY_MS / 2);
+
+  // No review yet today - that alone shouldn't break the streak, so start
+  // counting from yesterday instead.
+  if (!daysWithReviews.has(cursor)) cursor = back(cursor);
 
   let streak = 0;
-  while (daysWithReviews.has(dateKey(cursorMs))) {
+  while (daysWithReviews.has(cursor)) {
     streak++;
-    cursorMs -= DAY_MS;
+    cursor = back(cursor);
   }
   return streak;
 }
@@ -290,14 +294,18 @@ export function computePaceTrend(
   weeks = 6
 ): PaceWeek[] {
   const buckets = new Map<number, number[]>();
+  // local weeks, like every other bucket in the app. under UTC a sunday-night
+  // sitting east of greenwich fell into the week before it happened in.
   const startOfWeek = (ts: number): number => {
-    const d = new Date(ts);
-    d.setUTCHours(0, 0, 0, 0);
-    d.setUTCDate(d.getUTCDate() - d.getUTCDay());
+    const d = new Date(dayStart(dateKey(ts)));
+    d.setDate(d.getDate() - d.getDay());
     return d.getTime();
   };
-  const oldest = startOfWeek(now.getTime() - (weeks - 1) * 7 * DAY_MS);
-  for (let i = 0; i < weeks; i++) buckets.set(oldest + i * 7 * DAY_MS, []);
+  // seeded through startOfWeek as well, or a week that spans a clock change is
+  // an hour off the key its own reviews hash to and quietly collects nothing
+  for (let i = weeks - 1; i >= 0; i--) {
+    buckets.set(startOfWeek(now.getTime() - i * 7 * DAY_MS), []);
+  }
 
   for (const record of reviews) {
     for (const entry of record.log) {

@@ -66,7 +66,6 @@ import { onSwipe } from './ui/gestures';
 import { createPager, type PagerController } from './ui/pager';
 import { startSplash } from './ui/splash';
 import { setupSettingsSheet } from './ui/settingsSheet';
-import { armMotion } from './ui/motion';
 import { setupPackPanel } from './ui/packPanel';
 import { setupBinderTab, binderTapAllowed } from './ui/binderTab';
 import { startPointsClock } from './state/profile';
@@ -191,6 +190,128 @@ async function seedXpForTesting(target: number): Promise<void> {
   location.replace(import.meta.env.BASE_URL);
 }
 
+/**
+ * dev only: ?pack connects the pack the dev server already serves at /__pack.
+ *
+ * the opening screen asks for a file, and a file picker is not something you
+ * can drive on a phone or a simulator - which is the only place the layout
+ * questions this exists to answer can be asked.
+ */
+async function connectLocalPack(): Promise<void> {
+  const res = await fetch('/__pack');
+  if (!res.ok) throw new Error('no pack: run node tools/pack-gallery.mjs');
+  const { connectPack } = await import('./state/vault');
+  await connectPack(new File([await res.blob()], 'aonohako.pack'));
+}
+
+/**
+ * dev only: ?probe draws a card's real measurements and frame rate on screen.
+ *
+ * safari on a phone cannot be asked a question from here - there is no console
+ * to reach into and no way to run a line of javascript in it - so anything you
+ * want to know has to be drawn where a screenshot can read it. this is what
+ * caught the window coming back 162px tall inside a 159px card, which no amount
+ * of looking at the screen was going to find.
+ *
+ * ?probe&auto sweeps the tilt in a circle without a finger, so two runs are
+ * comparable. ?probe&off=wash,grain,foil,glare hides layers to price them.
+ *
+ * a warning worth keeping: close anything else that animates before believing a
+ * number. two chrome tabs running this same app moved the reading by ten frames
+ * a second, which was wider than the differences being measured.
+ */
+function showProbe(): void {
+  const flags = new URLSearchParams(location.search);
+  const off = (flags.get('off') ?? '').split(',').filter(Boolean);
+  if (off.length) {
+    const style = document.createElement('style');
+    style.textContent = off
+      .map((n) => `.gc-${n}, .gc-${n}2 { display: none !important; }`)
+      .join('\n');
+    document.head.appendChild(style);
+  }
+  const pre = document.createElement('pre');
+  pre.style.cssText =
+    'position:fixed;inset:auto 0 0 0;z-index:99999;margin:0;padding:6px;font:10px/1.35 ui-monospace,monospace;' +
+    'background:#000;color:#0f0;white-space:pre-wrap;max-height:44vh;overflow:auto;pointer-events:none';
+  document.body.appendChild(pre);
+  const box = (el: Element | null): string =>
+    el ? `${(el as HTMLElement).offsetWidth}x${(el as HTMLElement).offsetHeight}` : '-';
+
+  // 300 frames, not 60: a five-second window. a one-second window swings by ten
+  // frames a second between two readings of the SAME page, which is wider than
+  // any difference worth measuring.
+  const frames: number[] = [];
+  let worst = 0;
+  const beat = (t: number): void => {
+    frames.push(t);
+    while (frames.length > 300) frames.shift();
+    requestAnimationFrame(beat);
+  };
+  requestAnimationFrame(beat);
+
+  // the sweep writes the same properties cardTilt writes, so the paint cost is
+  // the real one - it just does it identically every time
+  let phase = 0;
+  const sweep = (): void => {
+    const card = document.querySelector<HTMLElement>('.g-viewer .gc');
+    if (card) {
+      phase += 0.05;
+      const px = 50 + Math.cos(phase) * 45;
+      const py = 50 + Math.sin(phase) * 45;
+      card.style.setProperty('--rotate-x', `${(-(px - 50) / 3.5).toFixed(2)}deg`);
+      card.style.setProperty('--rotate-y', `${((py - 50) / 3.5).toFixed(2)}deg`);
+      card.style.setProperty('--pointer-x', `${px.toFixed(1)}%`);
+      card.style.setProperty('--pointer-y', `${py.toFixed(1)}%`);
+      card.style.setProperty('--card-opacity', '1');
+      card.style.setProperty('--pointer-from-center', '1');
+      card.style.setProperty('--foil-x', `${(37 + px * 0.26).toFixed(1)}%`);
+      card.style.setProperty('--foil-y', `${(33 + py * 0.34).toFixed(1)}%`);
+    }
+    requestAnimationFrame(sweep);
+  };
+  if (flags.has('auto')) requestAnimationFrame(sweep);
+
+  const fps = (): string => {
+    if (frames.length < 2) return '-';
+    const span = frames.at(-1)! - frames[0]!;
+    let slowest = 0;
+    for (let i = 1; i < frames.length; i++) slowest = Math.max(slowest, frames[i]! - frames[i - 1]!);
+    worst = Math.max(worst, slowest);
+    const median = [...frames.slice(1).map((f, i) => f - frames[i]!)].sort((a, b) => a - b)[
+      Math.floor((frames.length - 1) / 2)
+    ]!;
+    return (
+      `${Math.round(((frames.length - 1) / span) * 1000)}fps over ${frames.length}f` +
+      `  median ${median.toFixed(1)}ms  slowest ${Math.round(slowest)}ms  worst ${Math.round(worst)}ms`
+    );
+  };
+  const tick = (): void => {
+    const card =
+      document.querySelector<HTMLElement>('.g-viewer .gc') ??
+      document.querySelector<HTMLElement>('.g-slot .gc');
+    if (!card) {
+      pre.textContent = fps();
+      return;
+    }
+    const cs = getComputedStyle(card);
+    const img = card.querySelector<HTMLImageElement>('.gc-art');
+    pre.textContent = [
+      `ua      ${navigator.userAgent.slice(-38)}`,
+      `frame   ${box(card.parentElement)}   card ${box(card)}`,
+      `--u     ${cs.getPropertyValue('--u').trim()}  ->  padding ${cs.padding}  radius ${cs.borderTopLeftRadius}`,
+      `win     ${box(card.querySelector('.gc-win'))}`,
+      `img     ${box(img)}  natural ${img?.naturalWidth}x${img?.naturalHeight}`,
+      `tf      ${img?.style.transform}`,
+      `seg1    ${card.style.getPropertyValue('--seg1')}`,
+      `clip    ${cs.clipPath}`,
+      `off     ${off.join(',') || 'nothing'}`,
+      `rate    ${fps()}`,
+    ].join('\n');
+  };
+  setInterval(tick, 700);
+}
+
 async function init(): Promise<void> {
   if (import.meta.env.DEV) {
     const flags = new URLSearchParams(location.search);
@@ -203,6 +324,8 @@ async function init(): Promise<void> {
       await seedXpForTesting(xp);
       return;
     }
+    if (flags.has('pack')) await connectLocalPack();
+    if (flags.has('probe')) showProbe();
   }
 
   // Started before any work so the counter reflects the real boot, and
@@ -269,8 +392,6 @@ function setupEventListeners(): void {
   setupSettingsSheet();
   setupPackPanel();
   setupBinderTab();
-  // takes the tilt sensor at the first touch, so the first card opens live
-  armMotion();
 
 
   // SRS Grade buttons

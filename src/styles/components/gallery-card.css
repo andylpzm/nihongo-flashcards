@@ -29,8 +29,13 @@
   --rotate-x: 0deg;
   --rotate-y: 0deg;
   --pointer-from-center: 0;
+  --pad: calc(3.81 * var(--u));
   border-radius: calc(5.714 * var(--u));
-  padding: calc(3.81 * var(--u));
+  padding: var(--pad);
+  /* NOT clip-path, unlike .gc-win and .g-back. clip-path clips everything the
+     element paints, and the box-shadow below is painted outside the border box
+     - clipping here quietly took the card's drop shadow away. overflow alone
+     holds the watercolour edge in on both engines. */
   overflow: hidden;
   background: #7fc4e8;
   touch-action: none;
@@ -43,13 +48,26 @@
   --u: 0.7159cqw;
 }
 
-/* the watercolour edge */
+/* the watercolour edge.
+   drawn a quarter bigger than the card on every side so the blur has material
+   to work with, then clipped back to the card's own rounded rectangle.
+   the clip belongs HERE and not on .gc, and that distinction is the whole
+   thing: this is the layer that paints past the corners, and .gc is the layer
+   that carries the drop shadow. clip-path clips everything an element paints,
+   a box-shadow included - put it on .gc and the shadow goes with it. put it on
+   the wash and the corners come back for free.
+   `overflow: hidden` on .gc is supposed to handle this and does on blink, but
+   webkit does not apply it to this layer once the card is composited, which is
+   what filled the corners in square on the phone.
+   16.216% is where the card's edge falls inside the wash: the wash is 148% of
+   the card, so 24/148 of the way in on every side. */
 .gc-wash {
   position: absolute;
   inset: -24%;
   z-index: 0;
   pointer-events: none;
   mix-blend-mode: multiply;
+  clip-path: inset(16.216% round calc(5.714 * var(--u)));
   filter: blur(15px) saturate(150%);
   background:
     radial-gradient(40% 28% at 20% 16%, rgb(31 92 168 / 95%), transparent 68%),
@@ -62,6 +80,9 @@
   z-index: 1;
   pointer-events: none;
   opacity: 0.42;
+  /* rounds itself rather than trusting the card to round it, same reason as the
+     wash above - it covers the full border box, corners included */
+  border-radius: inherit;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 140px 140px;
@@ -84,12 +105,26 @@
       rgb(120 200 255 / 35%) 0%, transparent 40%);
 }
 
+/* the window is placed against the card's edges rather than sized at 100% of
+   it. the card's height comes from `aspect-ratio`, and a percentage height
+   resolved against an aspect-ratio height is where the engines part company:
+   blink measured the content box (151px inside a 159px card) and webkit came
+   back with 162 - a window 3px TALLER than the card it sits in. the artwork
+   was then fitted to that, so every picture on an iphone was drawn to the
+   wrong frame and the framing each one was authored with was thrown away.
+   inset off the padding is a definite size and asks nobody's opinion. */
 .gc-win {
-  position: relative;
+  position: absolute;
+  inset: var(--pad);
   z-index: 2;
-  height: 100%;
   border-radius: calc(2.857 * var(--u));
   overflow: hidden;
+  /* the window is the crop. `preserve-3d` below puts it on its own compositing
+     layer, and webkit clips a composited layer to its rectangle and no further
+     - so on iphone the artwork simply ran out past the card, and the framing
+     each picture was authored with went with it. clip-path is applied to the
+     layer, so it holds. */
+  clip-path: inset(0 round calc(2.857 * var(--u)));
   transform-style: preserve-3d;
   /* what shows for the instant before the artwork paints. near-white, because
      these are manga pages: a dark window read as a hole punched in the card. */
@@ -352,6 +387,14 @@
   display: block;
   cursor: pointer;
   aspect-ratio: 63 / 88;
+  /* not decoration - the binder collapses without it. a grid item whose width
+     and height are both auto is stretched to its cell in BOTH axes, but an
+     item that also has an aspect-ratio cannot be: something has to give, and
+     the engines disagree about what. blink stretches the width and derives the
+     height; webkit shrinks to content and derives the height from that, which
+     on an iphone turned every pocket into a 25pt stub. saying the width out
+     loud leaves nothing to disagree about. */
+  width: 100%;
 }
 /* a landscape pocket covers the whole two-wide space. its height comes from a
    hidden sizer shaped like ONE portrait pocket, not from align-self:stretch -
@@ -596,6 +639,12 @@ body.light-theme .g-grid {
   inset: 3px;
   border-radius: 5px;
   overflow: hidden;
+  /* the wiggle below puts this on its own compositing layer, and webkit clips
+     a composited layer to its RECTANGLE - `overflow: hidden` stops rounding
+     the corners the moment the animation starts, so the face-down card came
+     out square on iphone and rounded everywhere else. clip-path is applied to
+     the layer itself and survives. */
+  clip-path: inset(0 round 5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -679,14 +728,46 @@ body.light-theme .g-grid {
     radial-gradient(70% 55% at 45% 45%, #ffffff 0%, rgb(255 255 255 / 88%) 42%, rgb(226 244 255 / 70%) 72%),
     linear-gradient(100deg, #f4fbff 0%, #ffffff 46%, #dcf0ff 100%);
 }
-.gc-veil::after {
-  content: '';
+/* the travelling band crosses the WHOLE card, not just the window.
+   it used to live on the veil, which sits inside .gc-win - so the light stopped
+   dead at the window's edge and the card number, the wordmark and the author
+   line sat there untouched in the middle of a glowing surface. a sheet of light
+   lying on a card catches all of it. what stays hidden is still only the
+   artwork; this is the shine, not the cover. */
+.gc-shine {
   position: absolute;
   inset: 0;
+  /* 10, above EVERYTHING the card carries. the number and the author line sit
+     at 9 and the logo and side text at 8, so anything lower lets the light
+     cross some of the furniture and skip the rest - which is what made the
+     number look like a sticker on a lit card. */
+  z-index: 10;
+  pointer-events: none;
+  border-radius: inherit;
   background: linear-gradient(100deg,
     transparent 26%, rgb(255 255 255 / 62%) 46%, rgb(200 236 255 / 50%) 54%, transparent 74%);
   background-size: 260% 100%;
-  animation: gc-shine 2.6s ease-in-out infinite;
+  /* no-repeat, and it is the whole reason the sweep stops cleanly.
+     the band is one gradient on a tile two and a half times the card's width,
+     and a tiled background does not have one band - it has one per tile. at the
+     end of the travel the NEXT tile's band has already come in from the other
+     side, and `forwards` then freezes it there across the card's left edge
+     until the element is torn down. that is the sweep appearing to loop back.
+     with a single tile there is exactly one band: it comes in one side, crosses,
+     and leaves the other, and both ends of the animation are off-card. */
+  background-repeat: no-repeat;
+  /* ONE pass, and it comes AFTER the card has landed.
+     this used to be `2.6s infinite`, which fits about one and a half sweeps
+     into the reveal: the first crossed a card that was still a blank sheet of
+     light, which reads as a flicker rather than a highlight, and the second ran
+     on over a card that had already settled and then got cut off mid-sweep.
+     the delay is past the 3.4s the rest of the reveal takes, deliberately. run
+     any earlier and the band travels over a card the veil is still bleaching -
+     white over white, with nothing to catch. it waits for the picture to be all
+     the way up, then the light crosses something you can actually see.
+     `both` matters: without a backwards fill the band sits parked mid-card for
+     the whole delay instead of waiting off the right-hand edge. */
+  animation: gc-shine 2s ease-in-out 2.8s both;
   mix-blend-mode: screen;
 }
 @keyframes gc-shine {
@@ -801,7 +882,7 @@ body.light-theme .g-grid {
 
 @media (prefers-reduced-motion: reduce) {
   .gc-veil,
-  .gc-veil::after,
+  .gc-shine,
   .gc-bloom,
   .gc.is-veiled {
     animation: none;

@@ -598,6 +598,13 @@ function mountCard(el: HTMLElement, item: ViewerItem, veiled = false): void {
     veil.className = 'gc-veil';
     card.querySelector('.gc-win')?.appendChild(veil);
 
+    // the shine goes on the CARD, not in the window with the veil: the light
+    // has to cross the number, the wordmark and the author line too, or it
+    // stops at the window's edge and leaves them sitting there unlit
+    const shine = document.createElement('span');
+    shine.className = 'gc-shine';
+    card.appendChild(shine);
+
     // the bloom lives OUTSIDE the card: .gc clips its own children, so a glow
     // added inside can never spill past the border and would read as light
     // behind the card rather than light coming off it
@@ -616,14 +623,17 @@ function mountCard(el: HTMLElement, item: ViewerItem, veiled = false): void {
         frame.classList.add('is-unveiling');
       })
     );
-    // 3.4s of keyframes: two swells ~600ms apart, then a long fade as the
-    // picture comes up on the white; the sheet goes once the picture covers it.
+    // 3.4s of keyframes brings the picture up on the white, and the shine then
+    // crosses the settled card and is gone by 4.8s. torn down after that, with
+    // a beat to spare - pulling these while the band is still on the card is
+    // what a cut-off sweep looks like.
     window.setTimeout(() => {
       card.classList.remove('is-veiled', 'is-unveiling');
       frame.classList.remove('is-veiled', 'is-unveiling');
       veil.remove();
+      shine.remove();
       bloom.remove();
-    }, 3800);
+    }, 5000);
   }
 
   tilt = mountTilt(card);

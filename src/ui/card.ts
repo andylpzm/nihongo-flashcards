@@ -22,6 +22,7 @@ import { saveActiveSession, loadActiveSession, clearActiveSession } from '../srs
 import { renderSessionBar, clearSessionBar, type SessionBarState } from './sessionBar';
 import type { Grade, SessionRecord } from '../srs/types';
 import { computeStreak } from '../srs/stats';
+import { dateKey } from '../srs/dates';
 import { recordSession } from '../state/profile';
 import { loadGallery } from '../data/loader';
 import { announceSessionReward } from './galleryView';
@@ -102,9 +103,11 @@ let sessionComplete: { answers: number; elapsedMs: number; endedEarly: boolean }
 // button advertises is guaranteed to be the interval written to IndexedDB.
 let pendingPreview: Record<Grade, RecordLogItem> | null = null;
 
-function todayKey(now: Date): string {
-  return now.toISOString().slice(0, 10);
-}
+// which day a half-finished session belongs to. the same 6am boundary as the
+// streak and the missions (srs/dates.ts): bucketing this by UTC instead meant
+// that somewhere around 2am local the app decided last night's session was
+// stale and threw it away, on a screen still calling it the same day.
+const todayKey = (now: Date): string => dateKey(now.getTime());
 
 export function persistFilters(): void {
   saveFilters({
@@ -651,6 +654,13 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
 
   const item = activeSession.current;
   const elapsedMs = Date.now() - cardShownAt;
+  // taken BEFORE the await, not after it. recordGrade yields, and nothing about
+  // the card changes while it does - so a second tap landing in that gap passed
+  // every guard above and graded the same card twice: two log entries, two
+  // steps through the queue, and an fsrs interval computed from a review that
+  // never happened. dropping the preview first makes the second tap fall out at
+  // the check above.
+  pendingPreview = null;
   await recordGrade(item.card, grade, chosen.card, new Date(), elapsedMs);
 
   // Every grade gets audio confirmation. The three "I recalled it" grades share
@@ -664,7 +674,6 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
   }
 
   activeSession.advance(grade);
-  pendingPreview = null;
   updateStats();
 
   if (activeSession.isComplete) {

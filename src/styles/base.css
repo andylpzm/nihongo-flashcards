@@ -36,6 +36,11 @@ body {
   width: 100%;
   overflow-x: hidden;
   position: relative;
+  /* no rubber band. added to the home screen this is meant to read as an app,
+     and an enthusiastic swipe that bounces the whole page to show grey behind
+     it is the single clearest tell that it is a web page. the page still
+     scrolls normally - only the overscroll at either end is stopped. */
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -74,12 +79,29 @@ body {
   z-index: 0;
 }
 
+/* A GRADIENT, not a blurred disc.
+ *
+ * These were solid circles under `filter: blur(120px)`, drifting on a 20s
+ * transform. That combination is the single most expensive thing the app can
+ * do: an animated transform promotes the element to its own layer, and a
+ * blurred element on its own layer has to be re-blurred from its unblurred
+ * texture EVERY FRAME - the blur result cannot be cached across frames. Two of
+ * them, on every screen, for as long as the app is open. A 120px radius is
+ * roughly six times the radius at which blur is considered cheap.
+ *
+ * A blurred disc is a radial gradient drawn the hard way. Painting the gradient
+ * directly is the same picture for no filter at all, and the drift then becomes
+ * an ordinary composited transform on a cached texture.
+ *
+ * The box is grown to cover where the blur used to spread (a 200px disc under a
+ * 120px standard deviation reaches about 440px), and the offsets are moved by
+ * the same amount so each bloom stays centred where it was.
+ */
 .glow-orb {
   position: absolute;
-  width: 400px;
-  height: 400px;
+  width: 880px;
+  height: 880px;
   border-radius: 50%;
-  filter: blur(120px);
   z-index: -1;
   opacity: 0.15;
   pointer-events: none;
@@ -87,15 +109,15 @@ body {
 }
 
 .orb-pink {
-  background: var(--accent-primary);
-  top: -100px;
-  right: -50px;
+  background: radial-gradient(closest-side, var(--accent-primary), transparent 72%);
+  top: -340px;
+  right: -290px;
 }
 
 .orb-cyan {
-  background: var(--accent-cyan);
-  bottom: -150px;
-  left: -100px;
+  background: radial-gradient(closest-side, var(--accent-cyan), transparent 72%);
+  bottom: -390px;
+  left: -340px;
   animation-delay: -10s;
 }
 

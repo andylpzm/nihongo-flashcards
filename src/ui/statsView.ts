@@ -30,6 +30,7 @@ import {
 } from '../state/profile';
 import { placement, DEFAULT_POS, type ImagePos } from '../state/imagePos';
 import { openImagePicker } from './imagePicker';
+import { profilePicUrl, readyUrl } from './galleryCard';
 import { syncDailyRing, syncPendingXp } from './progressTab';
 import { createModal, type ModalController } from './modal';
 import { RANKS, rankFor, type Rank } from '../srs/points';
@@ -54,7 +55,10 @@ import type { Card, CardId } from '../state/types';
 
 const statsGrid = document.getElementById('stats-grid');
 
-const BASE = import.meta.env.BASE_URL;
+/** the name is the one piece of this page the user typed. everything else
+    interpolated into innerHTML here is authored data. */
+const escapeHtml = (s: string): string =>
+  s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 const TOPIC_LABELS: Record<string, string> = {
   numbers: 'Numbers & Counters',
@@ -321,7 +325,7 @@ export async function renderStatsView(): Promise<void> {
   statsGrid.innerHTML = `
     <div class="player-card">
       <div class="pc-art">
-        ${profile.banner ? `<img id="pc-art-img" src="${BASE}${profile.banner}" alt="">` : ''}
+        ${profile.banner ? `<img id="pc-art-img" alt="">` : ''}
       </div>
       <button class="pc-banner-btn" id="btn-pick-banner">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3H3a2 2 0 00-2 2v14a2 2 0 002 2h18a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H3V5h18v14zM8.5 12.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg>
@@ -331,13 +335,13 @@ export async function renderStatsView(): Promise<void> {
         <button class="pc-avatar" id="btn-pick-avatar" aria-label="Change profile picture">
           ${
             profile.avatar
-              ? `<span class="pc-avatar-clip"><img id="pc-avatar-img" src="${profile.avatar}" alt=""></span>`
+              ? `<span class="pc-avatar-clip"><img id="pc-avatar-img" alt=""></span>`
               : `<span class="pc-silhouette"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5c0-3-4-5.5-9-5.5z"/></svg></span>`
           }
           <span class="pc-pen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></span>
         </button>
         <div class="pc-name">
-          <div class="pc-id"><h3>${displayName(profile)}</h3><button class="pc-rank" id="btn-rank" aria-label="What ${shownRank.name} earns you">${shownRank.name}</button></div>
+          <div class="pc-id"><h3>${escapeHtml(displayName(profile))}</h3><button class="pc-rank" id="btn-rank" aria-label="What ${shownRank.name} earns you">${shownRank.name}</button></div>
           <div class="pc-xp"><b id="pc-total">${shownTotal.toLocaleString()}</b><span>xp</span></div>
         </div>
         <div class="pc-bar"><i id="pc-fill" style="width:${rankPct}%"></i><span class="pc-edge" id="pc-edge"></span></div>
@@ -439,7 +443,7 @@ export async function renderStatsView(): Promise<void> {
   syncDailyRing(missions.doneCount, missions.missions.length, !missions.bonusClaimed);
   syncPendingXp(0);
   wireBonusClaim(missions);
-  applyStoredPositions(profile.bannerPos, profile.avatarPos);
+  applyStoredPositions(profile.banner, profile.bannerPos, profile.avatar, profile.avatarPos);
   wireRankSheet(rank, pointsSummary.total);
   if (pendingXp > 0) void countUpXp(shownTotal, pointsSummary.total);
   else if (profile.seenPoints !== pointsSummary.total) void saveProfile({ seenPoints: pointsSummary.total });
@@ -453,7 +457,12 @@ export async function renderStatsView(): Promise<void> {
  * clientWidth rather than the border box - measuring the wrong one shifts the
  * crop away from what the editor showed.
  */
-function applyStoredPositions(bannerPos: ImagePos, avatarPos: ImagePos): void {
+function applyStoredPositions(
+  banner: string,
+  bannerPos: ImagePos,
+  avatar: string,
+  avatarPos: ImagePos
+): void {
   const place = (img: HTMLImageElement | null, pos: ImagePos): void => {
     if (!img) return;
     const frame = img.parentElement;
@@ -473,8 +482,21 @@ function applyStoredPositions(bannerPos: ImagePos, avatarPos: ImagePos): void {
     if (img.complete && img.naturalWidth) draw();
     else img.addEventListener('load', draw, { once: true });
   };
-  place(document.querySelector<HTMLImageElement>('#pc-art-img'), bannerPos);
-  place(document.querySelector<HTMLImageElement>('#pc-avatar-img'), avatarPos);
+  // src is set here rather than in the markup: what is stored is a path into
+  // the pack, and only the vault can turn that into something an <img> will
+  // load. writing the path straight into src worked in the repo, where the
+  // artwork is still loose in public/, and 404'd in the built app - where it
+  // is the only copy that exists.
+  const show = (img: HTMLImageElement | null, stored: string, pos: ImagePos): void => {
+    if (!img) return;
+    void profilePicUrl(stored).then((url) => {
+      if (!url || !img.isConnected) return;
+      img.src = url;
+      place(img, pos);
+    });
+  };
+  show(document.querySelector<HTMLImageElement>('#pc-art-img'), banner, bannerPos);
+  show(document.querySelector<HTMLImageElement>('#pc-avatar-img'), avatar, avatarPos);
 }
 
 const TICK_SVG =
@@ -788,11 +810,21 @@ function wirePickers(
   const open = async (target: 'avatar' | 'banner'): Promise<void> => {
     const { summary } = await getPointsState();
     const sagas = await loadGallery();
-    const pictures = unlockedImages(sagas, effectivePoints(summary.total)).map((p) => ({
-      ...p,
-      image: `${BASE}${p.image}`,
-      thumb: p.thumb ? `${BASE}${p.thumb}` : '',
-    }));
+    // the picker works in urls it can put in a src; the profile stores paths.
+    // this is the only place the two meet, so the way back is kept right here
+    // rather than by trying to reverse a blob url later.
+    const pathOf = new Map<string, string>();
+    const unlocked = unlockedImages(sagas, effectivePoints(summary.total));
+    const pictures = (
+      await Promise.all(
+        unlocked.map(async (p) => {
+          const image = await profilePicUrl(p.image);
+          if (!image) return null;
+          pathOf.set(image, p.image);
+          return { ...p, image, thumb: (p.thumb && readyUrl(p.thumb)) || image };
+        })
+      )
+    ).filter((p): p is NonNullable<typeof p> => p !== null);
 
     openImagePicker(overlay, {
       target,
@@ -811,17 +843,21 @@ function wirePickers(
       clearLabel: target === 'avatar' ? 'Remove picture' : 'No banner',
       pictures,
       current: {
-        image: target === 'avatar' ? avatar : banner ? `${BASE}${banner}` : '',
+        image: await profilePicUrl(target === 'avatar' ? avatar : banner),
         pos: target === 'avatar' ? avatarPos : bannerPos,
       },
       async onSave(image, pos, file) {
+        // back from the url the picker handed us to the path worth keeping. a
+        // photo has no path and is stored whole; anything unrecognised is left
+        // as it came rather than saved as a blob url that dies with the tab.
+        const stored = pathOf.get(image) ?? image;
         if (target === 'avatar') {
           // a phone photo is baked down to 256px here; a gallery picture is
           // already small, so it is stored by path and positioned on render
-          const value = file ? await photoToAvatar(file, pos) : image;
+          const value = file ? await photoToAvatar(file, pos) : stored;
           await saveProfile({ avatar: value, avatarPos: file ? { ...DEFAULT_POS } : pos });
         } else {
-          await saveProfile({ banner: image.replace(BASE, ''), bannerPos: pos });
+          await saveProfile({ banner: stored, bannerPos: pos });
         }
         await renderStatsView();
       },

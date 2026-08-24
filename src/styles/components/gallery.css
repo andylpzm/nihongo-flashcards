@@ -228,6 +228,26 @@ body.viewer-open {
   overflow: hidden;
 }
 
+/* nothing behind the viewer keeps moving.
+   the viewer is opaque and fills the screen, but the binder underneath carried
+   on regardless: every wrapped card still rocking, every cover and arc card
+   still running its 7s sweep - and that sweep travels on background-position,
+   which repaints. dozens of elements repainting continuously, none of them on
+   screen, for as long as a card is open. a css animation does not stop just
+   because nothing can see it, so it has to be told. */
+/* !important on purpose. every one of these animations is declared with the
+   `animation` shorthand, which resets play-state to running, and those rules
+   are more specific than any blanket ancestor selector - so without it the
+   card sweeps carry on and only the ones declared loosely actually pause. */
+body.viewer-open .g-grid,
+body.viewer-open .g-grid *,
+body.viewer-open .g-grid *::before,
+body.viewer-open .g-grid *::after,
+body.viewer-open .decorations-container,
+body.viewer-open .decorations-container * {
+  animation-play-state: paused !important;
+}
+
 .g-viewer {
   position: fixed;
   inset: 0;
@@ -248,7 +268,11 @@ body.viewer-open {
     radial-gradient(30% 22% at 8% 92%, rgb(249 115 22 / 13%), transparent 72%);
   background-repeat: no-repeat;
   background-size: 150% 150%;
-  animation: g-wash-warm 47s ease-in-out infinite;
+  /* NOT animated. this used to drift on `background-position`, which is a paint
+     property - so the whole viewport was repainted every frame, for as long as
+     the viewer was open, to move a bloom you cannot see moving over 47 seconds.
+     the two blue washes below still drift, on transforms, which is free; three
+     independent periods was the point and two of them still deliver it. */
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -263,20 +287,24 @@ body.viewer-open {
   z-index: 0;
   pointer-events: none;
   mix-blend-mode: screen;
-  /* the app's orbs are blur(120) at .15 - anything near full strength here
-     turned the viewer into a blue room next door to a near-black app */
-  filter: blur(70px) saturate(105%);
+  /* no blur here either. these are radial gradients, which are already soft -
+     the 70px blur only rounded off an edge that a gradient stop can round off
+     for nothing. it cost a great deal: an animated transform puts each of these
+     on its own layer, and a blurred layer is re-blurred from scratch every
+     frame, at better than viewport size, twice, for as long as a card is open.
+     the stops below were widened to give back the softness. */
+  opacity: 0.9;
 }
 .g-viewer::before {
   background:
-    radial-gradient(40% 30% at 24% 20%, rgb(24 58 104 / 62%), transparent 68%),
-    radial-gradient(34% 26% at 78% 16%, rgb(20 72 104 / 52%), transparent 70%);
+    radial-gradient(52% 42% at 24% 20%, rgb(24 58 104 / 62%), rgb(24 58 104 / 22%) 46%, transparent 82%),
+    radial-gradient(46% 38% at 78% 16%, rgb(20 72 104 / 52%), rgb(20 72 104 / 18%) 48%, transparent 84%);
   animation: g-wash-a 34s ease-in-out infinite;
 }
 .g-viewer::after {
   background:
-    radial-gradient(44% 32% at 54% 84%, rgb(19 62 108 / 58%), transparent 66%),
-    radial-gradient(30% 24% at 14% 74%, rgb(22 84 84 / 34%), transparent 70%);
+    radial-gradient(56% 44% at 54% 84%, rgb(19 62 108 / 58%), rgb(19 62 108 / 20%) 44%, transparent 80%),
+    radial-gradient(42% 36% at 14% 74%, rgb(22 84 84 / 34%), rgb(22 84 84 / 12%) 46%, transparent 84%);
   animation: g-wash-b 41s ease-in-out infinite;
 }
 @keyframes g-wash-a {
@@ -287,12 +315,8 @@ body.viewer-open {
   0%, 100% { transform: translate(0, 0); }
   50% { transform: translate(-10%, -9%); }
 }
-/* 47s against the blues' 34 and 41: three periods with no common factor, so
-   the three blooms never come back to the same arrangement */
-@keyframes g-wash-warm {
-  0%, 100% { background-position: 40% 30%, 60% 70%; }
-  50% { background-position: 55% 20%, 45% 82%; }
-}
+/* the warm bloom sits still now - see .g-viewer. the two blues still run on 34s
+   and 41s, which share no factor, so they go a long way before repeating. */
 /* light: the same blooms, but multiplied onto paper instead of screened onto
    night - screened over a pale ground just washes out to nothing */
 body.light-theme .g-viewer {
@@ -301,7 +325,6 @@ body.light-theme .g-viewer {
 body.light-theme .g-viewer::before,
 body.light-theme .g-viewer::after {
   mix-blend-mode: multiply;
-  filter: blur(44px) saturate(120%);
 }
 body.light-theme .g-viewer::before {
   background:
