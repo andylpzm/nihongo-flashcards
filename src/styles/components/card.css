@@ -18,7 +18,7 @@
   /* GPU layer promotion: force a dedicated compositing layer so transforms
      don't trigger main-thread layout. The 0.01px Z nudge is the same trick
      poke-holo uses to get hardware acceleration on iOS Safari. */
-  will-change: transform, opacity, z-index;
+  will-change: transform;
   -webkit-transform: translate3d(0, 0, 0.01px);
   transform: translate3d(0, 0, 0.01px);
 }
@@ -76,9 +76,6 @@ body.light-theme .flashcard {
   border: 1px solid var(--border);
   border-radius: 24px;
   overflow: hidden;
-  /* GPU layer hint */
-  -webkit-transform: translate3d(0, 0, 0.01px);
-  transform: translate3d(0, 0, 0.01px);
   /* Safari fails to clip backgrounds to border-radius on elements with 
      backface-visibility hidden during 3d transforms. This forces clipping. */
   -webkit-mask-image: -webkit-radial-gradient(white, black);

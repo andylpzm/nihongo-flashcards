@@ -23,8 +23,8 @@
   --hair: calc(0.714 * var(--u));
   --pointer-x: 50%;
   --pointer-y: 50%;
-  --foil-x: calc(37% + (var(--pointer-x) * 0.26));
-  --foil-y: calc(33% + (var(--pointer-y) * 0.34));
+  --foil-x: 50%;
+  --foil-y: 50%;
   --card-opacity: 0;
   --rotate-x: 0deg;
   --rotate-y: 0deg;
@@ -57,7 +57,7 @@
      svg's own alpha). 148% centred reproduces the wash's old inset:-24% box. */
   touch-action: none;
   transform-style: preserve-3d;
-  will-change: transform, visibility, z-index;
+  will-change: transform;
   transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
   box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
   /* Fix Safari border-radius clipping bug on the shadow */
