@@ -277,8 +277,12 @@ body.viewer-open .decorations-container * {
   opacity: 0;
   transition: opacity 0.2s ease;
 }
-/* two washes drifting past each other on 34s and 41s. the periods are
-   deliberately unequal so they never realign into a loop you can spot. */
+/* two washes, and they hold still.
+   they used to drift past each other on 34s and 41s. both carry
+   `mix-blend-mode: screen`, and a BLENDED layer that moves forces everything
+   underneath it - the whole card - to be re-composited every frame. that is the
+   last thing running while a card just sits on screen, and it ran for as long
+   as the viewer was open. the drift was never the point; the arrangement is. */
 .g-viewer::before,
 .g-viewer::after {
   content: '';
@@ -299,21 +303,11 @@ body.viewer-open .decorations-container * {
   background:
     radial-gradient(52% 42% at 24% 20%, rgb(24 58 104 / 62%), rgb(24 58 104 / 22%) 46%, transparent 82%),
     radial-gradient(46% 38% at 78% 16%, rgb(20 72 104 / 52%), rgb(20 72 104 / 18%) 48%, transparent 84%);
-  animation: g-wash-a 34s ease-in-out infinite;
 }
 .g-viewer::after {
   background:
     radial-gradient(56% 44% at 54% 84%, rgb(19 62 108 / 58%), rgb(19 62 108 / 20%) 44%, transparent 80%),
     radial-gradient(42% 36% at 14% 74%, rgb(22 84 84 / 34%), rgb(22 84 84 / 12%) 46%, transparent 84%);
-  animation: g-wash-b 41s ease-in-out infinite;
-}
-@keyframes g-wash-a {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(12%, 8%); }
-}
-@keyframes g-wash-b {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(-10%, -9%); }
 }
 /* the warm bloom sits still now - see .g-viewer. the two blues still run on 34s
    and 41s, which share no factor, so they go a long way before repeating. */

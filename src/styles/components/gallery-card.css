@@ -68,11 +68,17 @@
   pointer-events: none;
   mix-blend-mode: multiply;
   clip-path: inset(16.216% round calc(5.714 * var(--u)));
-  filter: blur(15px) saturate(150%);
+  /* NO blur. this is the one layer on the card that is painted whether or not
+     anything is happening, so a convolution here is paid on every card in the
+     binder, forever. these are radial gradients - already soft - and the blur
+     was only rounding off where they overlap. extra stops do that for free.
+     (poke-holo, which this card's effects come from, has no blur anywhere in
+     its card css at all; its idle card is a single flat image.) */
   background:
-    radial-gradient(40% 28% at 20% 16%, rgb(31 92 168 / 95%), transparent 68%),
-    radial-gradient(32% 24% at 80% 12%, rgb(46 140 196 / 90%), transparent 70%),
-    radial-gradient(44% 32% at 52% 88%, rgb(28 104 176 / 92%), transparent 66%);
+    radial-gradient(44% 31% at 20% 16%, rgb(31 92 168 / 95%), rgb(31 92 168 / 34%) 46%, transparent 76%),
+    radial-gradient(36% 27% at 80% 12%, rgb(46 140 196 / 90%), rgb(46 140 196 / 30%) 48%, transparent 78%),
+    radial-gradient(48% 35% at 52% 88%, rgb(28 104 176 / 92%), rgb(28 104 176 / 32%) 46%, transparent 74%);
+  filter: saturate(150%);
 }
 .gc-grain {
   position: absolute;
