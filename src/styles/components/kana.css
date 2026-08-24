@@ -31,7 +31,7 @@ body.light-theme .kana-switch {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .btn-kana-switch span {
@@ -93,7 +93,7 @@ body.light-theme .btn-kana-switch.active {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s, border-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
   position: relative;
   overflow: hidden;
   min-height: 70px;

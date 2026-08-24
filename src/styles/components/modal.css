@@ -276,7 +276,7 @@ body.light-theme .drawer-body::-webkit-scrollbar-thumb {
   padding: 0.55rem 0.75rem;
   min-height: 46px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   -webkit-user-select: none;
   box-sizing: border-box;
@@ -397,7 +397,7 @@ body.light-theme .filter-chip-btn.active {
   padding: 0.35rem 0.6rem;
   min-height: 44px;
   border-radius: 8px;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 @media (hover: hover) {

@@ -504,19 +504,6 @@ body.light-theme .g-viewer-nav button[disabled] {
   height: 18px;
 }
 
-@media (min-width: 480px) {
-  .g-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (min-width: 768px) {
-  .g-grid {
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-  }
-}
-
 /* volume covers sit in the sequence like any other piece, but are colour art
    and worth marking so they don't read as just another title page */
 .g-tile.is-cover {
@@ -643,7 +630,7 @@ body.light-theme .g-viewer-nav button[disabled] {
 
 .g-ghost-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   height: 62px;
   /* dissolves downward: the collection carries on past what is known, rather

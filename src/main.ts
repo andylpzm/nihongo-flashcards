@@ -657,10 +657,12 @@ function setupEventListeners(): void {
   // already no-op in Study Session mode, where grading advances instead).
   onSwipe(cardViewport, {
     onDragMove: (dx) => {
+      cardViewport.classList.add('dragging');
       cardViewport.style.transform = `translateX(${dx}px)`;
       cardViewport.style.opacity = String(1 - Math.min(Math.abs(dx) / 300, 0.5));
     },
     onDragEnd: () => {
+      cardViewport.classList.remove('dragging');
       cardViewport.style.transform = '';
       cardViewport.style.opacity = '';
     },

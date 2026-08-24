@@ -17,8 +17,6 @@
 .btn {
   background: var(--glass);
   border: 1px solid var(--border);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   color: var(--text);
   padding: 0.85rem 1.75rem;
   border-radius: 14px;
@@ -26,7 +24,7 @@
   font-weight: 500;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s, border-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +197,7 @@ body.light-theme .btn-primary {
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 body.light-theme .btn-toggle {
@@ -338,7 +336,7 @@ body.light-theme .settings-number-input {
   background: var(--glass);
   color: var(--text);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
   font-family: var(--font-ui);
 }
 

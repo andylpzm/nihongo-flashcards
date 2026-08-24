@@ -63,8 +63,6 @@ body.light-theme .logo-section h1 {
   border-radius: 18px;
   padding: 1.25rem 1.5rem;
   box-shadow: 0 10px 30px color-mix(in srgb, var(--accent-primary) 10%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .proposal-header {

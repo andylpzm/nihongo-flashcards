@@ -15,6 +15,19 @@
      horizontal one belongs to the card, not to the browser's back gesture */
   touch-action: pan-y;
   transition: transform 0.25s, opacity 0.25s;
+  /* GPU layer promotion: force a dedicated compositing layer so transforms
+     don't trigger main-thread layout. The 0.01px Z nudge is the same trick
+     poke-holo uses to get hardware acceleration on iOS Safari. */
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0.01px);
+  transform: translate3d(0, 0, 0.01px);
+}
+
+/* During a swipe drag the JS updates transform every pointer event. The
+   default transition: transform 0.25s fights that, starting a new 250ms
+   curve per pixel and lagging behind the finger. Kill it while dragging. */
+.card-viewport.dragging {
+  transition: none;
 }
 
 @media (max-width: 767px) {
@@ -68,9 +81,9 @@
   z-index: 2;
   opacity: 1;
   visibility: visible;
-  background: linear-gradient(135deg, rgb(255 255 255 / 4%) 0%, rgb(255 255 255 / 1%) 100%);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 4%) 0%, rgb(255 255 255 / 1%) 100%),
+    var(--surface-raised, rgb(15 23 42 / 88%));
   box-shadow: 0 20px 40px var(--shadow-color);
 }
 
@@ -80,9 +93,9 @@
   visibility: hidden;
   pointer-events: none;
   transform: rotateY(180deg);
-  background: linear-gradient(135deg, rgb(255 255 255 / 5%) 0%, rgb(255 255 255 / 1%) 100%);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 5%) 0%, rgb(255 255 255 / 1%) 100%),
+    var(--surface-raised, rgb(15 23 42 / 88%));
   box-shadow: 0 20px 40px var(--shadow-color);
 }
 
