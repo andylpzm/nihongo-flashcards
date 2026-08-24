@@ -55,24 +55,6 @@
      two things a background layer cannot carry, so they are folded in by hand:
      the wash's saturate(150%) (into the colours) and the grain's 0.42 (into the
      svg's own alpha). 148% centred reproduces the wash's old inset:-24% box. */
-  touch-action: none;
-  transform-style: preserve-3d;
-  will-change: transform;
-  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
-  box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
-  /* Fix Safari border-radius clipping bug on the shadow */
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-}
-
-.gc::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  z-index: -1; /* place behind gc-rim and gc-art */
-  
   background-color: #7fc4e8;
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E"),
@@ -83,12 +65,12 @@
   background-position: 0 0, center, center, center;
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-blend-mode: overlay, multiply, multiply, multiply;
-  
-  /* Force Safari to clip this layer's background to border-radius */
-  -webkit-transform: translate3d(0, 0, 0.01px);
-  transform: translate3d(0, 0, 0.01px);
+  touch-action: none;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  box-shadow: 0 12px 28px rgb(0 0 0 / 55%);
 }
-
 .gc.is-land {
   aspect-ratio: 88 / 63;
   --u: 0.7159cqw;
