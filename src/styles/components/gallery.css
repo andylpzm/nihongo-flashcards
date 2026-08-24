@@ -154,6 +154,12 @@
 
 /* viewer */
 
+/* the viewer is its own room - nothing behind it should move.
+   html as well as body, and that is the whole point: base.css puts
+   `overflow-x: hidden` on html, which stops body's overflow propagating to the
+   viewport. html is the scrolling element, so locking body alone clipped
+   body's own box and left the page scrolling underneath the open card. */
+html:has(body.viewer-open),
 body.viewer-open {
   overflow: hidden;
 }

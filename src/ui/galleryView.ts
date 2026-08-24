@@ -536,9 +536,15 @@ function ensureViewer(): HTMLElement {
   let sy = 0;
   let tracking = false;
   el.addEventListener('pointerdown', (e) => {
+    // only from the room around the card, never from the card itself. the
+    // card tilts to a finger, so a downward tilt drag and this gesture were
+    // the same input - handling a card kept closing it. same test the
+    // tap-to-close above uses, which is where the line already was.
+    const from = e.target as HTMLElement;
+    tracking = from === el || from.classList.contains('g-viewer-stage');
+    if (!tracking) return;
     sx = e.clientX;
     sy = e.clientY;
-    tracking = true;
   });
   el.addEventListener('pointerup', (e) => {
     if (!tracking) return;

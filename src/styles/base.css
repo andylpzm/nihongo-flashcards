@@ -36,10 +36,20 @@ body {
   width: 100%;
   overflow-x: hidden;
   position: relative;
-  /* no rubber band. added to the home screen this is meant to read as an app,
-     and an enthusiastic swipe that bounces the whole page to show grey behind
-     it is the single clearest tell that it is a web page. the page still
-     scrolls normally - only the overscroll at either end is stopped. */
+}
+
+/* no rubber band. added to the home screen this is meant to read as an app,
+   and an enthusiastic swipe that bounces the whole page to show grey behind
+   it is the single clearest tell that it is a web page. the page still
+   scrolls normally - only the overscroll at either end is stopped.
+
+   html ONLY. `overflow-x: hidden` makes body a scroll container too, and body
+   grows to its content, so body has no scrollable range of its own - a wheel
+   or a swipe lands on it and has to CHAIN up to html to move anything. this
+   property is exactly what stops that chaining, so on body it did not tame the
+   overscroll, it ate the scroll. the page could still be scrolled from script,
+   which is what made it look like a layout problem rather than this. */
+html {
   overscroll-behavior-y: none;
 }
 
