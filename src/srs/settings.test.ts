@@ -30,7 +30,18 @@ describe('settings', () => {
 
   it('falls back to the default sessionLength for an invalid value', () => {
     localStorage.setItem('nihongo_study_settings', JSON.stringify({ sessionLength: 'huge' }));
-    expect(loadSettings().sessionLength).toBe('medium');
+    expect(loadSettings().sessionLength).toBe('long');
+  });
+
+  it('carries the old three-length picker across', () => {
+    // 'medium' was the 25-card sitting and is now called Long; the old 50-card
+    // 'long' is gone. Neither may silently reset the user's choice.
+    for (const stored of ['medium', 'long']) {
+      localStorage.setItem('nihongo_study_settings', JSON.stringify({ sessionLength: stored }));
+      expect(loadSettings().sessionLength).toBe('long');
+    }
+    localStorage.setItem('nihongo_study_settings', JSON.stringify({ sessionLength: 'short' }));
+    expect(loadSettings().sessionLength).toBe('short');
   });
 
   it('falls back to defaults entirely on corrupt JSON', () => {

@@ -1,5 +1,6 @@
 import type { Card as FsrsCard, Grade } from 'ts-fsrs';
 import type { CardId } from '../state/types';
+import type { SessionLength } from './settings';
 
 export type { FsrsCard, Grade };
 
@@ -30,8 +31,11 @@ export interface SessionRecord {
   endedAt: number;
   /** activeDeck at the time, for a per-deck breakdown later. */
   deck: string;
-  /** Grade presses, the same unit the session bar and Progress page report. */
+  /** Grade presses. Kept for the stats pages; xp no longer reads it. */
   answers: number;
+  /** Which preset this sitting was, and so what finishing it pays. Absent on
+   * sittings recorded before xp went flat - those are scored as 'long'. */
+  length?: SessionLength;
   /** false when the user pressed "End session" instead of emptying the queue. */
   completed: boolean;
 }

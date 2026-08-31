@@ -1,15 +1,22 @@
 import { describe, it, expect } from 'vitest';
-import { computePoints, previewAward, streakOn, streakMultiplier, COMPLETION_BONUS_RATE, RANKS, MISSION_XP, SESSION_VALUE, sessionValue, MAX_STREAK_MULTIPLIER, STREAK_RAMP_DAYS, rankFor, promotionLabel } from './points';
+import { computePoints, previewAward, streakOn, streakMultiplier, SESSION_XP, RANKS, MISSION_XP, SESSION_VALUE, sessionValue, MAX_STREAK_MULTIPLIER, STREAK_RAMP_DAYS, rankFor, promotionLabel } from './points';
 import type { SessionRecord } from './types';
+import type { SessionLength } from './settings';
 
 /** Local noon on the given day, so nothing here sits near a timezone edge. */
 function at(day: string, hour = 12): number {
   return new Date(`${day}T${String(hour).padStart(2, '0')}:00:00`).getTime();
 }
 
-function session(day: string, answers: number, completed = true, hour = 12): SessionRecord {
+function session(
+  day: string,
+  answers: number,
+  completed = true,
+  hour = 12,
+  length: SessionLength = 'long'
+): SessionRecord {
   const startedAt = at(day, hour);
-  return { startedAt, endedAt: startedAt + 300_000, deck: 'vocabulary', answers, completed };
+  return { startedAt, endedAt: startedAt + 300_000, deck: 'vocabulary', answers, length, completed };
 }
 
 /** `days` consecutive sessions ending on 2026-03-30. */
@@ -92,24 +99,21 @@ describe('computePoints', () => {
     expect(computePoints([], new Date(at('2026-03-30'))).total).toBe(0);
   });
 
-  it('pays answers plus the completion bonus on a first session', () => {
+  it('pays the flat amount plus the deck daily on a first session', () => {
     const s = [session('2026-03-30', 30)];
     // Streak is 1 on the very first day, so the multiplier is already slightly
     // above 1 - assert against the formula rather than a magic number.
     // one day of vocabulary also clears that deck's daily mission
-    const expected = Math.round(30 * (1 + COMPLETION_BONUS_RATE) * streakMultiplier(1)) + MISSION_XP;
+    const expected =
+      Math.round(SESSION_XP.long * streakMultiplier(1) * RANKS[0]!.mult) + MISSION_XP;
     expect(computePoints(s, new Date(at('2026-03-30'))).total).toBe(expected);
   });
 
-  it('pays a whole session at full value however long it is', () => {
-    // the old daily cap docked answers mid-session once a total was crossed,
-    // which punished long sittings. a session is now internally uniform.
+  it('pays a Long more than a Short', () => {
     const now = new Date(at('2026-03-30'));
-    const short = computePoints([session('2026-03-30', 25)], now).awards[0]!.points;
-    const long = computePoints([session('2026-03-30', 50)], now).awards[0]!.points;
-    // within rounding: each session is scored once, so doubling the answers
-    // doubles the pay rather than tailing off partway through
-    expect(Math.abs(long - short * 2)).toBeLessThanOrEqual(2);
+    const short = computePoints([session('2026-03-30', 10, true, 12, 'short')], now).awards[0]!;
+    const long = computePoints([session('2026-03-30', 25, true, 12, 'long')], now).awards[0]!;
+    expect(long.points).toBeGreaterThan(short.points);
   });
 
   it('pays each later sitting of the day less than the one before', () => {
@@ -125,20 +129,22 @@ describe('computePoints', () => {
     expect(sessionValue(9)).toBeLessThan(SESSION_VALUE[0]);
   });
 
-  it('keeps one long sitting ahead of the same work split in two', () => {
+  it('keeps one Long ahead of two Shorts', () => {
+    // chris's actual complaint: under per-answer scoring two Shorts earned the
+    // same per card as one Long, so doing less was the better play.
     const now = new Date(at('2026-03-30'));
-    const one = computePoints([session('2026-03-30', 50)], now).total;
-    const split = computePoints(
-      [session('2026-03-30', 25, true, 9), session('2026-03-30', 25, true, 17)],
+    const long = computePoints([session('2026-03-30', 25, true, 12, 'long')], now).total;
+    const twoShorts = computePoints(
+      [session('2026-03-30', 10, true, 9, 'short'), session('2026-03-30', 10, true, 17, 'short')],
       now
     ).total;
-    expect(one).toBeGreaterThan(split);
+    expect(long).toBeGreaterThan(twoShorts);
   });
 
-  it('pays a better finishing bonus at higher rank', () => {
+  it('pays more per sitting at higher rank', () => {
     // rank is read from xp earned so far, so a long history earns at the
     // higher rate its own history bought
-    expect(RANKS[RANKS.length - 1]!.bonus).toBeGreaterThan(RANKS[0]!.bonus);
+    expect(RANKS[RANKS.length - 1]!.mult).toBeGreaterThan(RANKS[0]!.mult);
     const now = new Date(at('2026-03-30'));
     const rich = computePoints(
       [...run(120, 50), session('2026-03-30', 25, true, 20)],
@@ -146,31 +152,45 @@ describe('computePoints', () => {
     ).awards;
     const poor = computePoints([session('2026-03-30', 25)], now).awards[0]!;
     const lastRich = rich[rich.length - 1]!;
-    expect(lastRich.bonusRate).toBeGreaterThan(poor.bonusRate);
+    expect(lastRich.rankMult).toBeGreaterThan(poor.rankMult);
   });
 
-  it('withholds the completion bonus from an abandoned sitting', () => {
-    const finished = computePoints([session('2026-03-30', 30, true)], new Date(at('2026-03-30')));
-    const abandoned = computePoints([session('2026-03-30', 30, false)], new Date(at('2026-03-30')));
-    expect(finished.total).toBeGreaterThan(abandoned.total);
-    expect(abandoned.total).toBe(Math.round(30 * streakMultiplier(1)) + MISSION_XP);
-  });
-
-  it('pays effort, not session count: one long sitting beats several short ones', () => {
+  it('pays an abandoned sitting nothing at all', () => {
+    // the sitting is the unit now, and half a sitting is not one. only the
+    // deck's daily survives, since the deck was still studied.
     const now = new Date(at('2026-03-30'));
-    const one = computePoints([session('2026-03-30', 60)], now);
-    const many = computePoints(
-      [
-        session('2026-03-30', 10, true, 9),
-        session('2026-03-30', 10, true, 10),
-        session('2026-03-30', 10, true, 11),
-        session('2026-03-30', 10, true, 13),
-      ],
-      now
+    const finished = computePoints([session('2026-03-30', 30, true)], now);
+    const abandoned = computePoints([session('2026-03-30', 30, false)], now);
+    expect(finished.total).toBeGreaterThan(abandoned.total);
+    expect(abandoned.awards[0]!.points).toBe(0);
+    expect(abandoned.total).toBe(MISSION_XP);
+  });
+
+  it('cannot be farmed by answering more inside one sitting', () => {
+    // the old scoring paid per grade press, so a failed card coming round
+    // again paid twice - answering 25 cards badly beat answering them well.
+    const now = new Date(at('2026-03-30'));
+    const clean = computePoints([session('2026-03-30', 25)], now).total;
+    const messy = computePoints([session('2026-03-30', 75)], now).total;
+    expect(messy).toBe(clean);
+  });
+
+  it('pays a flat amount for the preset, whatever happened inside', () => {
+    const now = new Date(at('2026-03-30'));
+    const short = computePoints([session('2026-03-30', 99, true, 12, 'short')], now);
+    const long = computePoints([session('2026-03-30', 1, true, 12, 'long')], now);
+    // streak is 1 on the first day, so both carry the same 1.04x
+    expect(short.awards[0]!.points).toBe(Math.round(SESSION_XP.short * streakMultiplier(1)));
+    expect(long.awards[0]!.points).toBe(Math.round(SESSION_XP.long * streakMultiplier(1)));
+  });
+
+  it('scores a sitting recorded before lengths existed as a Long', () => {
+    const now = new Date(at('2026-03-30'));
+    const legacy = { ...session('2026-03-30', 30) };
+    delete (legacy as { length?: unknown }).length;
+    expect(computePoints([legacy], now).awards[0]!.points).toBe(
+      Math.round(SESSION_XP.long * streakMultiplier(1))
     );
-    // The whole point of a proportional finishing bonus: the same 40 answers
-    // split into four tidy little sittings must not out-earn one real one.
-    expect(one.total).toBeGreaterThan(many.total);
   });
 
   it('pays more per session as a streak builds', () => {
@@ -199,11 +219,14 @@ describe('computePoints', () => {
     expect(b).toBe(a);
   });
 
-  it('ignores a negative answer count rather than paying it out', () => {
+  it('survives a length the store should never have held', () => {
+    // read back from IndexedDB, which the user can edit and a restored backup
+    // can carry anything into. an unknown preset must not turn the total NaN.
     const now = new Date(at('2026-03-30'));
-    const s = [{ ...session('2026-03-30', 0), answers: -50 }];
-    // the sitting itself pays nothing; only the daily mission it satisfied
-    expect(computePoints(s, now).total).toBe(MISSION_XP);
+    const junk = { ...session('2026-03-30', 30), length: 'enormous' as unknown as SessionLength };
+    const total = computePoints([junk], now).total;
+    expect(Number.isFinite(total)).toBe(true);
+    expect(total).toBe(Math.round(SESSION_XP.long * streakMultiplier(1)) + MISSION_XP);
   });
 
   it('pays daily missions once per day, not per session', () => {
@@ -236,7 +259,7 @@ describe('previewAward', () => {
   it('matches what the session actually pays once recorded', () => {
     const now = new Date(at('2026-03-30'));
     const history = run(10);
-    const predicted = previewAward(history, 30, true, now);
+    const predicted = previewAward(history, 'long', true, now);
     const actual = computePoints([...history, session('2026-03-30', 30)], now);
     expect(predicted).toBe(actual.awards[actual.awards.length - 1]!.points);
   });

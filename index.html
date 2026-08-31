@@ -81,9 +81,9 @@
   </div>
 
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary">
-    <button class="bottom-nav-item active" id="bottom-nav-study" aria-label="Study Vocabulary" aria-current="page">
+    <button class="bottom-nav-item active" id="bottom-nav-study" aria-label="Words" aria-current="page">
       <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
-      <span>Study</span>
+      <span>Words</span>
     </button>
     <button class="bottom-nav-item" id="bottom-nav-kana" aria-label="Learn Kana">
       <svg viewBox="0 0 24 24" style="fill: none; stroke: currentColor; stroke-width: 2.2;"><circle cx="12" cy="12" r="10"/><text x="12" y="16.5" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" lang="ja">あ</text></svg>
@@ -151,7 +151,7 @@
       <!-- Mode 1: Vocabulary Workspace -->
       <section class="section" id="section-vocabulary">
         <main style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-          <!-- Study session / Browse are two cards of one deck (ui/pager.ts).
+          <!-- Practice / Browse are two cards of one deck (ui/pager.ts).
                The stage is what the pager animates; the card viewport inside
                keeps its own next/previous swipe (see pager's ignoreFrom). -->
           <div class="pager-stage">
@@ -161,7 +161,7 @@
           <!-- 3D Flippable Card Viewport -->
           <div class="session-bar">
             <div class="toggle-group" role="group" aria-label="Study Mode">
-              <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">Study session</button>
+              <button class="btn-toggle active" id="mode-session" title="SRS-scheduled review session">Practice</button>
               <button class="btn-toggle" id="mode-browse" title="Free browsing, does not affect scheduling">Browse</button>
             </div>
             <div class="session-status" id="session-status">
@@ -171,8 +171,7 @@
             <!-- Length picker: visible only in the idle/available and complete states -->
             <div class="toggle-group hidden" id="session-length-group" role="group" aria-label="Session length">
               <button class="btn-toggle" data-length="short">Short<small>10</small></button>
-              <button class="btn-toggle active" data-length="medium">Medium<small>25</small></button>
-              <button class="btn-toggle" data-length="long">Long<small>50</small></button>
+              <button class="btn-toggle active" data-length="long">Long<small>25</small></button>
             </div>
             <button class="btn hidden" id="btn-end-session">End session</button>
           </div>

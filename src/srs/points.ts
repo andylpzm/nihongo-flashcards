@@ -5,32 +5,68 @@
 // which is what makes a corrupted or missing counter a non-event instead of a
 // disaster. The cached total in `meta` is a cache and is treated as one.
 //
+// A finished sitting pays a FLAT amount for its length. It used to pay per
+// grade press, which had three faults nobody could see from the screen: two
+// Short sittings earned exactly the same per card as one Long, so the best
+// strategy was to do less; opening a sitting in each deck and answering one
+// card paid fourteen times better per card than studying properly; and because
+// a failed card comes back for another press, answering 25 cards badly paid
+// more than twice what answering them well did. A flat amount has none of
+// those - the sitting is the unit, and how it goes inside cannot be farmed.
+//
 // Two properties this file exists to guarantee:
 //
 //   1. Points already earned can never be taken away. Each session is scored
 //      with the streak as it stood ON THAT DAY, so breaking a streak today
 //      cannot retroactively devalue work done last month. A replay of the same
 //      sessions always produces the same number.
-//   2. Effort is what pays. Points come from answers given, not sessions
-//      started, so five Short sittings cannot out-earn one Long one.
+//   2. Doing more still pays more. The per-day ladder below decays, but never
+//      to zero, so a second sitting is always worth more than not doing it.
 
 import type { SessionRecord } from './types';
+import type { SessionLength } from './settings';
 import { dateKey, daysBetween, dayStart } from './dates';
 
-/** One point per grade press - the same unit the Progress page reports. */
-export const POINTS_PER_ANSWER = 1;
+/**
+ * what finishing a sitting pays, before the streak and rank scale it.
+ *
+ * deliberately low, because RANK_MULTIPLIER below is steep: the base is what
+ * a First Year earns, and a Nationals player earns three times it. tuned so
+ * that studying every day fills the collection in about ten months - see the
+ * pacing table in economy.sim.test.ts.
+ */
+export const SESSION_XP: Record<SessionLength, number> = {
+  short: 11,
+  long: 30,
+};
+
+/** a sitting recorded before xp went flat carries no length - see types.ts */
+const DEFAULT_LENGTH: SessionLength = 'long';
 
 /**
- * finishing bonus, as a fraction of the sitting's own answers, paid only when
- * the queue is worked to empty. it RISES WITH RANK - this is what rank rewards,
- * rather than a blanket multiplier on everything.
+ * the sitting's preset, for anything the store might actually hold.
  *
- * proportional, not flat. a flat bonus is farmable: with +10 per completed
- * sitting, four short sessions out-earned one long session covering the same
- * ground, which is precisely what this must not reward.
+ * this is read back from IndexedDB, which the user can edit and a restored
+ * backup can carry anything into. an unrecognised value indexing SESSION_XP
+ * yields undefined, and the total quietly becomes NaN from that point on.
  */
-export const COMPLETION_BONUS_BY_RANK = [1 / 3, 0.4, 0.5, 0.6, 0.75, 0.9, 1] as const;
-export const COMPLETION_BONUS_RATE = COMPLETION_BONUS_BY_RANK[0];
+function lengthOf(session: SessionRecord): SessionLength {
+  return session.length === 'short' || session.length === 'long' ? session.length : DEFAULT_LENGTH;
+}
+
+/**
+ * what each rank multiplies a sitting by.
+ *
+ * rank used to pay a share of a session's answers back, which a flat amount
+ * has nothing to take a share OF - so rank scales the whole thing instead.
+ *
+ * the gaps GROW: 1.1x for the first promotion, half a multiple for the last.
+ * a flat ladder made the middle ranks the dullest part of the collection -
+ * hundreds of hours where nothing about a session changed. climbing is the
+ * reward, so climbing has to be felt, and the base above is set low precisely
+ * so there is room for the top to be worth three times the bottom.
+ */
+export const RANK_MULTIPLIER = [1, 1.1, 1.3, 1.6, 2, 2.5, 3] as const;
 
 /** Days of unbroken study to reach the maximum multiplier. */
 export const STREAK_RAMP_DAYS = 28;
@@ -173,14 +209,14 @@ function shiftDay(key: string, delta: number): string {
  * thresholds are fractions of the 66,500 xp journey, so promotions land at
  * real milestones for a two-decks-a-day habit: ~day 10, 33, 76, 148, 238, 329.
  */
-export const RANKS: readonly { name: string; at: number; bonus: number }[] = [
-  { name: 'First Year', at: 0, bonus: COMPLETION_BONUS_BY_RANK[0] },
-  { name: 'Bench', at: 1330, bonus: COMPLETION_BONUS_BY_RANK[1] },
-  { name: 'Regular', at: 5320, bonus: COMPLETION_BONUS_BY_RANK[2] },
-  { name: 'Ace', at: 13300, bonus: COMPLETION_BONUS_BY_RANK[3] },
-  { name: 'Captain', at: 26600, bonus: COMPLETION_BONUS_BY_RANK[4] },
-  { name: 'Regionals', at: 43225, bonus: COMPLETION_BONUS_BY_RANK[5] },
-  { name: 'Nationals', at: 59850, bonus: COMPLETION_BONUS_BY_RANK[6] },
+export const RANKS: readonly { name: string; at: number; mult: number }[] = [
+  { name: 'First Year', at: 0, mult: RANK_MULTIPLIER[0] },
+  { name: 'Bench', at: 1330, mult: RANK_MULTIPLIER[1] },
+  { name: 'Regular', at: 5320, mult: RANK_MULTIPLIER[2] },
+  { name: 'Ace', at: 13300, mult: RANK_MULTIPLIER[3] },
+  { name: 'Captain', at: 26600, mult: RANK_MULTIPLIER[4] },
+  { name: 'Regionals', at: 43225, mult: RANK_MULTIPLIER[5] },
+  { name: 'Nationals', at: 59850, mult: RANK_MULTIPLIER[6] },
 ] as const;
 
 /**
@@ -198,8 +234,8 @@ export interface Rank {
   /** 0-based index into RANKS. */
   index: number;
   at: number;
-  /** finishing bonus rate this rank grants */
-  bonus: number;
+  /** what this rank multiplies a finished sitting by */
+  mult: number;
   /** Points needed for the next rank, or null at the top. */
   nextAt: number | null;
   nextName: string | null;
@@ -219,7 +255,7 @@ export function rankFor(total: number): Rank {
     name: current.name,
     index,
     at: current.at,
-    bonus: current.bonus,
+    mult: current.mult,
     nextAt: next?.at ?? null,
     nextName: next?.name ?? null,
     progress: next && span > 0 ? Math.min(1, (total - current.at) / span) : 1,
@@ -235,8 +271,8 @@ export interface SessionAward {
   sessionIndex: number;
   /** what that position was worth */
   sessionValue: number;
-  /** finishing bonus rate at the rank held when this was earned */
-  bonusRate: number;
+  /** rank multiplier at the rank held when this was earned */
+  rankMult: number;
   points: number;
 }
 
@@ -253,6 +289,25 @@ export interface PointsSummary {
   awards: SessionAward[];
 }
 
+export interface ComputeOptions {
+  /**
+   * xp already banked under the previous per-answer economy.
+   *
+   * the total is a replay, so changing the formula rescores every sitting ever
+   * recorded - which would move a total that gallery unlocks are keyed to and
+   * could take back a picture already earned. the old total is frozen into the
+   * profile once and seeded here instead; see state/profile.ts.
+   */
+  startingTotal?: number;
+  /**
+   * days studied before that freeze.
+   *
+   * only used to keep the streak walking. without them the migration reads as
+   * a first-ever session and silently resets a streak weeks long.
+   */
+  priorDays?: Set<string>;
+}
+
 /**
  * Replays every session in order and returns the running total.
  *
@@ -260,10 +315,14 @@ export interface PointsSummary {
  * the multiplier it was earned under, and it means the answer never depends on
  * when the function happens to be called.
  */
-export function computePoints(sessions: SessionRecord[], now: Date = new Date()): PointsSummary {
+export function computePoints(
+  sessions: SessionRecord[],
+  now: Date = new Date(),
+  opts: ComputeOptions = {}
+): PointsSummary {
   const ordered = [...sessions].sort((a, b) => a.startedAt - b.startedAt);
 
-  const studyDays = new Set<string>();
+  const studyDays = new Set<string>(opts.priorDays ?? []);
   for (const s of ordered) studyDays.add(dateKey(s.startedAt));
 
   const sessionsByDay = new Map<string, number>();
@@ -274,8 +333,8 @@ export function computePoints(sessions: SessionRecord[], now: Date = new Date())
   // scored. Using the full set would let an early session borrow credit from
   // days that had not happened yet. Accumulated as we go, since `ordered` is
   // already chronological.
-  const daysSoFar = new Set<string>();
-  let total = 0;
+  const daysSoFar = new Set<string>(opts.priorDays ?? []);
+  let total = opts.startingTotal ?? 0;
 
   for (const session of ordered) {
     const day = dateKey(session.startedAt);
@@ -292,10 +351,11 @@ export function computePoints(sessions: SessionRecord[], now: Date = new Date())
 
     // rank is read from the total EARNED SO FAR, so a session is scored at the
     // rank held when it happened - the same replay property as the streak
-    const bonusRate = rankFor(total).bonus;
-    const answers = Math.max(0, session.answers) * POINTS_PER_ANSWER;
-    const base = answers + (session.completed ? answers * bonusRate : 0);
-    const points = Math.round(base * multiplier * value);
+    const rankMult = rankFor(total).mult;
+    // an abandoned sitting pays nothing. the whole point of a flat amount is
+    // that the sitting is the unit, and half a sitting is not one.
+    const flat = session.completed ? SESSION_XP[lengthOf(session)] : 0;
+    const points = Math.round(flat * multiplier * value * rankMult);
 
     total += points;
     awards.push({
@@ -304,7 +364,7 @@ export function computePoints(sessions: SessionRecord[], now: Date = new Date())
       multiplier,
       sessionIndex,
       sessionValue: value,
-      bonusRate,
+      rankMult,
       points,
     });
   }
@@ -327,7 +387,7 @@ export function computePoints(sessions: SessionRecord[], now: Date = new Date())
 }
 
 /**
- * What a session worth `answers` would pay right now.
+ * What finishing a `length` sitting would pay right now.
  *
  * Used to show the reward before it is earned. Deliberately runs the same
  * replay as computePoints with the prospective session appended, rather than
@@ -336,17 +396,19 @@ export function computePoints(sessions: SessionRecord[], now: Date = new Date())
  */
 export function previewAward(
   sessions: SessionRecord[],
-  answers: number,
+  length: SessionLength,
   completed: boolean,
-  now: Date = new Date()
+  now: Date = new Date(),
+  opts: ComputeOptions = {}
 ): number {
   const hypothetical: SessionRecord = {
     startedAt: now.getTime(),
     endedAt: now.getTime(),
     deck: 'preview',
-    answers,
+    answers: 0,
+    length,
     completed,
   };
-  const withIt = computePoints([...sessions, hypothetical], now);
+  const withIt = computePoints([...sessions, hypothetical], now, opts);
   return withIt.awards[withIt.awards.length - 1]?.points ?? 0;
 }

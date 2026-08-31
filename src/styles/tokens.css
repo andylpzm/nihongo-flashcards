@@ -82,6 +82,9 @@
     var(--bottom-nav-height) + var(--nav-gesture-clearance) + env(safe-area-inset-bottom)
   );
   --transition-speed: 0.6s;
+  /* half the flip: the moment the card is edge-on and the faces can be
+     swapped without the swap being visible. keep in step with the line above. */
+  --flip-half: 0.3s;
 
   --font-ui: 'Outfit', 'Klee One', sans-serif;
   --font-jp: 'Klee One', 'Yu Kyokasho', 'YuKyo-Medium', '教科書体', sans-serif;

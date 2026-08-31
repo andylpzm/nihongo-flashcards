@@ -33,7 +33,7 @@ import { openImagePicker } from './imagePicker';
 import { profilePicUrl, readyUrl } from './galleryCard';
 import { syncDailyRing, syncPendingXp } from './progressTab';
 import { createModal, type ModalController } from './modal';
-import { RANKS, rankFor, type Rank } from '../srs/points';
+import { RANKS, rankFor, SESSION_XP, type Rank } from '../srs/points';
 import { unlockedImages } from '../srs/gallery';
 import { effectivePoints } from '../state/preview';
 import { loadGallery } from '../data/loader';
@@ -702,7 +702,6 @@ function tickTo(id: string, from: number, to: number): void {
 }
 
 /** an example sitting, so the bonus is shown as xp rather than as a percentage */
-const EXAMPLE_ANSWERS = 40;
 
 /** created once - createModal wires drag-to-dismiss on every call */
 let rankModal: ModalController | null = null;
@@ -721,21 +720,21 @@ function wireRankSheet(rank: Rank, total: number): void {
   if (!body) return;
 
   button.addEventListener('click', () => {
-    const pct = Math.round(rank.bonus * 100);
-    const bonusXp = Math.round(EXAMPLE_ANSWERS * rank.bonus);
+    const base = SESSION_XP.long;
+    const paid = Math.round(base * rank.mult);
 
     body.innerHTML = `
       <h3 id="rank-sheet-title" class="rk-title">${rank.name}</h3>
-      <p class="rk-lead">Finishing a session pays back
-        <b>${pct}%</b> of its answers again.</p>
+      <p class="rk-lead">Finishing a Long session pays
+        <b>${paid} xp</b> at this rank.</p>
 
       <div class="rk-sum">
-        <span>${EXAMPLE_ANSWERS} answers</span>
-        <span class="rk-plus">+ ${bonusXp} finish bonus</span>
-        <b>${EXAMPLE_ANSWERS + bonusXp} xp</b>
+        <span>${base} xp</span>
+        <span class="rk-plus">&times; ${rank.mult.toFixed(2)} rank</span>
+        <b>${paid} xp</b>
       </div>
-      <p class="rk-note">A full session, first of the day. Later sittings are worth less,
-        and leaving one unfinished pays the answers without the bonus.</p>
+      <p class="rk-note">First sitting of the day, before the streak bonus. Later sittings
+        are worth less, and an unfinished sitting pays nothing.</p>
 
       <ol class="rk-road">
         ${RANKS.map((r, i) => {
@@ -758,7 +757,7 @@ function wireRankSheet(rank: Rank, total: number): void {
               i === rank.index + 1 ? '<span class="rk-tag">NEXT</span>' : ''
             }</span>
             <span class="rk-at">${i === 0 ? '&mdash;' : r.at.toLocaleString()}</span>
-            <span class="rk-bonus">${sealed ? '?' : `${Math.round(r.bonus * 100)}%`}</span>
+            <span class="rk-bonus">${sealed ? '?' : `${r.mult.toFixed(2)}\u00d7`}</span>
           </li>`;
         }).join('')}
       </ol>
@@ -766,7 +765,7 @@ function wireRankSheet(rank: Rank, total: number): void {
       <p class="rk-next">${
         rank.nextAt !== null
           ? `${(rank.nextAt - total).toLocaleString()} xp to ${rank.nextName}`
-          : 'Top rank &mdash; every finished session pays double'
+          : 'Top rank &mdash; every finished session pays three times over'
       }</p>`;
 
     rankModal ??= createModal(overlay);

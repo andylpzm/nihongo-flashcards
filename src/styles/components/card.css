@@ -58,6 +58,12 @@ body.light-theme .flashcard {
   .flashcard {
     transition: none !important;
   }
+
+  /* nothing turns, so there is no half-way to wait for - waiting anyway would
+     leave the old face on screen for 0.3s after the tap */
+  .card-face {
+    transition: border-color 0.3s !important;
+  }
 }
 
 /* ---- the two faces ------------------------------------------------------ */
@@ -85,7 +91,22 @@ body.light-theme .flashcard {
      face, and without it the hidden side shows through mid-flip */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transition: border-color 0.3s, opacity 0.4s, visibility 0.4s;
+  /* The faces swap INSTANTLY, halfway through the turn.
+   *
+   * This used to be a 0.4s crossfade starting the moment the card began to
+   * move, against a 0.6s rotation - so the answer was already fading up while
+   * the card was still almost face-on, and you caught a glimpse of it before
+   * you had decided. backface-visibility alone should have hidden it, but the
+   * mask above defeats backface culling (a masked element is flattened), which
+   * is why these faces are opacity-toggled at all.
+   *
+   * 0s duration at the half-way delay: at 90deg the card is edge-on and there
+   * is nothing to see, so a hard swap there is invisible in a way no crossfade
+   * can be. */
+  transition:
+    border-color 0.3s,
+    opacity 0s linear var(--flip-half),
+    visibility 0s linear var(--flip-half);
 }
 
 .card-front {
@@ -106,6 +127,18 @@ body.light-theme .flashcard {
   background:
     linear-gradient(135deg, rgb(255 255 255 / 5%) 0%, rgb(255 255 255 / 1%) 100%),
     var(--surface-raised, rgb(15 23 42 / 88%));
+}
+
+/* A new card APPEARS face-down; it does not turn back over.
+ *
+ * renderCard() rewrites both faces and then drops `flipped`, so at that moment
+ * the face pointing at the user is the back - and it is already printed with
+ * the NEXT card's answer. Letting that rotate away shows the answer for the
+ * first half of the turn, before the question has even been read. Killing the
+ * transition for that one frame means the new card is simply there, face-down. */
+.card-viewport.no-flip-anim .flashcard,
+.card-viewport.no-flip-anim .card-face {
+  transition: none !important;
 }
 
 .card-viewport.flipped .card-front {
@@ -310,17 +343,32 @@ body.light-theme .hiragana-text {
   align-items: baseline;
   gap: 0.5rem;
   font-size: 0.8rem;
+  min-width: 0;
+}
+
+/* The japanese side can be squeezed too.
+ *
+ * These were nowrap with no overflow, which makes a flex item's automatic
+ * minimum its full text width - unshrinkable. A long compound then took the
+ * whole row and the meaning, the only item that COULD give, gave everything:
+ * at iOS's larger text sizes it measured 0px and the translation was simply
+ * not on the card. Setting overflow here resolves that automatic minimum to
+ * zero, so the two sides share the squeeze instead of one absorbing all of it. */
+.kanji-example-word,
+.kanji-example-reading {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .kanji-example-word {
   font-family: var(--font-jp);
   font-weight: 600;
-  white-space: nowrap;
 }
 
 .kanji-example-reading {
   font-size: 0.7rem;
-  white-space: nowrap;
   color: var(--text-muted);
 }
 
@@ -328,6 +376,9 @@ body.light-theme .hiragana-text {
    than wrapping - a two-line example row pushes the next one off the card */
 .kanji-example-meaning {
   margin-left: auto;
+  /* a floor, so the translation can never be squeezed out of existence -
+     a row of japanese with no english is worse than a truncated gloss */
+  min-width: 5.5em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

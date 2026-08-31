@@ -85,7 +85,7 @@ import { startSplash } from './ui/splash';
 import { setupSettingsSheet } from './ui/settingsSheet';
 import { setupPackPanel } from './ui/packPanel';
 import { setupBinderTab, binderTapAllowed } from './ui/binderTab';
-import { startPointsClock } from './state/profile';
+import { startPointsClock, freezeLegacyPoints } from './state/profile';
 import { restorePack } from './state/vault';
 import { syncGalleryBadge } from './ui/galleryBadge';
 
@@ -125,15 +125,15 @@ let studyPager: PagerController | null = null;
 
 /* the study screen's own pages. held here rather than inline at createPager so
    the session page can be retitled: a kana or kanji sitting runs on this screen
-   but is not "Study", and leaving the heading saying so was the other half of
+   but is not "Words", and leaving the heading saying so was the other half of
    what made starting one feel like being moved somewhere else.
    the pager re-reads pages[i].title on refresh(), so mutating is enough. */
 const STUDY_PAGES: PagerPage[] = [
-  { id: 'session', title: 'Study', label: 'Study session' },
+  { id: 'session', title: 'Words', label: 'Practice' },
   { id: 'browse', title: 'Browse' },
 ];
 const DECK_TITLE: Record<'vocabulary' | 'hiragana' | 'katakana' | 'kanji', string> = {
-  vocabulary: 'Study',
+  vocabulary: 'Words',
   hiragana: 'Hiragana',
   katakana: 'Katakana',
   kanji: 'Kanji',
@@ -141,6 +141,19 @@ const DECK_TITLE: Record<'vocabulary' | 'hiragana' | 'katakana' | 'kanji', strin
 /** name the study screen after the deck it is currently working through */
 function setStudyTitle(deck: keyof typeof DECK_TITLE): void {
   STUDY_PAGES[0]!.title = DECK_TITLE[deck];
+
+  // Browse is a vocabulary idea: it walks the filtered deck, and the filters
+  // it walks with are hidden for kana and kanji, where the whole "deck" is one
+  // 25-46 card chart you can already see in full on the chart page. Offering
+  // the page there left a second dot under Hiragana that swiped to a stripped
+  // version of a screen the user had just come from.
+  const pages = deck === 'vocabulary' ? ['session', 'browse'] : ['session'];
+  studyPager?.setAvailable(pages);
+  // the page being taken away might be the one we are standing on
+  if (deck !== 'vocabulary' && studyPager?.getActive() === 'browse') {
+    void setStudyMode('session');
+    studyPager.goTo('session', false);
+  }
   studyPager?.refresh();
 }
 
@@ -167,7 +180,7 @@ function startKanaPractice(deck: 'hiragana' | 'katakana' | 'kanji', page: KanaPa
   void loadDeck(deck);
   // the study SCREEN, but still the Kana TAB: `session-active` hides the study
   // chrome for the duration, so what is on screen is a card rather than a
-  // section, and saying "Study" here was the jarring part - the tab jumped
+  // section, and saying "Words" here was the jarring part - the tab jumped
   // under the finger that had just pressed Practice.
   switchSection('vocabulary', page === 'kanji' ? 'katakana' : page);
   syncBottomNav('kana');
@@ -438,7 +451,13 @@ async function init(): Promise<void> {
     // the pictures are the one thing loading cannot finish on its own. a pack
     // connected on an earlier visit is already in storage; a first run stops
     // here and asks for the file rather than opening into empty frames.
-    if (!(await restorePack())) await splash.askForPack();
+    //
+    // dev only: ?nopack leaves it in storage but does not open it, so the app
+    // reads the loose files in public/gallery instead. that is the only way to
+    // see what the framing tool just did - a connected pack is a snapshot, and
+    // it would go on showing the artwork as it was when the pack was built.
+    const skipPack = import.meta.env.DEV && new URLSearchParams(location.search).has('nopack');
+    if (!skipPack && !(await restorePack())) await splash.askForPack();
   } finally {
     void splash.finish();
   }
@@ -449,6 +468,8 @@ async function boot(): Promise<void> {
   // before this build, so the binder is earned from today rather than bought
   // by a back catalogue
   await startPointsClock();
+  // must run before any new-economy scoring reads the sessions store
+  await freezeLegacyPoints();
   setupEventListeners();
   // Vocabulary is shown by default without going through switchSection, which
   // left body.section-vocabulary unstamped until the first navigation - and
@@ -588,10 +609,15 @@ function setupEventListeners(): void {
 
   // a sitting started from Kana hands the user back to the chart they came
   // from. on Study it is already where it should be, so nothing happens.
-  onSessionEnd(() => {
+  onSessionEnd((showedRecap) => {
     const from = sessionOrigin;
     sessionOrigin = null;
-    if (from) showKanaSection(from);
+    // a kana sitting is started from the chart and runs on the study screen,
+    // so ending one used to jump straight back to the chart - which threw
+    // away the summary card the sitting had just rendered, and kana sessions
+    // appeared to end in nothing at all. the summary stays up; the Kana tab
+    // is still the active one, so the chart is one tap away.
+    if (from && !showedRecap) showKanaSection(from);
   });
 
   // The three charts are pages of one deck: big title, dots, long swipe.
@@ -814,6 +840,15 @@ function handleKeyboardShortcuts(e: KeyboardEvent): void {
       }
       break;
   }
+}
+
+// the framing tool writes artwork and card data into the repo while it runs;
+// this is how the app finds out. dev only - import.meta.hot is undefined in a
+// build, so the whole block goes with it.
+if (import.meta.hot) {
+  import.meta.hot.on('gallery:changed', () => {
+    location.reload();
+  });
 }
 
 // Run application

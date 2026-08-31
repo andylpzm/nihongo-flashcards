@@ -21,6 +21,7 @@ import {
   type Rank,
 } from '../srs/points';
 import { dateKey } from '../srs/dates';
+import { legacyTotal } from '../srs/legacyPoints';
 import {
   newlyUnlocked,
   countUnlocked,
@@ -93,6 +94,17 @@ export interface Profile {
    * now this only gates the prize in the ui.
    */
   claimedBonusOn: string;
+  /**
+   * xp banked under the old per-answer economy, frozen once.
+   *
+   * the total is a replay, so the new flat scoring would rescore everything
+   * chris has ever done and move a number the gallery unlocks are keyed to.
+   * this holds the old answer; only sittings after `legacyUntil` are scored
+   * the new way, on top of it. see srs/legacyPoints.ts.
+   */
+  legacyPoints: number;
+  /** when that freeze happened, in ms. 0 means "not frozen yet". */
+  legacyUntil: number;
   lastBackupAt: number | null;
 }
 
@@ -112,6 +124,8 @@ function blankProfile(now = Date.now()): Profile {
     pointsEpoch: 0,
     seenPoints: -1,
     claimedBonusOn: '',
+    legacyPoints: 0,
+    legacyUntil: 0,
     lastBackupAt: null,
   };
 }
@@ -134,6 +148,8 @@ export function coerce(raw: unknown, now = Date.now()): Profile {
     pointsEpoch: typeof p.pointsEpoch === 'number' ? p.pointsEpoch : base.pointsEpoch,
     seenPoints: typeof p.seenPoints === 'number' ? p.seenPoints : base.seenPoints,
     claimedBonusOn: typeof p.claimedBonusOn === 'string' ? p.claimedBonusOn : base.claimedBonusOn,
+    legacyPoints: typeof p.legacyPoints === 'number' ? p.legacyPoints : base.legacyPoints,
+    legacyUntil: typeof p.legacyUntil === 'number' ? p.legacyUntil : base.legacyUntil,
     lastBackupAt: typeof p.lastBackupAt === 'number' ? p.lastBackupAt : null,
   };
 }
@@ -215,6 +231,23 @@ export function needsNamePrompt(profile: Profile): boolean {
   return profile.name === '';
 }
 
+/**
+ * Freezes the old per-answer total, once, before any new scoring happens.
+ *
+ * Called at boot next to startPointsClock(). On a fresh install there are no
+ * sittings, so this stamps a zero and costs nothing; on an upgrade it is the
+ * only thing standing between chris and a total that moves under him.
+ */
+export async function freezeLegacyPoints(now: Date = new Date()): Promise<void> {
+  const profile = await loadProfile();
+  if (profile.legacyUntil) return;
+  const all = await getAllSessions();
+  const sessions = profile.pointsEpoch
+    ? all.filter((s) => s.startedAt >= profile.pointsEpoch)
+    : all;
+  await saveProfile({ legacyPoints: legacyTotal(sessions), legacyUntil: now.getTime() });
+}
+
 export interface PointsState {
   summary: PointsSummary;
   rank: Rank;
@@ -232,7 +265,17 @@ export async function getPointsState(now: Date = new Date()): Promise<PointsStat
   const all = await getAllSessions();
   // sittings from before the binder existed do not pay towards it
   const sessions = profile.pointsEpoch ? all.filter((s) => s.startedAt >= profile.pointsEpoch) : all;
-  const summary = computePoints(sessions, now);
+  // everything up to the freeze is already counted in legacyPoints and must
+  // not be scored twice - but its DAYS still feed the streak, or the upgrade
+  // would read as a first-ever session and reset a streak weeks long.
+  const fresh = sessions.filter((s) => s.startedAt >= profile.legacyUntil);
+  const priorDays = new Set(
+    sessions.filter((s) => s.startedAt < profile.legacyUntil).map((s) => dateKey(s.startedAt))
+  );
+  const summary = computePoints(fresh, now, {
+    startingTotal: profile.legacyPoints,
+    priorDays,
+  });
   if (profile.cachedPoints !== summary.total) {
     await saveProfile({ cachedPoints: summary.total });
   }

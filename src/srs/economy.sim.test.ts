@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { computePoints, MISSION_DECKS } from './points';
 import { thresholdFor, TOTAL_TARGET } from './gallery';
 import type { SessionRecord } from './types';
+import type { SessionLength } from './settings';
 
 // how long the collection actually takes.
 //
@@ -38,9 +39,9 @@ interface Habit {
 /**
  * a year of sittings.
  *
- * a normal night is one or two decks of 25. a grind night is all four, and
- * one of them long. a tired night is ten cards before sleep. answers are the
- * unit points are paid in, so this is where the whole economy comes from.
+ * a normal night is one or two decks of 25. a grind night is all four. a
+ * tired night is a Short before sleep. the sitting is the unit points are
+ * paid in, so this is where the whole economy comes from.
  */
 function simulate(habit: Habit, days: number, seed = 7): SessionRecord[] {
   const rand = rng(seed);
@@ -54,16 +55,22 @@ function simulate(habit: Habit, days: number, seed = 7): SessionRecord[] {
 
     const decks = grind ? [...MISSION_DECKS] : MISSION_DECKS.slice(0, 1 + Math.floor(rand() * 2));
     decks.forEach((deck, i) => {
-      const answers = tired ? 10 : grind && i === 0 ? 50 : 25;
-      // evening study, sittings an hour apart
+      // a tired night is what the Short preset is for - he picks it and
+      // finishes it, rather than opening a Long and walking away
+      const length: SessionLength = tired ? 'short' : 'long';
+      const answers = tired ? 10 : 25;
+      // a sitting is sometimes abandoned, and an abandoned one now pays
+      // nothing at all, so the pacing has to feel that rather than assume
+      // every sitting lands
+      const completed = rand() > 0.12;
       const at = start + d * DAY + i * 60 * 60 * 1000;
       out.push({
         startedAt: at,
         endedAt: at + answers * 6000,
         deck,
         answers,
-        // a tired ten-card sitting is usually abandoned rather than emptied
-        completed: !tired,
+        length,
+        completed,
       });
     });
   }

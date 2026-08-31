@@ -5,7 +5,7 @@ import { SESSION_SIZES } from './settings';
 import type { Card } from '../state/types';
 import type { ReviewRecord } from './types';
 
-const sessionSize = SESSION_SIZES.medium;
+const sessionSize = SESSION_SIZES.long;
 
 function makeCard(id: number): Card {
   return {

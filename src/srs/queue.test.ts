@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildQueue } from './queue';
+import { buildQueue, buildRandomQueue } from './queue';
 import { Rating, State, newFsrsCard } from './scheduler';
 import { SESSION_SIZES } from './settings';
 import type { ReviewRecord, FsrsCard } from './types';
@@ -41,7 +41,7 @@ function makeReview(cardId: number, due: Date): ReviewRecord {
   };
 }
 
-const fullSessionSize = SESSION_SIZES.medium;
+const fullSessionSize = SESSION_SIZES.long;
 
 describe('buildQueue', () => {
   const now = new Date('2026-06-15T12:00:00Z');
@@ -105,7 +105,6 @@ describe('buildQueue', () => {
   it('a smaller preset produces a smaller sitting', () => {
     const cards = Array.from({ length: 200 }, (_, i) => makeCard(i + 1));
     expect(buildQueue(cards, new Map(), SESSION_SIZES.short, now).items).toHaveLength(SESSION_SIZES.short);
-    expect(buildQueue(cards, new Map(), SESSION_SIZES.medium, now).items).toHaveLength(SESSION_SIZES.medium);
     expect(buildQueue(cards, new Map(), SESSION_SIZES.long, now).items).toHaveLength(SESSION_SIZES.long);
   });
 
@@ -209,5 +208,84 @@ describe('new-card reserve', () => {
     const build = buildQueue(cards, reviews, 25, now);
     expect(build.items).toHaveLength(25);
     expect(build.newCount).toBe(0);
+  });
+});
+
+describe('buildRandomQueue', () => {
+  // walks 0, 1, 2... through the range so a shuffle is reproducible in tests
+  function seeded(): () => number {
+    let n = 0;
+    return () => ((n = (n * 9301 + 49297) % 233280) / 233280);
+  }
+
+  function pool(size: number): Card[] {
+    return Array.from({ length: size }, (_, i) => makeCard(i + 1));
+  }
+
+  it('fills a sitting from a pool where nothing is due', () => {
+    // the failure this exists to prevent: 25 voiced kana, all reviewed, all
+    // scheduled a week out. buildQueue returns nothing; this returns a sitting.
+    const cards = pool(25);
+    const reviews = new Map<CardId, ReviewRecord>();
+    const future = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    for (const card of cards) {
+      reviews.set(card.id, { cardId: card.id, card: makeFsrsCard(future), log: [] });
+    }
+
+    expect(buildQueue(cards, reviews, SESSION_SIZES.long).items).toHaveLength(0);
+    expect(buildRandomQueue(cards, reviews, SESSION_SIZES.long, seeded()).items).toHaveLength(25);
+  });
+
+  it('never asks for more cards than the pool holds', () => {
+    const build = buildRandomQueue(pool(25), new Map(), SESSION_SIZES.long, seeded());
+    expect(build.items).toHaveLength(25);
+  });
+
+  it('never repeats a card inside one sitting', () => {
+    const build = buildRandomQueue(pool(46), new Map(), SESSION_SIZES.long, seeded());
+    const ids = build.items.map((i) => i.card.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('rotates through the pool instead of redrawing the same cards', () => {
+    // 46 basic hiragana, 25 a sitting: the second sitting must reach the 21
+    // the first one missed rather than sampling the same half again.
+    const cards = pool(46);
+    const reviews = new Map<CardId, ReviewRecord>();
+    const first = buildRandomQueue(cards, reviews, 25, seeded());
+    for (const item of first.items) {
+      reviews.set(item.card.id, {
+        cardId: item.card.id,
+        card: makeFsrsCard(new Date()),
+        log: [{ ts: Date.now(), rating: Rating.Good, elapsedMs: 1000 }],
+      });
+    }
+
+    const second = buildRandomQueue(cards, reviews, 25, seeded());
+    const firstIds = new Set(first.items.map((i) => i.card.id));
+    const unseen = second.items.filter((i) => !firstIds.has(i.card.id));
+    expect(unseen).toHaveLength(21);
+  });
+
+  it('holds nothing back and schedules nothing', () => {
+    // what keeps "Learn more" and the next-review countdown off these decks
+    const build = buildRandomQueue(pool(46), new Map(), 10, seeded());
+    expect(build.newHeldBack).toBe(0);
+    expect(build.nextDueAt).toBeNull();
+  });
+
+  it('reports how much of the sitting is new', () => {
+    const cards = pool(10);
+    const reviews = new Map<CardId, ReviewRecord>();
+    for (const card of cards.slice(0, 4)) {
+      reviews.set(card.id, { cardId: card.id, card: makeFsrsCard(new Date()), log: [] });
+    }
+    const build = buildRandomQueue(cards, reviews, 10, seeded());
+    expect(build.newCount).toBe(6);
+    expect(build.dueCount).toBe(4);
+  });
+
+  it('leaves an empty pool empty', () => {
+    expect(buildRandomQueue([], new Map(), SESSION_SIZES.long, seeded()).items).toHaveLength(0);
   });
 });

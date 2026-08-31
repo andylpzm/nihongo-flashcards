@@ -46,6 +46,14 @@ export interface PagerController {
   getActive: () => string;
   /** Re-read the title for the active page (after a language/label change). */
   refresh: () => void;
+  /**
+   * Limit which pages can be reached right now.
+   *
+   * Their dots are hidden and the swipe steps straight past them, so a page
+   * that does not apply to the current deck stops existing rather than
+   * sitting there as a dot that leads nowhere. Pass every id to restore.
+   */
+  setAvailable: (ids: string[]) => void;
 }
 
 export function createPager(host: HTMLElement, opts: PagerOptions): PagerController {
@@ -56,6 +64,9 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
   const stage = content.parentElement;
   let activeId = opts.initial ?? pages[0]!.id;
   let animating = false;
+  /** every page, until setAvailable() says otherwise */
+  let available = new Set(pages.map((p) => p.id));
+  const usable = (): PagerPage[] => pages.filter((p) => available.has(p.id));
 
   // ---- header: big title + dots -------------------------------------------
   const header = document.createElement('div');
@@ -95,7 +106,7 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
     // end right where it still swipes round to the first.
     // One peek edge per other card in the deck, capped at two. A two-card
     // deck must show one edge, not two - the stack has to match the dots.
-    stage?.setAttribute('data-remaining', String(Math.min(2, pages.length - 1)));
+    stage?.setAttribute('data-remaining', String(Math.min(2, Math.max(0, usable().length - 1))));
     const nextTitle = pages[i]!.title;
     if (titleEl.textContent !== nextTitle) {
       titleEl.textContent = nextTitle;
@@ -106,8 +117,11 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
       titleEl.classList.add('is-changing');
     }
     dotEls.forEach((dot, n) => {
-      dot.classList.toggle('is-active', n === i);
-      dot.setAttribute('aria-selected', String(n === i));
+      const page = pages[n]!;
+      // compared by id, not by index: with a dot hidden the two no longer line up
+      dot.classList.toggle('hidden', !available.has(page.id));
+      dot.classList.toggle('is-active', page.id === activeId);
+      dot.setAttribute('aria-selected', String(page.id === activeId));
     });
   }
 
@@ -159,6 +173,7 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
 
   function goTo(id: string, animate = true, forced?: 1 | -1): void {
     if (id === activeId || animating) return;
+    if (!available.has(id)) return;
     if (opts.isLocked?.()) return;
     // On a wrap the index comparison lies - going from the last card to the
     // first is forwards, even though the index drops - so a stepped swipe
@@ -176,9 +191,11 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
 
   /** Steps wrap: the deck is a ring, so the last card leads back to the first. */
   function step(delta: number): void {
-    if (pages.length < 2) return;
-    const next = (indexOf(activeId) + delta + pages.length) % pages.length;
-    goTo(pages[next]!.id, true, delta > 0 ? 1 : -1);
+    const list = usable();
+    if (list.length < 2) return;
+    const at = Math.max(0, list.findIndex((p) => p.id === activeId));
+    const next = (at + delta + list.length) % list.length;
+    goTo(list[next]!.id, true, delta > 0 ? 1 : -1);
   }
 
   // ---- swipe --------------------------------------------------------------
@@ -221,5 +238,11 @@ export function createPager(host: HTMLElement, opts: PagerOptions): PagerControl
     goTo,
     getActive: () => activeId,
     refresh: syncHeader,
+    setAvailable: (ids) => {
+      // an empty list would leave the pager with nowhere to be; treat it as
+      // "no restriction" rather than stranding the user on a hidden page
+      available = new Set(ids.length ? ids : pages.map((p) => p.id));
+      syncHeader();
+    },
   };
 }

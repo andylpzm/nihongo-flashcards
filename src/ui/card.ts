@@ -5,7 +5,7 @@ import type { Pos } from '../data/types';
 import { FeedbackAudio } from '../audio/feedback';
 import { speakJapanese } from '../audio/tts';
 import { state } from '../state/store';
-import type { Card, FilterMode, LevelFilter, StudyMode } from '../state/types';
+import type { ActiveDeck, Card, FilterMode, LevelFilter, StudyMode } from '../state/types';
 import { saveFilters } from '../state/persistence';
 import {
   ensureReviewsLoaded,
@@ -15,7 +15,7 @@ import {
 } from '../state/reviews';
 import { Rating, newFsrsCard, previewIntervals } from '../srs/scheduler';
 import type { RecordLogItem } from 'ts-fsrs';
-import { buildQueue, type QueueItem, type QueueBuildResult } from '../srs/queue';
+import { buildQueue, buildRandomQueue, type QueueItem, type QueueBuildResult } from '../srs/queue';
 import { StudySession } from '../srs/session';
 import { loadSettings, saveSettings, SESSION_SIZES, type StudySettings } from '../srs/settings';
 import { saveActiveSession, loadActiveSession, clearActiveSession } from '../srs/sessionStore';
@@ -160,10 +160,20 @@ function getFilteredCards(applyProgressFilter: boolean): Card[] {
   });
 }
 
+/** hiragana and katakana are scheduled at random rather than by due date -
+ * see buildRandomQueue(). one tab is 25-46 cards, which fsrs runs dry. */
+const isKanaDeck = (deck: ActiveDeck): boolean => deck === 'hiragana' || deck === 'katakana';
+
 // Build the queue for a sitting. Session length is the only limit - there are
 // no daily budgets, which used to shrink a session below the chosen preset.
 function buildTodayQueueResult(candidates: Card[], settings: StudySettings, now: Date = new Date()): QueueBuildResult {
-  return buildQueue(candidates, getReviewsSnapshot(), SESSION_SIZES[settings.sessionLength], now);
+  const size = SESSION_SIZES[settings.sessionLength];
+  // the kana tab is whatever loadDeck() put in state.cards, so drawing from
+  // `candidates` keeps basic, voiced and combos as three separate pools
+  if (isKanaDeck(state.activeDeck)) {
+    return buildRandomQueue(candidates, getReviewsSnapshot(), size);
+  }
+  return buildQueue(candidates, getReviewsSnapshot(), size, now);
 }
 
 // Get the Active Card Object: from the running session's queue in Study
@@ -203,8 +213,17 @@ export function renderCard(): void {
   const currentCard = getActiveCard();
   cardShownAt = Date.now();
 
-  // Reset Flipped Class and answer glow classes
+  // Reset Flipped Class and answer glow classes.
+  //
+  // Both faces are rewritten below, so the back is about to hold the NEXT
+  // card's answer - and if the un-flip is allowed to animate, that answer is
+  // what faces the user for the first half of the turn. Suppress the
+  // transition for this one frame so the new card is just there, face-down.
+  // The reflow is what makes it take effect before the class comes back off.
+  cardViewport.classList.add('no-flip-anim');
   cardViewport.classList.remove('flipped');
+  void cardViewport.offsetWidth;
+  requestAnimationFrame(() => cardViewport.classList.remove('no-flip-anim'));
   state.isFlipped = false;
   hideGradeButtons();
 
@@ -694,13 +713,15 @@ export async function gradeCurrentCard(grade: Grade): Promise<void> {
  * study screen, and when it ends the study chrome comes back - so whoever
  * sent the user here needs to know to take them back. finishSession is the
  * single funnel for both endings, the natural one and endSessionEarly. */
-type SessionEndListener = () => void;
+/** @param showedRecap false when the sitting ended with nothing to report, so
+ * the study screen is sitting on its idle state rather than on a summary. */
+type SessionEndListener = (showedRecap: boolean) => void;
 const sessionEndListeners: SessionEndListener[] = [];
 export function onSessionEnd(fn: SessionEndListener): void {
   sessionEndListeners.push(fn);
 }
-function notifySessionEnd(): void {
-  for (const fn of sessionEndListeners) fn();
+function notifySessionEnd(showedRecap: boolean): void {
+  for (const fn of sessionEndListeners) fn(showedRecap);
 }
 
 function finishSession(endedEarly: boolean): void {
@@ -725,7 +746,7 @@ function finishSession(endedEarly: boolean): void {
     updateStats();
     refreshSessionBar();
     renderCard();
-    notifySessionEnd();
+    notifySessionEnd(false);
     return;
   }
 
@@ -772,10 +793,13 @@ function finishSession(endedEarly: boolean): void {
     endedAt,
     deck: state.activeDeck,
     answers: p.answers,
+    // what the sitting pays is now a property of the sitting, not of how many
+    // times a button was pressed inside it
+    length: loadSettings().sessionLength,
     completed: !endedEarly,
   });
 
-  notifySessionEnd();
+  notifySessionEnd(true);
 }
 
 /** writes the sitting, then reports what it earned on the finished card. */
@@ -913,7 +937,7 @@ function refreshSessionBar(): void {
 sessionLengthGroup?.querySelectorAll<HTMLElement>('.btn-toggle').forEach((btn) => {
   btn.addEventListener('click', () => {
     const length = btn.dataset.length;
-    if (length !== 'short' && length !== 'medium' && length !== 'long') return;
+    if (length !== 'short' && length !== 'long') return;
     const settings = loadSettings();
     settings.sessionLength = length;
     saveSettings(settings);

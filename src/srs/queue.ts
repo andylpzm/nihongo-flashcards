@@ -84,3 +84,55 @@ export function buildQueue(
     nextDueAt: nextDueAt === null ? null : new Date(nextDueAt),
   };
 }
+
+/**
+ * A sitting for a deck too small to schedule.
+ *
+ * The kana pools are 25-46 cards a tab. FSRS empties one in a single sitting
+ * and then pushes every card days out, so the next queue comes back empty and
+ * the bar sits on "Nothing due yet" - correct scheduling, useless practice.
+ * These decks draw from the pool instead, and nothing here reads a due date.
+ *
+ * Least recently seen first, then shuffled. A plain random draw of 25 out of
+ * the 46 basic hiragana repeats about half the deck every sitting; rotating by
+ * staleness walks the whole pool and leaves only the ORDER random. Cards never
+ * seen sort first, in deck order, so a fresh tab still starts at あ.
+ */
+export function buildRandomQueue(
+  candidateCards: Card[],
+  reviewsByCardId: Map<CardId, ReviewRecord>,
+  sessionSize: number,
+  rng: () => number = Math.random
+): QueueBuildResult {
+  const lastSeen = (card: Card): number => {
+    const review = reviewsByCardId.get(card.id);
+    const last = review?.log[review.log.length - 1];
+    return last ? last.ts : -1;
+  };
+
+  const items = shuffle(
+    [...candidateCards]
+      .sort((a, b) => lastSeen(a) - lastSeen(b))
+      .slice(0, Math.max(0, sessionSize))
+      .map((card) => ({ card, isNew: !reviewsByCardId.has(card.id) })),
+    rng
+  );
+
+  return {
+    items,
+    dueCount: items.filter((i) => !i.isNew).length,
+    newCount: items.filter((i) => i.isNew).length,
+    // nothing is withheld and nothing is scheduled, so neither the "Learn more"
+    // prompt nor the next-review countdown can appear for these decks
+    newHeldBack: 0,
+    nextDueAt: null,
+  };
+}
+
+function shuffle<T>(items: T[], rng: () => number): T[] {
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [items[i], items[j]] = [items[j]!, items[i]!];
+  }
+  return items;
+}
