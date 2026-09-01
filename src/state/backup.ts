@@ -18,6 +18,7 @@
 import { getAllReviews, putReview, getAllSessions, putSession } from '../srs/db';
 import { loadProfile, saveProfile, resetProfileCache, type Profile } from './profile';
 import { coercePos } from './imagePos';
+import { legacyTotal } from '../srs/legacyPoints';
 import type { ReviewRecord, SessionRecord } from '../srs/types';
 
 export const BACKUP_FORMAT = 'nihongo-flashcards-backup';
@@ -215,6 +216,35 @@ function restoreSeen(p: Profile): string[] {
   return typeof legacy === 'number' && legacy > 0 ? [`#${Math.floor(legacy)}`] : [];
 }
 
+/**
+ * the freeze that separates xp earned under the old per-answer economy from
+ * today's flat scoring - see state/profile.ts freezeLegacyPoints().
+ *
+ * losing this is total: the boot before a restore stamps a fresh freeze at
+ * "now", every restored sitting then predates it and is skipped, the starting
+ * total is zero, and a lifetime of study reads as 0 xp with the whole binder
+ * locked again. so it is carried across, and a backup taken before the freeze
+ * existed is scored the old way here exactly as its own device would have.
+ */
+function legacyFreeze(
+  profile: Profile,
+  restored: SessionRecord[],
+  epoch: number
+): { legacyPoints: number; legacyUntil: number } {
+  // PRESENT, not non-zero: buildBackup always writes the field, so a zero here
+  // is a real device that simply has nothing frozen yet, and carrying the zero
+  // across is what makes the total come out identical. only a backup written
+  // before the flat economy existed is missing the key altogether.
+  if (typeof profile.legacyUntil === 'number') {
+    return {
+      legacyPoints: typeof profile.legacyPoints === 'number' ? profile.legacyPoints : 0,
+      legacyUntil: profile.legacyUntil,
+    };
+  }
+  const counted = restored.filter((s) => s.startedAt >= epoch);
+  return { legacyPoints: legacyTotal(counted), legacyUntil: Date.now() };
+}
+
 /** just before the earliest sitting in the bundle, so all of it still counts */
 function oldestSessionStart(sessions: SessionRecord[]): number {
   let oldest = Infinity;
@@ -237,14 +267,20 @@ export async function applyBackup(bundle: BackupBundle): Promise<RestoreResult> 
   }
 
   let sessions = 0;
+  const restored: SessionRecord[] = [];
   for (const session of bundle.sessions) {
-    await putSession({
+    const record: SessionRecord = {
       startedAt: session.startedAt,
       endedAt: typeof session.endedAt === 'number' ? session.endedAt : session.startedAt,
       deck: typeof session.deck === 'string' ? session.deck : 'vocabulary',
       answers: Math.max(0, session.answers),
       completed: session.completed === true,
-    });
+    };
+    // which preset it was, and so what finishing it paid. dropping this scored
+    // every restored Short as a Long - see SESSION_XP in srs/points.ts
+    if (session.length === 'short' || session.length === 'long') record.length = session.length;
+    await putSession(record);
+    restored.push(record);
     sessions++;
   }
 
@@ -258,17 +294,19 @@ export async function applyBackup(bundle: BackupBundle): Promise<RestoreResult> 
 
   if (bundle.profile && typeof bundle.profile === 'object') {
     resetProfileCache();
+    const epoch =
+      typeof bundle.profile.pointsEpoch === 'number' && bundle.profile.pointsEpoch > 0
+        ? bundle.profile.pointsEpoch
+        : oldestSessionStart(bundle.sessions);
     await saveProfile({
+      ...legacyFreeze(bundle.profile, restored, epoch),
       name: typeof bundle.profile.name === 'string' ? bundle.profile.name : '',
       // the moment xp started counting. losing this is not cosmetic: the next
       // boot would stamp a fresh epoch, every restored session would predate
       // it, and the whole collection would read as unearned. a backup taken
       // before the epoch existed gets one just ahead of its oldest sitting, so
       // the history it holds still counts.
-      pointsEpoch:
-        typeof bundle.profile.pointsEpoch === 'number' && bundle.profile.pointsEpoch > 0
-          ? bundle.profile.pointsEpoch
-          : oldestSessionStart(bundle.sessions),
+      pointsEpoch: epoch,
       // whether the binder has been opened for the first time. restoring
       // without it would re-lock a binder that has been in use for months.
       binderRevealed: bundle.profile.binderRevealed === true,

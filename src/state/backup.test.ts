@@ -271,3 +271,68 @@ describe('parseBackup validation', () => {
     expect(await db.getAllReviews()).toHaveLength(1);
   });
 });
+
+describe('restoring onto a fresh browser', () => {
+  const DAY = 24 * 60 * 60 * 1000;
+  const day = (n: number): number => new Date('2026-06-01T12:00:00').getTime() + n * DAY;
+
+  /** a device that has been studied on, and has stamped its own freeze */
+  async function studiedDevice() {
+    const a = await fresh();
+    await a.db.putSession(makeSession(day(1), 30));
+    await a.db.putSession(makeSession(day(2), 30));
+    await a.profile.startPointsClock(new Date(day(0)));
+    await a.profile.freezeLegacyPoints(new Date(day(3)));
+    return a;
+  }
+
+  /** a browser that has never seen the app: it boots BEFORE the file arrives,
+   *  and that boot is what stamps a fresh freeze at "now" */
+  async function bootedEmpty() {
+    const b = await fresh();
+    await b.profile.startPointsClock(new Date(day(3)));
+    await b.profile.freezeLegacyPoints(new Date(day(3)));
+    return b;
+  }
+
+  it('carries the whole xp total across an export and import', async () => {
+    const a = await studiedDevice();
+    const before = (await a.profile.getPointsState(new Date(day(3)))).summary.total;
+    const file = await a.backup.buildBackup();
+
+    const b = await bootedEmpty();
+    await b.backup.applyBackup(JSON.parse(JSON.stringify(file)));
+    const after = (await b.profile.getPointsState(new Date(day(3)))).summary.total;
+
+    expect(before).toBeGreaterThan(0);
+    expect(after).toBe(before);
+  });
+
+  it('keeps which preset each sitting was', async () => {
+    const a = await fresh();
+    await a.db.putSession({ ...makeSession(day(1), 10), length: 'short' as const });
+    const file = await a.backup.buildBackup();
+
+    const b = await fresh();
+    await b.backup.applyBackup(JSON.parse(JSON.stringify(file)));
+    const [restored] = await b.db.getAllSessions();
+    // a Short restored without its length is scored as a Long, and pays nearly
+    // three times what it earned
+    expect(restored?.length).toBe('short');
+  });
+
+  it('scores a backup written before the freeze existed rather than zeroing it', async () => {
+    const a = await fresh();
+    await a.db.putSession(makeSession(day(1), 30));
+    await a.profile.startPointsClock(new Date(day(0)));
+    const file = await a.backup.buildBackup();
+    delete (file.profile as { legacyUntil?: number }).legacyUntil;
+    delete (file.profile as { legacyPoints?: number }).legacyPoints;
+
+    const b = await bootedEmpty();
+    await b.backup.applyBackup(JSON.parse(JSON.stringify(file)));
+    const total = (await b.profile.getPointsState(new Date(day(3)))).summary.total;
+
+    expect(total).toBeGreaterThan(0);
+  });
+});
