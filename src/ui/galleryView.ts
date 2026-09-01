@@ -41,7 +41,7 @@ let viewerIndex = 0;
 let profile: Awaited<ReturnType<typeof loadProfile>> | null = null;
 
 const isCover = (entry: GalleryEntry) => entry.kind === 'cover';
-const pieceLabel = (entry: GalleryEntry) => `Card ${entry.index + 1}`;
+const pieceLabel = (entry: GalleryEntry) => `Card ${positionOf(entry.id)}`;
 const pieceDetail = (entry: GalleryEntry) =>
   isCover(entry)
     ? `Volume ${entry.volume} cover`
@@ -60,6 +60,10 @@ function thumb(entry: GalleryEntry, itemIndex: number, next: NextUp | null): str
     // the next tile carries the same fill as the header bar, so the number up
     // top and the picture it buys are visibly the same thing
     const fill = isNext ? `<span class="g-tile-fill" style="height:${Math.round(next!.fraction * 100)}%"></span>` : '';
+    // the number the CARD will print, not the pocket's place in the ladder.
+    // an arc payoff takes a card number but no rung on the ladder, so the two
+    // drift apart by one per arc - by the two hundredth pocket the empty frame
+    // was promising a card seventeen numbers off the one that lands in it.
     // the total xp the picture costs, not what is left to earn. showing the
     // remainder made every arc look like it restarted near zero, because the
     // numbers shrink as you earn; the requirement is one continuous ladder.
@@ -69,7 +73,7 @@ function thumb(entry: GalleryEntry, itemIndex: number, next: NextUp | null): str
     return `<div class="g-slot is-locked${slot}${cover ? ' is-cover' : ''}${isNext ? ' is-next' : ''}">
       <span class="g-empty">
         ${fill}
-        <span class="g-num">${entry.index + 1}</span>
+        <span class="g-num">${positionOf(entry.id)}</span>
         <span class="g-need">${entry.threshold.toLocaleString()}</span>
       </span>
     </div>`;
@@ -274,7 +278,7 @@ function headerBlock(next: NextUp | null): string {
   // picture number rather than chapter/volume: the chapter it happens to be is
   // a spoiler about what is coming, and the number the user is chasing is the
   // position in the collection
-  const label = `Card ${next.entry.index + 1}`;
+  const label = `Card ${positionOf(next.entry.id)}`;
   return `<div class="g-head">
     <div class="g-head-next">
       <span class="g-head-label">Next card</span>
