@@ -1,0 +1,77 @@
+{
+  "_note": "cards added by hand in tools/framer.html. applied over gallery.json on load - see src/data/inserts.ts. the generator never sees this file.",
+  "inserts": [
+    {
+      "id": "ins-001",
+      "arc": "regulars-arc",
+      "after": "ch-007",
+      "kind": "chapter",
+      "image": "gallery/ins-001.jpg",
+      "thumb": "gallery/t/ins-001.jpg"
+    },
+    {
+      "id": "ins-002",
+      "arc": "regional-preliminaries-arc",
+      "after": "ch-014",
+      "kind": "chapter",
+      "image": "gallery/ins-002.jpg",
+      "thumb": "gallery/t/ins-002.jpg"
+    },
+    {
+      "id": "ins-003",
+      "arc": "fireworks-festival-arc",
+      "after": "ch-031",
+      "kind": "chapter",
+      "image": "gallery/ins-003.jpg",
+      "thumb": "gallery/t/ins-003.jpg"
+    },
+    {
+      "id": "ins-004",
+      "arc": "nationals-arc",
+      "after": "ch-045",
+      "kind": "chapter",
+      "image": "gallery/ins-004.jpg",
+      "thumb": "gallery/t/ins-004.jpg"
+    },
+    {
+      "id": "ins-005",
+      "arc": "yumekas-return-arc",
+      "after": "ch-096",
+      "kind": "chapter",
+      "image": "gallery/ins-005.jpg",
+      "thumb": "gallery/t/ins-005.jpg"
+    },
+    {
+      "id": "ins-006",
+      "arc": "confession-arc",
+      "after": "ch-105",
+      "kind": "chapter",
+      "image": "gallery/ins-006.jpg",
+      "thumb": "gallery/t/ins-006.jpg"
+    },
+    {
+      "id": "ins-007",
+      "arc": "confession-arc",
+      "after": "ins-006",
+      "kind": "chapter",
+      "image": "gallery/ins-007.jpg",
+      "thumb": "gallery/t/ins-007.jpg"
+    },
+    {
+      "id": "ins-009",
+      "arc": "relationship-beginnings-arc",
+      "after": "ins-008",
+      "kind": "chapter",
+      "image": "gallery/ins-009.jpg",
+      "thumb": "gallery/t/ins-009.jpg"
+    },
+    {
+      "id": "ins-010",
+      "arc": "relationship-beginnings-arc",
+      "after": "ins-009",
+      "kind": "chapter",
+      "image": "gallery/ins-010.jpg",
+      "thumb": "gallery/t/ins-010.jpg"
+    }
+  ]
+}

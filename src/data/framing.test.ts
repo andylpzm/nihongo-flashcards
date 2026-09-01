@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import framing from './framing.json';
 import gallery from './gallery.json';
 import overrides from './cardOverrides.json';
+import cardInserts from './cardInserts.json';
+import { applyInserts, type InsertFile } from './inserts';
 import { coercePos, cropRect, placement, DEFAULT_POS, MAX_SCALE } from '../state/imagePos';
 
 // the framing tool (tools/framer.html) writes framing.json. these guard that
@@ -16,25 +18,44 @@ const OVR = overrides as Record<string, Override>;
 
 // every picture Andy singled out, by card number. pinned exactly, so a stray
 // edit to cardOverrides.json fails here instead of quietly reverting a card to
-// the wrong frame or the wrong finish.
+// the wrong frame or the wrong finish. the numbers in the comments shift when a
+// card is inserted - they are a signpost, not an assertion.
 const PINNED: Record<string, Override> = {
-  'ch-024': { layout: 'portrait', tier: 'cover' },                                 // #28
-  'ch-025': { layout: 'portrait', tier: 'chapter' },                               // #30
-  'ch-045': { layout: 'portrait', tier: 'chapter' },                               // #55
-  'ch-046': { layout: 'landscape', tier: 'cover' },                                // #56
-  'ch-056': { layout: 'landscape', tier: 'cover' },                                // #68
-  'ch-060': { layout: 'landscape', tier: 'chapter', rotate: 270 },                 // #72
-  'ch-065': { layout: 'portrait', tier: 'chapter' },                               // #78
-  'ch-120': { layout: 'landscape', tier: 'cover' },                                // #144
-  'ch-129': { layout: 'portrait', tier: 'cover' },                                 // #155
-  'ch-152': { layout: 'portrait', tier: 'cover' },                                 // #182
-  'ch-154': { layout: 'landscape', tier: 'cover', rotate: 270 },                   // #185
-  'ch-180': { layout: 'landscape', tier: 'cover' },                                // #216
-  'ch-235': { layout: 'landscape', tier: 'cover' },                                // #284
-  'ch-236': { layout: 'landscape', tier: 'chapter' },                              // #285
-  'ch-249': { layout: 'portrait', tier: 'chapter' },                               // #299
-  'ch-250': { layout: 'landscape', tier: 'cover' },                                // #300
-  'bonus-01': { layout: 'landscape', tier: 'arc' },                                // #302
+  'ch-005': { layout: 'landscape', tier: 'chapter' },                             // #5
+  'ch-012': { layout: 'landscape', tier: 'chapter' },                             // #15
+  'vol-02': { layout: 'portrait', tier: 'arc' },                                  // #22
+  'ch-017': { layout: 'portrait', tier: 'cover' },                                // #23
+  'ch-024': { layout: 'portrait', tier: 'cover' },                                // #30
+  'ch-025': { layout: 'portrait', tier: 'chapter' },                              // #32
+  'ch-027': { layout: 'landscape', tier: 'chapter' },                             // #35
+  'vol-05': { layout: 'landscape', tier: 'chapter' },                             // #56
+  'ch-045': { layout: 'portrait', tier: 'chapter' },                              // #58
+  'ch-046': { layout: 'portrait', tier: 'cover' },                                // #60
+  'ch-052': { layout: 'landscape', tier: 'chapter' },                             // #67
+  'ch-056': { layout: 'landscape', tier: 'cover' },                               // #72
+  'ch-060': { layout: 'landscape', tier: 'chapter', rotate: 270 },                // #76
+  'ch-065': { layout: 'portrait', tier: 'chapter' },                              // #82
+  'ch-069': { layout: 'landscape', tier: 'chapter' },                             // #87
+  'ch-081': { layout: 'landscape', tier: 'chapter' },                             // #102
+  'ch-089': { layout: 'landscape', tier: 'chapter' },                             // #110
+  'ch-093': { layout: 'landscape', tier: 'chapter' },                             // #115
+  'ins-005': { layout: 'portrait', tier: 'cover' },                               // #119
+  'vol-11': { layout: 'portrait', tier: 'chapter' },                              // #124
+  'ch-101': { layout: 'landscape', tier: 'chapter' },                             // #126
+  'ch-105': { layout: 'landscape', tier: 'chapter' },                             // #130
+  'ins-007': { layout: 'landscape', tier: 'chapter' },                            // #132
+  'vol-12': { layout: 'portrait', tier: 'chapter' },                              // #137
+  'ch-114': { layout: 'landscape', tier: 'chapter' },                             // #143
+  'ch-120': { layout: 'landscape', tier: 'cover' },                               // #148
+  'ch-129': { layout: 'portrait', tier: 'cover' },                                // #159
+  'ch-152': { layout: 'portrait', tier: 'cover' },                                // #186
+  'ch-154': { layout: 'landscape', tier: 'cover', rotate: 270 },                  // #189
+  'ch-180': { layout: 'landscape', tier: 'cover' },                               // #220
+  'ch-235': { layout: 'landscape', tier: 'cover' },                               // #288
+  'ch-236': { layout: 'landscape', tier: 'chapter' },                             // #289
+  'ch-249': { layout: 'portrait', tier: 'chapter' },                              // #303
+  'ch-250': { layout: 'landscape', tier: 'cover' },                               // #304
+  'bonus-01': { layout: 'landscape', tier: 'arc' },                               // #306
 };
 
 /** a picture's real frame, once its override has its say */
@@ -49,7 +70,13 @@ interface Piece {
 }
 function ids(): Map<string, string> {
   const out = new Map<string, string>();
-  for (const saga of gallery.sagas)
+  // the hand-inserted cards are gallery pictures like any other - the app sees
+  // them through the same merge, so the guards here have to as well
+  const sagas = applyInserts(
+    gallery.sagas as Parameters<typeof applyInserts>[0],
+    (cardInserts as InsertFile).inserts
+  );
+  for (const saga of sagas)
     for (const arc of saga.arcs) {
       for (const p of arc.pieces as Piece[]) out.set(p.id, p.kind);
       if (arc.payoff) out.set(arc.id, arc.payoff.kind);

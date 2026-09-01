@@ -213,3 +213,109 @@ describe('newlyUnlocked', () => {
     expect(got.pieces.every((p) => p.threshold > 5000)).toBe(true);
   });
 });
+
+/* ---- inserted cards ----------------------------------------------------
+   the requirements are numbers chris has been looking at, so inserting a card
+   must not move one of them. the curve keeps the shape it was fitted to; the
+   new card takes the slot it lands in, everything behind it moves up a slot and
+   takes that slot's price, and the collection grows one slot PAST the
+   twelve-month target - a little more to earn at the end, which is what an
+   extra card should cost.
+
+   the accepted consequence, pinned here so it stays a decision rather than a
+   surprise: chris's points do not move with the cards, so a picture already
+   given can go back behind glass until he earns the difference. */
+describe('a card inserted by hand', () => {
+  const arc = (pieces: { id: string; inserted?: boolean }[]) => ({
+    id: 'arc-1', arc: 'Arc 1', payoff: null,
+    pieces: pieces.map((p, i) => ({
+      id: p.id, kind: 'chapter', chapter: i + 1, volume: 1, image: '', thumb: '',
+      ...(p.inserted ? { inserted: true } : {}),
+    })),
+  });
+  const gallery = (pieces: { id: string; inserted?: boolean }[]): GallerySaga[] =>
+    [{ id: 'first', saga: 'First', arcs: [arc(pieces)] }];
+
+  const ten = Array.from({ length: 10 }, (_, i) => ({ id: `ch-${i + 1}` }));
+  /** the same ten, with a new card sitting behind the sixth */
+  const inserted = [...ten.slice(0, 6), { id: 'ins-001', inserted: true }, ...ten.slice(6)];
+
+  const entries = (pieces: { id: string; inserted?: boolean }[], points = 0) =>
+    buildGallery(gallery(pieces), points)[0]!.arcs[0]!.entries;
+  const priceOf = (pieces: { id: string; inserted?: boolean }[], id: string) =>
+    entries(pieces).find((e) => e.id === id)!.threshold;
+
+  it('does not move a single existing requirement', () => {
+    const before = entries(ten).map((e) => e.threshold);
+    const after = entries(inserted).map((e) => e.threshold);
+    // eleven slots now, but the first eleven prices of the ten-card curve
+    expect(after.slice(0, 10)).toEqual(before);
+  });
+
+  it('gives the new card the price of the slot it lands in', () => {
+    expect(priceOf(inserted, 'ins-001')).toBe(priceOf(ten, 'ch-7'));
+  });
+
+  it('moves the cards behind it up a slot, into that slot\'s price', () => {
+    expect(priceOf(inserted, 'ch-7')).toBe(priceOf(ten, 'ch-8'));
+    expect(priceOf(inserted, 'ch-8')).toBe(priceOf(ten, 'ch-9'));
+    expect(priceOf(inserted, 'ch-9')).toBe(priceOf(ten, 'ch-10'));
+  });
+
+  it('adds a slot past the target, priced by carrying the curve on', () => {
+    // ch-10 used to be the last card and cost the twelve-month target. it is
+    // the eleventh card that is last now, and it costs more than that.
+    expect(priceOf(ten, 'ch-10')).toBe(TOTAL_TARGET);
+    expect(priceOf(inserted, 'ch-10')).toBeGreaterThan(TOTAL_TARGET);
+    expect(priceOf(inserted, 'ch-10')).toBe(thresholdFor(10, 10));
+  });
+
+  it('costs a picture already given, until the difference is earned', () => {
+    // seven cards' worth of points, and a card added behind the sixth
+    const points = priceOf(ten, 'ch-7');
+    const open = (pieces: { id: string; inserted?: boolean }[]) =>
+      entries(pieces, points).filter((e) => e.unlocked).map((e) => e.id);
+
+    expect(open(ten)).toEqual(['ch-1', 'ch-2', 'ch-3', 'ch-4', 'ch-5', 'ch-6', 'ch-7']);
+    // still seven pictures, and the new one is among them - it costs exactly
+    // what ch-7 did. ch-7 itself has moved into slot eight and is behind glass.
+    expect(open(inserted)).toEqual(['ch-1', 'ch-2', 'ch-3', 'ch-4', 'ch-5', 'ch-6', 'ins-001']);
+  });
+
+  it('makes the arc reward wait for it', () => {
+    // the reward comes out when every piece in the arc is open, so a card added
+    // to the arc is one more thing it waits on
+    const withReward = (pieces: { id: string; inserted?: boolean }[]): GallerySaga[] => {
+      const g = gallery(pieces);
+      g[0]!.arcs[0]!.payoff = { kind: 'spread', image: '', thumb: '', width: null, height: null };
+      return g;
+    };
+    // the new card goes at the END of the arc, so it is the last thing standing
+    // between the collection and the reward
+    const last = [...ten, { id: 'ins-001', inserted: true }];
+    const view = (pieces: { id: string; inserted?: boolean }[], points: number) =>
+      buildGallery(withReward(pieces), points)[0]!.arcs[0]!;
+
+    const tenthPrice = priceOf(ten, 'ch-10');
+    // every original piece open, the added one not - the reward stays shut
+    const nearly = view(last, tenthPrice);
+    expect(nearly.entries.filter((e) => e.unlocked).map((e) => e.id)).toEqual(ten.map((p) => p.id));
+    expect(nearly.complete).toBe(false);
+    expect(nearly.payoff!.unlocked).toBe(false);
+
+    // and it opens once the added card does, priced at the slot it took
+    const eleventh = nearly.entries.at(-1)!.threshold;
+    expect(eleventh).toBeGreaterThan(tenthPrice);
+    const done = view(last, eleventh);
+    expect(done.complete).toBe(true);
+    expect(done.payoff!.unlocked).toBe(true);
+    expect(done.payoff!.threshold).toBe(eleventh);
+    expect(done.total).toBe(11);
+  });
+
+  it('numbers by the same slots it prices by', () => {
+    const all = entries(inserted);
+    expect(all.map((e) => e.index)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(all[6]!.id).toBe('ins-001');
+  });
+});

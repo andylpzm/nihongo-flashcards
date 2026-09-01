@@ -19,22 +19,30 @@ export const TOTAL_TARGET = 66_500;
 export const FIRST_UNLOCK = 50;
 
 /**
- * xp needed for piece `index` (0-based) out of `total`.
+ * xp needed for the picture in slot `index` (0-based), on a curve fitted to
+ * `total` slots.
  *
- * one smooth curve, `FIRST_UNLOCK x n^p`, fitted so the last piece lands on
+ * one smooth curve, `FIRST_UNLOCK x n^p`, fitted so slot `total - 1` lands on
  * TOTAL_TARGET. the first unlock used to be a hardcoded special case bolted
  * onto a curve that started far lower, which left a five-xp gap between
  * pictures one and two - a single session cleared both.
+ *
+ * `index` may run PAST the last slot, and that is not an error: a card inserted
+ * by hand adds a slot to the end of the collection, and the price of that slot
+ * is the curve carried on rather than the last rung repeated. `total` is what
+ * fixes the shape, so every existing price stays the number it was.
  */
 export function thresholdFor(index: number, total: number): number {
   const last = Math.max(2, total);
   const power = Math.log(TOTAL_TARGET / FIRST_UNLOCK) / Math.log(last);
-  const n = Math.min(index, last - 1) + 1;
-  return Math.round(FIRST_UNLOCK * Math.pow(n, power));
+  return Math.round(FIRST_UNLOCK * Math.pow(Math.max(0, index) + 1, power));
 }
 
 export interface GalleryPiece {
   id: string;
+  /** added by hand in the framing tool rather than by the generator - see
+   *  src/data/inserts.ts and countGenerated() */
+  inserted?: boolean;
   /** 'chapter' is a chapter title page; 'cover' a volume cover, which sits in
    *  the sequence right after that volume's last chapter */
   kind: string;
@@ -112,8 +120,26 @@ export function countPieces(sagas: GallerySaga[]): number {
   return sagas.reduce((n, s) => n + s.arcs.reduce((m, a) => m + a.pieces.length, 0), 0);
 }
 
+/**
+ * the pictures the manga itself supplies - what the curve is fitted to, and
+ * deliberately NOT the number of cards in the collection.
+ *
+ * a card inserted by hand must not re-price anything: the requirements are
+ * numbers chris has been looking at. so the curve keeps the shape it was fitted
+ * to, the inserted card pushes everything behind it up a slot into that slot's
+ * price, and the collection grows one slot past TOTAL_TARGET - a little more xp
+ * to earn at the end, which is what an extra card should cost.
+ */
+export function countGenerated(sagas: GallerySaga[]): number {
+  return sagas.reduce(
+    (n, s) => n + s.arcs.reduce((m, a) => m + a.pieces.filter((p) => !p.inserted).length, 0),
+    0
+  );
+}
+
 export function buildGallery(sagas: GallerySaga[], totalPoints: number): SagaView[] {
-  const total = countPieces(sagas);
+  // the curve's shape, not the collection's length - see countGenerated()
+  const total = countGenerated(sagas);
   let index = 0;
 
   return sagas.map((saga) => {

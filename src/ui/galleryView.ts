@@ -182,14 +182,20 @@ function arcBlock(arc: ArcView, next: NextUp | null): string {
     payoff = payoffTile(arc.payoff, arc, i);
   }
 
+  // the reward is a card in this block like any other, so it is counted like
+  // one. arc.total is pieces ONLY - that is what decides when the reward comes
+  // out, and it must stay that way or the reward would be waiting on itself.
+  const shown = arc.unlockedCount + (arc.payoff?.unlocked ? 1 : 0);
+  const shownTotal = arc.total + (arc.payoff ? 1 : 0);
+
   return `<section class="g-arc${arc.complete ? ' is-complete' : ''}">
     <header class="g-arc-head">
       <div class="g-arc-title">
         <h3>${arc.arc}</h3>
       </div>
-      <span class="g-count">${arc.unlockedCount}/${arc.total}</span>
+      <span class="g-count">${shown}/${shownTotal}</span>
     </header>
-    <div class="g-bar"><i style="width:${arc.total ? (arc.unlockedCount / arc.total) * 100 : 0}%"></i></div>
+    <div class="g-bar"><i style="width:${shownTotal ? (shown / shownTotal) * 100 : 0}%"></i></div>
     <div class="g-grid">${tiles}${payoff}</div>
   </section>`;
 }

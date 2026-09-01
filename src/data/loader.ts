@@ -1,5 +1,6 @@
 import type { VocabCard, KanaCard, KanjiCard } from './types';
 import type { GallerySaga } from '../srs/gallery';
+import { applyInserts, type InsertFile } from './inserts';
 
 export interface KanaDataset {
   hiraganaAlphabet: KanaCard[];
@@ -32,7 +33,13 @@ let galleryCache: GallerySaga[] | null = null;
 export async function loadGallery(): Promise<GallerySaga[]> {
   if (!galleryCache) {
     const mod = await import('./gallery.json');
-    galleryCache = (mod.default as { sagas: GallerySaga[] }).sagas;
+    // the hand-inserted cards go on here rather than into the manifest, which
+    // is generated and would drop them - see inserts.ts
+    const ins = await import('./cardInserts.json');
+    galleryCache = applyInserts(
+      (mod.default as { sagas: GallerySaga[] }).sagas,
+      (ins.default as InsertFile).inserts
+    );
   }
   return galleryCache;
 }

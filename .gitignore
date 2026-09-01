@@ -19,6 +19,8 @@ scripts/out/
 # scraped source artwork - copyrighted, kept out of git
 gallery-source/
 public/gallery/
+# the raw chapter scans the framer picks replacement pages from. 2.8GB.
+Ao_no_Hako_Raw/
 
 # the picture pack, built by tools/pack-gallery.mjs
 dist-pack/

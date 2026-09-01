@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { parsePack } from './vault';
 import packKey from '../data/packKey.json';
@@ -50,8 +50,14 @@ withPack('the real pack', () => {
     const indexLen = new DataView(bytes.buffer as ArrayBuffer, bytes.byteOffset).getUint32(5, true);
     const paths = Object.keys(index);
 
-    expect(paths.length).toBe(605);
-    expect(paths.filter((p) => p.startsWith('gallery/t/')).length).toBe(302);
+    // counted off the folder the pack is built from, not written in here: a
+    // card inserted in the framing tool is a 303rd picture, and a test that
+    // fails for that reason says nothing about whether the pack is sound
+    const pic = (f: string): boolean => /\.(jpe?g|png)$/i.test(f);
+    const full = (await readdir('public/gallery')).filter(pic);
+    const thumbs = (await readdir('public/gallery/t')).filter(pic);
+    expect(paths.length).toBe(full.length + thumbs.length);
+    expect(paths.filter((p) => p.startsWith('gallery/t/')).length).toBe(thumbs.length);
     // the wordmark rides along: it only ever appears on a card, and a card can
     // only be looked at with a pack connected, so shipping it with the app put
     // a piece of someone else's artwork in a public repo for nothing

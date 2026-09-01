@@ -37,10 +37,6 @@
     "layout": "portrait",
     "tier": "chapter"
   },
-  "ch-046": {
-    "layout": "landscape",
-    "tier": "cover"
-  },
   "ch-056": {
     "layout": "landscape",
     "tier": "cover"
@@ -68,5 +64,81 @@
   "bonus-01": {
     "layout": "landscape",
     "tier": "arc"
+  },
+  "ch-005": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-012": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "vol-02": {
+    "layout": "portrait",
+    "tier": "arc"
+  },
+  "ch-017": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "ch-027": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "vol-05": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-052": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-046": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "ch-069": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-081": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-089": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-093": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ins-005": {
+    "layout": "portrait",
+    "tier": "cover"
+  },
+  "vol-11": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "ch-101": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ch-105": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "ins-007": {
+    "layout": "landscape",
+    "tier": "chapter"
+  },
+  "vol-12": {
+    "layout": "portrait",
+    "tier": "chapter"
+  },
+  "ch-114": {
+    "layout": "landscape",
+    "tier": "chapter"
   }
 }
