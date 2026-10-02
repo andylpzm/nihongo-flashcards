@@ -87,6 +87,14 @@ body.session-active #section-vocabulary .pager-card {
   padding-bottom: 1.1rem;
 }
 
+/* a kanji back can grow past the space above the fixed grade bar on a small
+   phone. room for the bar under the page means it can always scroll clear. */
+@media (max-width: 767px) {
+  body.session-active .main-content {
+    padding-bottom: calc(var(--bottom-nav-space) + 2.5rem);
+  }
+}
+
 /* Mark-as-learned toggle (Browse only - it sits inside .nav-buttons, which is
    hidden during a session). */
 .btn-mark-known {

@@ -2,12 +2,17 @@
  *
  * The two faces are stacked in the same box and turned together; which one you
  * see is the parent's `flipped` class. Both are kept in the layout rather than
- * display:none'd, or the card would resize as it turns. */
+ * display:none'd, or the card would resize as it turns.
+ *
+ * the box is --card-height at least, and grows to the taller face past that.
+ * it used to be exactly --card-height with the overflow clipped, which cut
+ * the bottom off a busy kanji back with no way to scroll to it. */
 
 .card-viewport {
   position: relative;
+  display: grid;
   width: var(--card-width);
-  height: var(--card-height);
+  min-height: var(--card-height);
   perspective: 1200px;
   margin: 0.5rem 0 1.25rem;
   cursor: pointer;
@@ -36,10 +41,12 @@
   }
 }
 
+/* a grid so both faces can share one cell, and the cell is as tall as the
+   taller of them */
 .flashcard {
   position: relative;
+  display: grid;
   width: 100%;
-  height: 100%;
   border-radius: 24px;
   box-shadow: 0 20px 40px var(--shadow-color);
   transform-style: preserve-3d;
@@ -69,15 +76,13 @@ body.light-theme .flashcard {
 /* ---- the two faces ------------------------------------------------------ */
 
 .card-face {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  grid-area: 1 / 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  height: 100%;
   padding: clamp(1.25rem, 5vw, 2.5rem);
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -181,12 +186,39 @@ body.light-theme .card-face {
 /* ---- what is printed on them -------------------------------------------- */
 
 /* the small caps line at the top: which deck this card came from */
+/* inline-flex so the level badge's padding is part of the row's height
+   rather than poking out above it */
 .card-indicator {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+/* the front's top row: deck label left, eye and speaker right. both are
+   allowed to wrap, or on a narrow screen (or safari's text zoom) the buttons
+   were pushed out past the edge of the card */
+.card-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.card-top .card-indicator {
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+}
+
+.card-top-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
 }
 
 .card-front .card-indicator {
@@ -214,6 +246,10 @@ body.light-theme .level-badge {
 }
 
 .card-main-text {
+  max-width: 100%;
+  /* one long english word ("photographed") must break rather than run out
+     of the card on a narrow screen */
+  overflow-wrap: anywhere;
   font-size: clamp(1.5rem, 6vw, 2.2rem);
   font-weight: 600;
   line-height: 1.2;
@@ -269,6 +305,55 @@ body.light-theme .hiragana-text {
   opacity: 0.5;
 }
 
+/* ---- the back of a word card ------------------------------------------ */
+
+.word-answer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 100%;
+}
+
+/* the kanji is the headline here, big enough to copy into a notebook */
+.word-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.word-reading {
+  font-family: var(--font-jp);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-cyan);
+}
+
+.word-kanji {
+  font-family: var(--font-jp);
+  font-size: clamp(2.4rem, 13vw, 3.2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+}
+
+/* five or six characters at full size run out of card */
+.word-kanji.is-long {
+  font-size: 2.3rem;
+}
+
+.word-alt {
+  font-family: var(--font-jp);
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.word-block + .card-main-text {
+  font-size: clamp(1.2rem, 5vw, 1.5rem);
+  font-weight: 500;
+}
+
 .card-sub-info {
   max-width: 90%;
   font-size: 0.9rem;
@@ -303,91 +388,86 @@ body.light-theme .hiragana-text {
 .kanji-readings {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
   width: 100%;
-  font-size: 0.9rem;
+  margin-block: 0.75rem;
 }
 
+/* label in a fixed column on the left, readings free to wrap beside it */
 .kanji-reading-row {
   display: flex;
-  justify-content: center;
   align-items: baseline;
-  gap: 0.6rem;
+  gap: 0.75rem;
+  text-align: left;
 }
 
 .kanji-reading-label {
-  min-width: 2.2rem;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
+  flex: none;
+  width: 2.2rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  text-align: right;
   color: var(--text-muted);
 }
 
 .kanji-reading-values {
+  min-width: 0;
   font-family: var(--font-jp);
+  font-size: 1.1rem;
+  line-height: 1.5;
   color: var(--accent-cyan);
 }
 
 .kanji-examples {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
   width: 100%;
-  padding-top: 0.6rem;
+  margin-bottom: 0.75rem;
   border-top: 1px solid var(--border);
 }
 
+/* two lines per example: the word big on the left, reading and meaning
+   stacked beside it. these were one nowrap line with ellipses, which cut
+   the meaning off on anything but the shortest gloss. */
 .kanji-example {
-  display: flex;
+  display: grid;
+  /* capped at half, so a long word wraps instead of squeezing the meaning */
+  grid-template-columns: fit-content(50%) 1fr;
+  column-gap: 0.75rem;
   align-items: baseline;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  min-width: 0;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
 }
 
-/* The japanese side can be squeezed too.
- *
- * These were nowrap with no overflow, which makes a flex item's automatic
- * minimum its full text width - unshrinkable. A long compound then took the
- * whole row and the meaning, the only item that COULD give, gave everything:
- * at iOS's larger text sizes it measured 0px and the translation was simply
- * not on the card. Setting overflow here resolves that automatic minimum to
- * zero, so the two sides share the squeeze instead of one absorbing all of it. */
-.kanji-example-word,
-.kanji-example-reading {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.kanji-example:last-child {
+  border-bottom: 0;
 }
 
 .kanji-example-word {
+  grid-row: span 2;
+  align-self: center;
   font-family: var(--font-jp);
+  font-size: 1.35rem;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .kanji-example-reading {
-  font-size: 0.7rem;
-  color: var(--text-muted);
+  font-family: var(--font-jp);
+  font-size: 0.95rem;
+  color: var(--accent-cyan);
 }
 
-/* the meaning takes whatever is left and gives up with an ellipsis rather
-   than wrapping - a two-line example row pushes the next one off the card */
 .kanji-example-meaning {
-  margin-left: auto;
-  /* a floor, so the translation can never be squeezed out of existence -
-     a row of japanese with no english is worse than a truncated gloss */
-  min-width: 5.5em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: right;
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  line-height: 1.35;
   color: var(--text-muted);
 }
 
 .kanji-strokes {
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 

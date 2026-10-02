@@ -454,7 +454,7 @@
       {
         "word": "半分",
         "reading": "はんぶん",
-        "meaning": "half minute"
+        "meaning": "half"
       },
       {
         "word": "大分",
@@ -2082,11 +2082,6 @@
         "word": "お父さん",
         "reading": "おとうさん",
         "meaning": "(honorable) father"
-      },
-      {
-        "word": "伯父 / 叔父",
-        "reading": "おじいさん",
-        "meaning": "grandfather, male senior citizen"
       }
     ]
   },
@@ -2206,7 +2201,7 @@
       {
         "word": "半分",
         "reading": "はんぶん",
-        "meaning": "half minute"
+        "meaning": "half"
       }
     ]
   },
@@ -5495,7 +5490,7 @@
         "meaning": "music"
       },
       {
-        "word": "楽む",
+        "word": "楽しむ",
         "reading": "たのしむ",
         "meaning": "to enjoy oneself"
       },

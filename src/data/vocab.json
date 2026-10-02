@@ -7109,7 +7109,7 @@
     "kanji": "半分",
     "romaji": "hanbun",
     "meanings": [
-      "half minute"
+      "half"
     ],
     "level": "N5",
     "pos": "noun",
@@ -7834,7 +7834,6 @@
   {
     "id": 567,
     "kana": "おじいさん",
-    "kanji": "伯父 / 叔父",
     "romaji": "ojiisan",
     "meanings": [
       "grandfather, male senior citizen"
@@ -13360,7 +13359,7 @@
   {
     "id": 967,
     "kana": "たのしむ",
-    "kanji": "楽む",
+    "kanji": "楽しむ",
     "romaji": "tanoshimu",
     "meanings": [
       "to enjoy oneself"

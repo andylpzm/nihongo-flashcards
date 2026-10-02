@@ -51,6 +51,11 @@ body {
    which is what made it look like a layout problem rather than this. */
 html {
   overscroll-behavior-y: none;
+  /* ios safari blows text up when the phone is turned sideways, which would
+     undo every width the card was measured at. ios ignores the manifest's
+     portrait lock, so it can happen. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {

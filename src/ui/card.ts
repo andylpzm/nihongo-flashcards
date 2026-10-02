@@ -198,14 +198,38 @@ function getEyeClosedSVG(): string {
   return `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.82l2.92 2.92C21.18 15.39 22.5 13.85 23 12c-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>`;
 }
 
-// Build the small "Kanji: X | Level: NX" style sub-info line for vocab cards.
-// Kana cards carry no such metadata, so they render nothing here.
-function getCardSubInfo(card: Card): string {
-  if (!isVocabCard(card)) return '';
-  const parts: string[] = [];
-  if (card.kanji) parts.push(`Kanji: ${card.kanji}`);
-  parts.push(`Level: ${card.level}`);
-  return parts.join(' | ');
+// the back of a word card. the kanji is the headline, reading above it, so
+// it can be copied into a notebook - it used to be a 14px grey "Kanji: x"
+// line. a word with several spellings ("伯母さん / 叔母さん") gets the first
+// one big and the rest underneath.
+function vocabBack(card: Card): string {
+  if (!isVocabCard(card)) {
+    return `
+    <span class="card-indicator">English</span>
+    <div class="card-main-text">${card.meanings.join(' / ')}</div>
+    <span></span>
+  `;
+  }
+  const forms = card.kanji ? card.kanji.split(/\s*\/\s*|\s{2,}/).filter(Boolean) : [];
+  const [first, ...rest] = forms;
+  const word = first
+    ? `<div class="word-block">
+      <span class="word-reading" lang="ja">${card.kana}</span>
+      <span class="word-kanji${[...first].length > 4 ? ' is-long' : ''}" lang="ja">${first}</span>
+      ${rest.length ? `<span class="word-alt" lang="ja">${rest.join('・')}</span>` : ''}
+    </div>`
+    : '';
+  // word and meaning are one group so they stay together in the middle - as
+  // separate children space-between pushed the meaning to the bottom edge of
+  // the tall session card. the empty span is the balancing bottom end.
+  return `
+    <span class="card-indicator">English <span class="level-badge">${card.level}</span></span>
+    <div class="word-answer">
+      ${word}
+      <div class="card-main-text">${card.meanings.join(' / ')}</div>
+    </div>
+    <span></span>
+  `;
 }
 
 // Render UI for Card
@@ -259,9 +283,9 @@ export function renderCard(): void {
 
   // FRONT: Japanese
   cardFront.innerHTML = `
-    <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
+    <div class="card-top">
       <span class="card-indicator">${isKanjiCard(currentCard) ? 'Kanji' : 'Japanese'} ${level ? `<span class="level-badge">${level}</span>` : ''}</span>
-      <div style="display: flex; gap: 0.5rem;">
+      <div class="card-top-buttons">
         ${state.activeDeck === 'vocabulary' ? `
           <button class="speak-button" id="btn-toggle-romaji" title="${state.showRomaji ? 'Hide Romaji [R]' : 'Show Romaji [R]'}" aria-label="Toggle Romaji">
             ${state.showRomaji ? getEyeOpenSVG() : getEyeClosedSVG()}
@@ -301,11 +325,7 @@ export function renderCard(): void {
     }
     <span class="kanji-strokes">${currentCard.strokes} stroke${currentCard.strokes === 1 ? '' : 's'}</span>
   `
-    : `
-    <span class="card-indicator">English</span>
-    <div class="card-main-text">${currentCard.meanings.join(' / ')}</div>
-    <div class="card-sub-info">${getCardSubInfo(currentCard)}</div>
-  `;
+    : vocabBack(currentCard);
 
   // Attach dynamic listener for speech icon (since cards are re-rendered)
   const speakBtn = document.getElementById('btn-speak');

@@ -745,10 +745,30 @@ function setupEventListeners(): void {
     });
   }
 
+  // no pinch zoom. safari zoomed the whole page and left it zoomed, so the
+  // card ran off the side and had to be panned back sideways - the side
+  // scroll chris reported. it ignores user-scalable=no and touch-action for
+  // this; cancelling its own gesture events is what it honours. a page that
+  // is already zoomed (safari keeps a tab's zoom across reloads) is let
+  // through, or there would be no pinching back out of it.
+  for (const type of ['gesturestart', 'gesturechange']) {
+    document.addEventListener(
+      type,
+      (e) => {
+        if ((window.visualViewport?.scale ?? 1) > 1.01) return;
+        e.preventDefault();
+      },
+      { passive: false },
+    );
+  }
+
   // Swipe navigation on the card (Browse mode only - nextCard/prevCard
   // already no-op in Study Session mode, where grading advances instead).
   onSwipe(cardViewport, {
     onDragMove: (dx) => {
+      // a session swipe does nothing on release, so the card must not follow
+      // the finger either - it slid half off the screen and back for nothing
+      if (state.studyMode !== 'browse') return;
       cardViewport.classList.add('dragging');
       cardViewport.style.transform = `translateX(${dx}px)`;
       cardViewport.style.opacity = String(1 - Math.min(Math.abs(dx) / 300, 0.5));
