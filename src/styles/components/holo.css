@@ -87,8 +87,20 @@
   width: 100%;
   height: 100%;
   border-radius: inherit;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+}
+
+/* ...and stay painted into the parent, never on a gpu layer of their own.
+   their blends are meant to mix with the parent only. on safari a pseudo on
+   its own layer blends straight onto the artwork instead, which is why the
+   finishes looked wrong there and fine on chrome. his translateZ and our
+   hidden backface each promoted them, so both go. */
+.gc > .card__shine::before,
+.gc > .card__shine::after,
+.gc > .card__glare::after {
+  transform: none;
+  will-change: auto;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
 }
 
 /* flat, so the furniture's z-index still decides what is on top. .gc was
