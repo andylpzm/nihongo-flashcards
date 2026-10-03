@@ -78,9 +78,9 @@
 
 
 /* the edge, the glare and the foils used to live here - .gc-rim, .gc-glare,
-   .gc-foil and .gc-foil2. they are replaced by his .card__shine and
-   .card__glare, mounted at card size in holo.css and driven by cardTilt.ts.
-   which finish a card gets is decided by finishOf() in galleryCard.ts. */
+   .gc-foil and .gc-foil2. they are .holo-shine and .holo-glare now, mounted
+   at card size in holo.css and driven by cardTilt.ts. which finish a card
+   gets is decided by finishOf() in galleryCard.ts. */
 
 /* the window is placed against the card's edges rather than sized at 100% of
    it. the card's height comes from `aspect-ratio`, and a percentage height

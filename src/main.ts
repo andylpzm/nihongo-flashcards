@@ -3,21 +3,6 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/components/card.css';
 import './styles/components/gallery-card.css';
-// the holographic finish: his stylesheets verbatim, then ours meeting them.
-//
-// the order is HIS load order, narrowed to the finishes we use. it matters
-// within a rarity: three files style `rare holo vmax` and they layer -
-// v-max lays down the shine (the rippled plate), rainbow-alt overrides it for
-// trainer-gallery cards, and trainer-gallery-v-max replaces the glare. drop
-// v-max and the cover tier loses its texture and keeps only the sparkle.
-import './styles/holo/base.css';
-import './styles/holo/vars.css';
-import './styles/holo/cosmos-holo.css';
-import './styles/holo/v-max.css';
-import './styles/holo/rainbow-alt.css';
-import './styles/holo/trainer-gallery-v-max.css';
-import './styles/holo/shiny-rare.css';
-// ours last: it overrides base.css's clips, sizing and pointer-events
 import './styles/components/holo.css';
 import './styles/components/controls.css';
 import './styles/components/sidebar.css';
