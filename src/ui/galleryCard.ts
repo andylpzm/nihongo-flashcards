@@ -80,7 +80,7 @@ export function finishOf(id: string, kind: string): Finish {
 
 // how strong the foil is, picked by eye on the screens that showed the
 // safari bug. a few pictures are busier than the rest and want less.
-const FOIL: Record<Finish, number> = { plain: 0, chapter: 0.4, cover: 0.6, arc: 1 };
+const FOIL: Record<Finish, number> = { plain: 0, chapter: 0.4, cover: 0.45, arc: 0.8 };
 const FOIL_BY_PICTURE: Record<string, number> = { 'ch-007': 0.2 };
 
 export function foilOf(id: string, finish: Finish): number {

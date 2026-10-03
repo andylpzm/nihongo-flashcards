@@ -16,8 +16,8 @@
    which finish a card takes is finishOf() in galleryCard.ts:
      plain    black and white chapter   glare only
      chapter  colour chapter            illusion rings over a sunpillar rainbow, soft-light
-     cover    cover                     ripple plate burned into rainbow bands, dodged
-     arc      arc reward and bonus      cosmos
+     cover    cover                     ripple plate times rainbow bands, overlay
+     arc      arc reward and bonus      cosmos times a spectrum, soft-light
 
    --foil (set per card) scales the foil; the glare is not scaled. */
 
@@ -125,23 +125,19 @@
 }
 
 
-/* ---- cover: ripple plate burned into rainbow bands --------------------- */
+/* ---- cover: ripple plate times rainbow bands ------------------------- */
 .gc-holo[data-finish='cover'] .holo-shine {
   background-image:
     url('/nihongo-flashcards/holo/vmaxbg.jpg'),
     repeating-linear-gradient(133deg,
       hsl(283 49% 60%) 5%, hsl(2 70% 58%) 10%, hsl(53 67% 53%) 15%, hsl(93 56% 52%) 20%,
-      hsl(176 38% 50%) 25%, hsl(228 100% 77%) 30%, hsl(283 49% 61%) 35%),
-    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      hsl(180 100% 89% / 50%) 5%, hsl(180 14% 57% / 30%) 40%, #000 130%);
-  background-size: 60% 30%, 400% 900%, cover;
+      hsl(176 38% 50%) 25%, hsl(228 100% 77%) 30%, hsl(283 49% 61%) 35%);
+  background-size: 60% 30%, 400% 900%;
   background-position:
     center,
-    calc(10% + var(--pointer-from-left) * 80%) calc(10% + var(--pointer-from-top) * 80%),
-    center;
-  background-blend-mode: color-burn, multiply, normal;
-  filter: saturate(0.8);
-  mix-blend-mode: color-dodge;
+    calc(10% + var(--pointer-from-left) * 80%) calc(10% + var(--pointer-from-top) * 80%);
+  background-blend-mode: multiply, normal;
+  mix-blend-mode: overlay;
 }
 .gc-holo[data-finish='cover'] .holo-glare {
   background-image: radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
@@ -151,24 +147,20 @@
 }
 
 
-/* ---- arc: cosmos ------------------------------------------------------- */
+/* ---- arc: cosmos times a spectrum -------------------------------------- */
 .gc-holo[data-finish='arc'] .holo-shine {
   background-image:
     url('/nihongo-flashcards/holo/cosmos-bottom.png'),
     repeating-linear-gradient(82deg,
       hsl(53 65% 60%) 4%, hsl(93 56% 50%) 8%, hsl(176 54% 49%) 12%, hsl(228 59% 55%) 16%,
       hsl(283 60% 55%) 20%, hsl(326 59% 51%) 24%, hsl(326 59% 51%) 28%, hsl(283 60% 55%) 32%,
-      hsl(228 59% 55%) 36%, hsl(176 54% 49%) 40%, hsl(93 56% 50%) 44%, hsl(53 65% 60%) 48%),
-    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      hsl(180 100% 89% / 50%) 5%, hsl(180 14% 57% / 30%) 40%, #000 130%);
-  background-size: cover, 400% 900%, cover;
+      hsl(228 59% 55%) 36%, hsl(176 54% 49%) 40%, hsl(93 56% 50%) 44%, hsl(53 65% 60%) 48%);
+  background-size: cover, 400% 900%;
   background-position:
     center,
-    calc(10% + var(--pointer-from-left) * 80%) calc(10% + var(--pointer-from-top) * 80%),
-    center;
-  background-blend-mode: color-burn, multiply, normal;
-  filter: saturate(0.8);
-  mix-blend-mode: color-dodge;
+    calc(10% + var(--pointer-from-left) * 80%) calc(10% + var(--pointer-from-top) * 80%);
+  background-blend-mode: multiply, normal;
+  mix-blend-mode: soft-light;
 }
 .gc-holo[data-finish='arc'] .holo-glare {
   background-image: radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y),
