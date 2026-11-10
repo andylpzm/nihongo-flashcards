@@ -85,7 +85,7 @@ function simulate(
   let answers = 0;
   let daysStudied = 0;
 
-  const start = new Date('2026-01-05T09:00:00Z').getTime();
+  const start = new Date('2027-01-04T09:00:00Z').getTime();
 
   for (let day = 0; day < days; day++) {
     const now = new Date(start + day * DAY);
@@ -221,7 +221,8 @@ describe('forgetting a mature card', () => {
     const matureInterval = (card.due.getTime() - lastReviewedAt.getTime()) / DAY;
     const beforeLapses = card.lapses;
     expect(card.state).toBe(State.Review);
-    expect(matureInterval).toBeGreaterThan(30);
+    // the 14-day cap is as mature as a card gets
+    expect(matureInterval).toBeGreaterThanOrEqual(13);
 
     const after = scheduleReview(card, Rating.Again, t).card;
     const afterInterval = (after.due.getTime() - t.getTime()) / DAY;

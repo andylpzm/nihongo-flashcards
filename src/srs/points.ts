@@ -25,7 +25,7 @@
 
 import type { SessionRecord } from './types';
 import type { SessionLength } from './settings';
-import { dateKey, daysBetween, dayStart } from './dates';
+import { dateKey, daysBetween, dayStart, UPDATE_SHIPS_ON } from './dates';
 
 /**
  * what finishing a sitting pays, before the streak and rank scale it.
@@ -105,11 +105,19 @@ export type MissionDeck = (typeof MISSION_DECKS)[number];
 export const MISSION_XP = 20;
 export const ALL_MISSIONS_XP = 40;
 
+/** an abandoned sitting no longer ticks off its deck - one answer in each deck
+ * paid more than a whole long sitting. older ones keep what they paid. */
+export function countsForMission(session: SessionRecord): boolean {
+  return session.completed || session.startedAt < UPDATE_SHIPS_ON;
+}
+
+const isMissionDeck = (deck: string): boolean => (MISSION_DECKS as readonly string[]).includes(deck);
+
 /** decks studied on a given day, from that day's sittings */
 export function decksStudied(sessions: SessionRecord[]): Set<string> {
   const decks = new Set<string>();
   for (const s of sessions) {
-    if ((MISSION_DECKS as readonly string[]).includes(s.deck)) decks.add(s.deck);
+    if (isMissionDeck(s.deck) && countsForMission(s)) decks.add(s.deck);
   }
   return decks;
 }
@@ -326,8 +334,9 @@ export function computePoints(
   for (const s of ordered) studyDays.add(dateKey(s.startedAt));
 
   const sessionsByDay = new Map<string, number>();
-  // decks seen per day, so mission xp can be paid once the day is complete
+  // mission decks ticked off per day
   const decksByDay = new Map<string, Set<string>>();
+  let missionTotal = 0;
   const awards: SessionAward[] = [];
   // The streak is evaluated against the days studied UP TO the session being
   // scored. Using the full set would let an early session borrow credit from
@@ -343,10 +352,10 @@ export function computePoints(
     const streak = streakOn(daysSoFar, day);
     const multiplier = streakMultiplier(streak);
 
+    // only finished sittings take a place in the day - an abandoned one pays
+    // nothing, so it must not make the next real one worth less
     const sessionIndex = sessionsByDay.get(day) ?? 0;
-    sessionsByDay.set(day, sessionIndex + 1);
-    if (!decksByDay.has(day)) decksByDay.set(day, new Set());
-    decksByDay.get(day)!.add(session.deck);
+    if (session.completed) sessionsByDay.set(day, sessionIndex + 1);
     const value = sessionValue(sessionIndex);
 
     // rank is read from the total EARNED SO FAR, so a session is scored at the
@@ -358,6 +367,19 @@ export function computePoints(
     const points = Math.round(flat * multiplier * value * rankMult);
 
     total += points;
+
+    // missions land as they are earned, so the rank the next sitting is paid
+    // at is the rank on screen. they used to be added after the replay.
+    const decks = decksByDay.get(day) ?? new Set<string>();
+    decksByDay.set(day, decks);
+    if (isMissionDeck(session.deck) && countsForMission(session) && !decks.has(session.deck)) {
+      decks.add(session.deck);
+      let mission = MISSION_XP;
+      if (decks.size === MISSION_DECKS.length) mission += ALL_MISSIONS_XP;
+      missionTotal += mission;
+      total += mission;
+    }
+
     awards.push({
       startedAt: session.startedAt,
       streak,
@@ -369,12 +391,6 @@ export function computePoints(
     });
   }
 
-  // mission xp is a property of the DAY, not of any one sitting, so it is
-  // added after the sittings are scored rather than inside the loop
-  let missionTotal = 0;
-  for (const decks of decksByDay.values()) missionTotal += missionXpFor(decks);
-  total += missionTotal;
-
   const currentStreak = streakOn(studyDays, dateKey(now.getTime()));
   return {
     total,
@@ -384,31 +400,4 @@ export function computePoints(
     sessionsCounted: ordered.length,
     awards,
   };
-}
-
-/**
- * What finishing a `length` sitting would pay right now.
- *
- * Used to show the reward before it is earned. Deliberately runs the same
- * replay as computePoints with the prospective session appended, rather than
- * reimplementing the formula - a second implementation is a second thing to
- * get wrong.
- */
-export function previewAward(
-  sessions: SessionRecord[],
-  length: SessionLength,
-  completed: boolean,
-  now: Date = new Date(),
-  opts: ComputeOptions = {}
-): number {
-  const hypothetical: SessionRecord = {
-    startedAt: now.getTime(),
-    endedAt: now.getTime(),
-    deck: 'preview',
-    answers: 0,
-    length,
-    completed,
-  };
-  const withIt = computePoints([...sessions, hypothetical], now, opts);
-  return withIt.awards[withIt.awards.length - 1]?.points ?? 0;
 }

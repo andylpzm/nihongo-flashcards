@@ -31,7 +31,6 @@ import {
   btnGradeAgain,
   btnGradeHard,
   btnGradeGood,
-  btnGradeEasy,
   flipCard,
   prevCard,
   nextCard,
@@ -64,6 +63,7 @@ import { renderStatsView, refreshMissionDot } from './ui/statsView';
 import { initTheme } from './ui/theme';
 import { speakJapanese } from './audio/tts';
 import { runMigrationIfNeeded } from './srs/migration';
+import { requestPersistentStorage } from './srs/db';
 import { onSwipe } from './ui/gestures';
 import { createPager, type PagerController, type PagerPage } from './ui/pager';
 import { startSplash } from './ui/splash';
@@ -449,6 +449,8 @@ async function init(): Promise<void> {
 }
 
 async function boot(): Promise<void> {
+  // without this safari may wipe everything after a week away
+  void requestPersistentStorage();
   // before anything reads points: draws the line under any studying done
   // before this build, so the binder is earned from today rather than bought
   // by a back catalogue
@@ -512,7 +514,6 @@ function setupEventListeners(): void {
   bindGrade(btnGradeAgain, Rating.Again);
   bindGrade(btnGradeHard, Rating.Hard);
   bindGrade(btnGradeGood, Rating.Good);
-  bindGrade(btnGradeEasy, Rating.Easy);
 
   // Deck filter sheet - the deck bar is its only trigger; progress, level,
   // types and topics all live inside it now.
@@ -821,9 +822,6 @@ function handleKeyboardShortcuts(e: KeyboardEvent): void {
       break;
     case 'Digit3':
       if (gradingReachable) void gradeCurrentCard(Rating.Good);
-      break;
-    case 'Digit4':
-      if (gradingReachable) void gradeCurrentCard(Rating.Easy);
       break;
     case 'ArrowLeft':
       prevCard();

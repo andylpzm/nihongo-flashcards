@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { newFsrsCard, scheduleReview, formatInterval, Rating } from './scheduler';
+import { newFsrsCard, scheduleReview, dueAt, Rating } from './scheduler';
 import { buildQueue } from './queue';
 import { SESSION_SIZES } from './settings';
 import type { Card } from '../state/types';
@@ -54,20 +54,6 @@ describe('scheduleReview', () => {
   });
 });
 
-describe('formatInterval', () => {
-  it('formats sub-hour intervals in minutes', () => {
-    const now = new Date('2026-01-01T00:00:00Z');
-    const due = new Date(now.getTime() + 10 * 60 * 1000);
-    expect(formatInterval(due, now)).toBe('10m');
-  });
-
-  it('formats multi-day intervals in days', () => {
-    const now = new Date('2026-01-01T00:00:00Z');
-    const due = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-    expect(formatInterval(due, now)).toBe('3d');
-  });
-});
-
 describe('grading a card Good removes it from today\'s queue and it reappears on its due date', () => {
   it('end-to-end with a faked clock', () => {
     const day1 = new Date('2026-05-01T09:00:00Z');
@@ -98,5 +84,38 @@ describe('grading a card Good removes it from today\'s queue and it reappears on
     const onDueDate = record.card.due;
     const queueOnDue = buildQueue([card], new Map([[1, record]]), sessionSize, onDueDate);
     expect(queueOnDue.items.map((q) => q.card.id)).toEqual([1]);
+  });
+});
+
+describe('dueAt', () => {
+  const DAY = 24 * 60 * 60 * 1000;
+
+  it('keeps every gap to about two weeks', () => {
+    let now = new Date('2027-03-01T00:00:00Z');
+    let card = newFsrsCard(now);
+    for (let i = 0; i < 6; i++) {
+      card = scheduleReview(card, Rating.Easy, now).card;
+      // easy can land a day or two past the cap
+      expect(card.due.getTime() - now.getTime()).toBeLessThanOrEqual(16 * DAY);
+      now = card.due;
+    }
+  });
+
+  it('pulls in a word scheduled under the old year-long gaps', () => {
+    const last = new Date('2026-03-01T00:00:00Z');
+    const card = { ...newFsrsCard(last), stability: 400, last_review: last, due: new Date(last.getTime() + 365 * DAY) };
+    expect(dueAt(card)).toBe(last.getTime() + 14 * DAY);
+  });
+
+  it('trusts words graded after the change', () => {
+    const last = new Date('2027-03-01T00:00:00Z');
+    const card = { ...newFsrsCard(last), stability: 400, last_review: last, due: new Date(last.getTime() + 15 * DAY) };
+    expect(dueAt(card)).toBe(card.due.getTime());
+  });
+
+  it('leaves a due date that is already sooner alone', () => {
+    const last = new Date('2026-03-01T00:00:00Z');
+    const card = { ...newFsrsCard(last), stability: 10, last_review: last, due: new Date(last.getTime() + 2 * DAY) };
+    expect(dueAt(card)).toBe(last.getTime() + 2 * DAY);
   });
 });

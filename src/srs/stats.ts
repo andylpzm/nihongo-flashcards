@@ -5,7 +5,6 @@ import { isVocabCard } from '../data/types';
 import { dateKey, dayStart, daysBetween } from './dates';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const MASTERED_STABILITY_DAYS = 21;
 
 export interface StateCounts {
   new: number;
@@ -128,32 +127,9 @@ export function computeStreak(reviews: ReviewRecord[], now: Date = new Date()): 
   return streak;
 }
 
-/** Cards considered durably "learned" for the progress header - in FSRS
- * Review state with a stability past the old app's mastery bar. */
-export function countLearned(
-  reviews: ReviewRecord[],
-  minStabilityDays: number = MASTERED_STABILITY_DAYS
-): number {
-  return reviews.filter((r) => r.card.state === State.Review && r.card.stability >= minStabilityDays)
-    .length;
-}
-
-export function countDueToday(reviews: ReviewRecord[], now: Date = new Date()): number {
-  return reviews.filter((r) => r.card.due.getTime() <= now.getTime()).length;
-}
-
-export function countNewAvailable(allCards: Card[], reviews: ReviewRecord[]): number {
-  const reviewedIds = new Set(reviews.map((r) => r.cardId));
-  return allCards.filter((c) => !reviewedIds.has(c.id)).length;
-}
-
-/** Reviews below this are too small a sample to quote a rate from. */
-export const MIN_SAMPLE = 30;
 /**
- * A median duration stabilises far sooner than a rate does: retention is the
- * frequency of a relatively rare event and needs a big sample before it means
- * anything, whereas the middle value of ten timings is already a fair summary
- * of how long a card takes.
+ * the middle value of ten timings is already a fair summary of how long a
+ * card takes.
  */
 export const MIN_PACE_SAMPLE = 10;
 /** Anything longer is "put the phone down mid-card", not a slow answer. */

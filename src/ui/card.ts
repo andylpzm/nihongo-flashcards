@@ -53,7 +53,6 @@ const gradeButtonsEl = document.getElementById('grade-buttons')!;
 export const btnGradeAgain = document.getElementById('btn-grade-again')!;
 export const btnGradeHard = document.getElementById('btn-grade-hard')!;
 export const btnGradeGood = document.getElementById('btn-grade-good')!;
-export const btnGradeEasy = document.getElementById('btn-grade-easy')!;
 // Proposal Progress Counters
 const proposalRemainingEl = document.getElementById('proposal-remaining');
 const proposalBarFillEl = document.getElementById('proposal-bar-fill') as HTMLElement | null;
@@ -370,15 +369,11 @@ function renderEmptyState(): void {
     return;
   }
 
-  // Never claim "all caught up" while unlearned cards remain in the deck (D3).
+  // an empty sitting only happens once every card in the filters has been seen
+  // and none is due, so "all caught up" is always true here
   const message =
     state.studyMode === 'session'
-      ? build && build.newHeldBack > 0
-        ? {
-            title: 'Nothing scheduled right now',
-            body: `${build.newHeldBack} cards are still unlearned - press "Learn more" to pull some in.`,
-          }
-        : { title: 'All caught up', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
+      ? { title: 'All caught up', body: 'No cards are due right now. Come back later, or Browse to review anyway.' }
       : { title: 'Nothing here', body: 'No cards match this filter. Try changing your filters.' };
 
   cardFront.innerHTML = `

@@ -61,7 +61,7 @@ describe('buildQueue', () => {
     expect(result.nextDueAt).toEqual(tomorrow);
   });
 
-  it('sorts due reviews oldest-due-first', () => {
+  it('sorts due reviews oldest-due-first when they are equally weak', () => {
     const twoDaysAgo = new Date('2026-06-13T12:00:00Z');
     const cards = [makeCard(1), makeCard(2)];
     const reviews = new Map([
@@ -72,6 +72,41 @@ describe('buildQueue', () => {
     const result = buildQueue(cards, reviews, fullSessionSize, now);
 
     expect(result.items.map((q) => q.card.id)).toEqual([2, 1]);
+  });
+
+  it('puts the weakest due words first, however overdue the strong ones are', () => {
+    const monthAgo = new Date('2026-05-15T12:00:00Z');
+    const strong = makeReview(1, monthAgo);
+    strong.card.stability = 40;
+    const weak = makeReview(2, yesterday);
+    weak.card.stability = 0.5;
+    const reviews = new Map([[1, strong], [2, weak]]);
+
+    const result = buildQueue([makeCard(1), makeCard(2)], reviews, fullSessionSize, now);
+
+    expect(result.items.map((q) => q.card.id)).toEqual([2, 1]);
+  });
+
+  it('keeps two seats for the longest-unseen words when the weak ones would fill the sitting', () => {
+    const monthAgo = new Date('2026-05-15T12:00:00Z');
+    const reviews = new Map<CardId, ReviewRecord>();
+    for (let id = 1; id <= 30; id++) {
+      const r = makeReview(id, yesterday);
+      r.card.stability = 0.5;
+      reviews.set(id, r);
+    }
+    for (const id of [31, 32]) {
+      const r = makeReview(id, monthAgo);
+      r.card.stability = 40;
+      reviews.set(id, r);
+    }
+    const cards = Array.from({ length: 32 }, (_, i) => makeCard(i + 1));
+
+    const ids = buildQueue(cards, reviews, SESSION_SIZES.short, now).items.map((q) => q.card.id);
+
+    expect(ids).toHaveLength(SESSION_SIZES.short);
+    expect(ids).toContain(31);
+    expect(ids).toContain(32);
   });
 
   it('treats cards with no review record as new cards', () => {
@@ -268,7 +303,7 @@ describe('buildRandomQueue', () => {
   });
 
   it('holds nothing back and schedules nothing', () => {
-    // what keeps "Learn more" and the next-review countdown off these decks
+    // what keeps the next-review countdown off these decks
     const build = buildRandomQueue(pool(46), new Map(), 10, seeded());
     expect(build.newHeldBack).toBe(0);
     expect(build.nextDueAt).toBeNull();

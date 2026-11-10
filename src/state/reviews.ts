@@ -1,26 +1,6 @@
 import { getAllReviews, putReview } from '../srs/db';
-import { State } from '../srs/scheduler';
 import type { ReviewRecord, Grade, FsrsCard } from '../srs/types';
 import type { Card, CardId } from './types';
-import { loadDailyProgress, saveDailyProgress, type DailyProgress } from './persistence';
-import { dateKey } from '../srs/dates';
-
-// the day turns at 6am local (srs/dates.ts), and the new-card allowance has to
-// turn with it. this used to bucket by UTC, which meant two different days ran
-// at once: east of greenwich the allowance reset somewhere around 2am while
-// the streak and the missions still called it last night.
-const todayKey = (now: Date): string => dateKey(now.getTime());
-
-function todayProgress(now: Date): DailyProgress {
-  const progress = loadDailyProgress();
-  const today = todayKey(now);
-  return progress.date === today ? progress : { date: today, newCount: 0, reviewCount: 0, extraNew: 0 };
-}
-
-/** A card is considered durably "learned" once it has graduated to FSRS
- * Review state with a stability past the old app's mastery bar. Mirrors
- * srs/stats.ts's countLearned() threshold for a single-card check. */
-const MASTERED_STABILITY_DAYS = 21;
 
 /**
  * In-memory cache of every review record, mirrored from IndexedDB. Loaded
@@ -46,20 +26,6 @@ export function getReviewsSnapshot(): Map<CardId, ReviewRecord> {
 
 export function getReview(cardId: CardId): ReviewRecord | undefined {
   return reviewsByCardId.get(cardId);
-}
-
-export function isCardMastered(cardId: CardId): boolean {
-  const review = reviewsByCardId.get(cardId);
-  return !!review && review.card.state === State.Review && review.card.stability >= MASTERED_STABILITY_DAYS;
-}
-
-function bumpDailyProgress(kind: 'new' | 'review', now: Date): void {
-  const progress = todayProgress(now);
-  saveDailyProgress({
-    ...progress,
-    newCount: progress.newCount + (kind === 'new' ? 1 : 0),
-    reviewCount: progress.reviewCount + (kind === 'review' ? 1 : 0),
-  });
 }
 
 /**
@@ -88,7 +54,6 @@ export async function recordGrade(
 
   await putReview(record);
   reviewsByCardId.set(card.id, record);
-  bumpDailyProgress(existing ? 'review' : 'new', now);
 
   return record;
 }

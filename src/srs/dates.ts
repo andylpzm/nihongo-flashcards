@@ -9,6 +9,10 @@
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** the day the shorter gaps and the xp fixes ship. anything before it keeps
+ * the old rules, so nothing already earned or scheduled moves the wrong way. */
+export const UPDATE_SHIPS_ON = Date.parse('2026-11-11T00:00:00Z');
+
 /**
  * when a new day begins, in hours past local midnight.
  *

@@ -1,6 +1,7 @@
 import { fsrs, generatorParameters, createEmptyCard, Rating, State } from 'ts-fsrs';
 import type { RecordLogItem } from 'ts-fsrs';
 import type { FsrsCard, Grade } from './types';
+import { UPDATE_SHIPS_ON } from './dates';
 
 export { Rating, State };
 
@@ -19,14 +20,32 @@ export { Rating, State };
  * is handled by the session queue instead (see session.ts), which targets the
  * repetition at the cards that actually need it rather than every card.
  */
+// chris wants a lot of repetition. a word answered right is due again after
+// 1, 2, 4, 7, 13 days and then every two weeks at most.
+const RETENTION = 0.97;
+const MAX_INTERVAL_DAYS = 14;
+
 const f = fsrs(
   generatorParameters({
     enable_fuzz: true,
-    maximum_interval: 365,
+    request_retention: RETENTION,
+    maximum_interval: MAX_INTERVAL_DAYS,
     learning_steps: [],
     relearning_steps: [],
   })
 );
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const intervalModifier = f.calculate_interval_modifier(RETENTION);
+
+/** when a card is due. words graded before the change still carry their old,
+ * longer due dates - this pulls them in without rewriting what is stored. */
+export function dueAt(card: FsrsCard): number {
+  const stored = card.due.getTime();
+  if (!card.last_review || new Date(card.last_review).getTime() >= UPDATE_SHIPS_ON) return stored;
+  const days = Math.min(Math.max(1, Math.round(card.stability * intervalModifier)), MAX_INTERVAL_DAYS);
+  return Math.min(stored, new Date(card.last_review).getTime() + days * DAY_MS);
+}
 
 /** A brand-new card, never reviewed. */
 export function newFsrsCard(now: Date = new Date()): FsrsCard {
@@ -51,17 +70,4 @@ export function previewIntervals(card: FsrsCard, now: Date = new Date()): Record
     result[item.log.rating as Grade] = item;
   }
   return result;
-}
-
-/** Human-readable interval label for a grade button, e.g. "10m", "3d". */
-export function formatInterval(dueDate: Date, now: Date = new Date()): string {
-  const diffMs = dueDate.getTime() - now.getTime();
-  const diffMinutes = Math.round(diffMs / (60 * 1000));
-  if (diffMinutes < 60) return `${Math.max(1, diffMinutes)}m`;
-  const diffHours = Math.round(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours}h`;
-  const diffDays = Math.round(diffHours / 24);
-  if (diffDays < 30) return `${diffDays}d`;
-  const diffMonths = Math.round(diffDays / 30);
-  return `${diffMonths}mo`;
 }

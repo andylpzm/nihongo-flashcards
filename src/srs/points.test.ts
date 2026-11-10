@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computePoints, previewAward, streakOn, streakMultiplier, SESSION_XP, RANKS, MISSION_XP, SESSION_VALUE, sessionValue, MAX_STREAK_MULTIPLIER, STREAK_RAMP_DAYS, rankFor, promotionLabel } from './points';
+import { computePoints, streakOn, streakMultiplier, SESSION_XP, RANKS, MISSION_XP, ALL_MISSIONS_XP, SESSION_VALUE, sessionValue, MAX_STREAK_MULTIPLIER, STREAK_RAMP_DAYS, rankFor, promotionLabel } from './points';
 import type { SessionRecord } from './types';
 import type { SessionLength } from './settings';
 
@@ -255,16 +255,6 @@ describe('computePoints', () => {
   });
 });
 
-describe('previewAward', () => {
-  it('matches what the session actually pays once recorded', () => {
-    const now = new Date(at('2026-03-30'));
-    const history = run(10);
-    const predicted = previewAward(history, 'long', true, now);
-    const actual = computePoints([...history, session('2026-03-30', 30)], now);
-    expect(predicted).toBe(actual.awards[actual.awards.length - 1]!.points);
-  });
-});
-
 describe('rank ladder', () => {
   it('reads as a school club, not one sport', () => {
     expect(RANKS.map((r) => r.name)).toEqual([
@@ -310,5 +300,44 @@ describe('rank reveal', () => {
       if (rank.nextName === null) continue;
       expect(revealed(r.at)).toContain(rank.nextName);
     }
+  });
+});
+
+describe('sittings after the update', () => {
+  const decks = ['vocabulary', 'hiragana', 'katakana', 'kanji'];
+  const on = (deck: string, hour: number, completed: boolean): SessionRecord => ({
+    ...session('2027-02-01', 1, completed, hour),
+    deck,
+  });
+  const now = new Date(at('2027-02-01', 23));
+
+  it('pays no mission for an abandoned sitting', () => {
+    const farmed = computePoints(decks.map((d, i) => on(d, 10 + i, false)), now);
+    expect(farmed.total).toBe(0);
+  });
+
+  it('still pays missions for abandoned sittings from before it', () => {
+    const old = computePoints([{ ...session('2026-03-01', 1, false), deck: 'kanji' }], new Date(at('2026-03-01', 23)));
+    expect(old.missionTotal).toBe(MISSION_XP);
+  });
+
+  it('does not let an abandoned sitting make the next one worth less', () => {
+    const straight = computePoints([on('vocabulary', 12, true)], now);
+    const afterQuit = computePoints([on('vocabulary', 11, false), on('vocabulary', 12, true)], now);
+    expect(afterQuit.total).toBe(straight.total);
+  });
+
+  it('pays each sitting at the rank on screen, missions included', () => {
+    const all: SessionRecord[] = [];
+    for (let d = 0; d < 120; d++) {
+      const day = new Date('2027-02-01T12:00:00');
+      day.setDate(day.getDate() + d);
+      const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+      decks.forEach((deck, i) => all.push({ ...session(key, 10, true, 10 + i, 'short'), deck }));
+    }
+    const result = computePoints(all, new Date(all[all.length - 1]!.endedAt));
+    const last = result.awards[result.awards.length - 1]!;
+    const before = result.total - last.points - MISSION_XP - ALL_MISSIONS_XP;
+    expect(last.rankMult).toBe(rankFor(before).mult);
   });
 });

@@ -2,13 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   computeStateCounts,
   computeStreak,
-  countLearned,
-  countDueToday,
-  countNewAvailable,
 } from './stats';
 import { Rating, State } from './scheduler';
 import type { ReviewRecord, FsrsCard } from './types';
-import type { Card } from '../state/types';
 
 function makeFsrsCard(overrides: Partial<FsrsCard> = {}): FsrsCard {
   return {
@@ -100,31 +96,3 @@ describe('computeStreak', () => {
   });
 });
 
-describe('countLearned / countDueToday / countNewAvailable', () => {
-  it('countLearned requires Review state and stability past the threshold', () => {
-    const reviews: ReviewRecord[] = [
-      { cardId: 1, card: makeFsrsCard({ state: State.Review, stability: 25 }), log: [] },
-      { cardId: 2, card: makeFsrsCard({ state: State.Review, stability: 5 }), log: [] },
-      { cardId: 3, card: makeFsrsCard({ state: State.Learning, stability: 25 }), log: [] },
-    ];
-    expect(countLearned(reviews)).toBe(1);
-  });
-
-  it('countDueToday counts records due at or before now', () => {
-    const now = new Date('2026-06-15T00:00:00Z');
-    const reviews: ReviewRecord[] = [
-      { cardId: 1, card: makeFsrsCard({ due: new Date('2026-06-14T00:00:00Z') }), log: [] },
-      { cardId: 2, card: makeFsrsCard({ due: new Date('2026-06-16T00:00:00Z') }), log: [] },
-    ];
-    expect(countDueToday(reviews, now)).toBe(1);
-  });
-
-  it('countNewAvailable is cards with no review record', () => {
-    const cards: Card[] = [
-      { id: 1, kana: 'あ', romaji: 'a', meanings: ['a'], level: 'N5', pos: 'other', topics: ['other'] },
-      { id: 2, kana: 'い', romaji: 'i', meanings: ['i'], level: 'N5', pos: 'other', topics: ['other'] },
-    ];
-    const reviews: ReviewRecord[] = [{ cardId: 1, card: makeFsrsCard(), log: [] }];
-    expect(countNewAvailable(cards, reviews)).toBe(1);
-  });
-});

@@ -24,8 +24,6 @@ import { dateKey } from '../srs/dates';
 import { legacyTotal } from '../srs/legacyPoints';
 import {
   newlyUnlocked,
-  countUnlocked,
-  countPieces,
   type GallerySaga,
   type UnlockBatch,
 } from '../srs/gallery';
@@ -226,11 +224,6 @@ export async function startPointsClock(now: Date = new Date()): Promise<void> {
   await saveProfile({ pointsEpoch: now.getTime() });
 }
 
-/** True until the user has been asked for a name even once. */
-export function needsNamePrompt(profile: Profile): boolean {
-  return profile.name === '';
-}
-
 /**
  * Freezes the old per-answer total, once, before any new scoring happens.
  *
@@ -327,18 +320,6 @@ export async function recordSession(
     rank: after.rank,
     promoted: after.rank.index > before.rank.index,
     unlocked: newlyUnlocked(sagas, totalBefore, totalAfter),
-  };
-}
-
-export async function galleryProgress(
-  sagas: GallerySaga[],
-  now: Date = new Date()
-): Promise<{ unlocked: number; total: number; points: number }> {
-  const { summary } = await getPointsState(now);
-  return {
-    unlocked: countUnlocked(sagas, summary.total),
-    total: countPieces(sagas),
-    points: summary.total,
   };
 }
 
