@@ -341,3 +341,25 @@ describe('sittings after the update', () => {
     expect(last.rankMult).toBe(rankFor(before).mult);
   });
 });
+
+describe('history from before the update', () => {
+  it('keeps scoring it the old way, missions held back from the rank', () => {
+    // enough missions to cross a rank, if they counted towards it as they landed
+    const days: SessionRecord[] = [];
+    for (let d = 0; d < 40; d++) {
+      const day = new Date('2026-09-01T12:00:00');
+      day.setDate(day.getDate() + d);
+      const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+      ['vocabulary', 'hiragana', 'katakana', 'kanji'].forEach((deck, i) => days.push({ ...session(key, 10, true, 10 + i, 'short'), deck }));
+    }
+    const result = computePoints(days, new Date('2026-10-20T12:00:00'));
+    const sittingsOnly = result.total - result.missionTotal;
+    // every sitting was paid at the rank its sittings alone had reached
+    let running = 0;
+    for (const award of result.awards) {
+      expect(award.rankMult).toBe(rankFor(running).mult);
+      running += award.points;
+    }
+    expect(running).toBe(sittingsOnly);
+  });
+});

@@ -337,6 +337,10 @@ export function computePoints(
   // mission decks ticked off per day
   const decksByDay = new Map<string, Set<string>>();
   let missionTotal = 0;
+  // missions from before the update, held back the way the old replay held
+  // them, so history scores exactly what it scored then. they join the total
+  // at the first sitting after the update.
+  let heldMissions = 0;
   const awards: SessionAward[] = [];
   // The streak is evaluated against the days studied UP TO the session being
   // scored. Using the full set would let an early session borrow credit from
@@ -348,6 +352,13 @@ export function computePoints(
   for (const session of ordered) {
     const day = dateKey(session.startedAt);
     daysSoFar.add(day);
+    // the fixes below count from the update on. applied to history they
+    // unlocked a run of pictures overnight that nothing had been studied for.
+    const before = session.startedAt < UPDATE_SHIPS_ON;
+    if (!before && heldMissions) {
+      total += heldMissions;
+      heldMissions = 0;
+    }
 
     const streak = streakOn(daysSoFar, day);
     const multiplier = streakMultiplier(streak);
@@ -355,7 +366,7 @@ export function computePoints(
     // only finished sittings take a place in the day - an abandoned one pays
     // nothing, so it must not make the next real one worth less
     const sessionIndex = sessionsByDay.get(day) ?? 0;
-    if (session.completed) sessionsByDay.set(day, sessionIndex + 1);
+    if (session.completed || before) sessionsByDay.set(day, sessionIndex + 1);
     const value = sessionValue(sessionIndex);
 
     // rank is read from the total EARNED SO FAR, so a session is scored at the
@@ -377,7 +388,8 @@ export function computePoints(
       let mission = MISSION_XP;
       if (decks.size === MISSION_DECKS.length) mission += ALL_MISSIONS_XP;
       missionTotal += mission;
-      total += mission;
+      if (before) heldMissions += mission;
+      else total += mission;
     }
 
     awards.push({
@@ -390,6 +402,8 @@ export function computePoints(
       points,
     });
   }
+
+  total += heldMissions;
 
   const currentStreak = streakOn(studyDays, dateKey(now.getTime()));
   return {
