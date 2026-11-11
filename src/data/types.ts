@@ -64,6 +64,23 @@ export interface KanjiCard {
   examples: { word: string; reading: string; meaning: string }[];
 }
 
+/** what the kanji sheet shows beyond KanjiCard - built by scripts/build-kanji-detail.mjs */
+export interface KanjiDetail {
+  /** svg path data in a 109 square, one per stroke, in writing order (kanjivg) */
+  strokes: string[];
+  /** which strokes make up the radical. empty when the kanji is its own radical */
+  radicalStrokes: number[];
+  radical: { char: string; meaning: string | null } | null;
+  /** the shapes it is built from - empty when there is nothing to split */
+  parts: { char: string; meaning: string | null }[];
+  /** newspaper frequency rank, 1 = most used (kanjidic2) */
+  freq: number | null;
+  /** japanese school grade: 1-6 primary, 8 secondary (kanjidic2) */
+  grade: number | null;
+  /** readings used only in names */
+  names: string[];
+}
+
 export type Card = VocabCard | KanaCard | KanjiCard;
 
 export function isVocabCard(card: Card): card is VocabCard {

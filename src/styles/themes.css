@@ -24,6 +24,18 @@ body.light-theme {
   --accent-cyan-glow: rgba(2, 132, 199, 0.2);
   --accent-orange: #0284c7;
   --accent-orange-glow: rgba(2, 132, 199, 0.2);
+  /* #0284c7 is 4.1:1 on white - fine for fills, short of 4.5 for text */
+  --accent-text: #0369a1;
+
+  --reading-fill: rgba(2, 132, 199, 0.08);
+  --kun-text: #b45309;
+  --kun-fill: rgba(245, 158, 11, 0.1);
+  --name-border: #cbd5e1;
+  --kanji-guide: rgba(2, 132, 199, 0.42);
+  --kanji-ghost: #e2e8f0;
+  --kanji-done-stroke: #cbd5e1;
+  --kanji-now: rgba(2, 132, 199, 0.1);
+  --note-fill: rgba(2, 132, 199, 0.06);
 
   --shadow-color: rgba(2, 132, 199, 0.15);
 

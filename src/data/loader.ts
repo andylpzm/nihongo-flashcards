@@ -1,4 +1,4 @@
-import type { VocabCard, KanaCard, KanjiCard } from './types';
+import type { VocabCard, KanaCard, KanjiCard, KanjiDetail } from './types';
 import type { GallerySaga } from '../srs/gallery';
 import { applyInserts, type InsertFile } from './inserts';
 
@@ -51,4 +51,14 @@ export async function loadKanji(): Promise<KanjiCard[]> {
     kanjiCache = mod.default as KanjiCard[];
   }
   return kanjiCache;
+}
+
+// stroke paths and the rest of the sheet - only fetched when a sheet opens
+let kanjiDetailCache: Record<string, KanjiDetail> | null = null;
+export async function loadKanjiDetail(): Promise<Record<string, KanjiDetail>> {
+  if (!kanjiDetailCache) {
+    const mod = await import('./kanjiDetail.json');
+    kanjiDetailCache = mod.default as Record<string, KanjiDetail>;
+  }
+  return kanjiDetailCache;
 }

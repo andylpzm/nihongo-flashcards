@@ -182,27 +182,366 @@ body.light-theme .kana-char {
   margin-bottom: 0;
 }
 
-/* Detail sheet */
-.kanji-sheet-hero {
+/* detail sheet. it sets its own rhythm - the drawer's 24px between blocks
+   pulled every label away from what it labels */
+.kanji-sheet .drawer-body {
+  gap: 0;
+}
+
+.kanji-sheet .ks-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.kanji-sheet .ks-muted {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.ks-top {
   display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ks-glyph-col {
+  display: flex;
+  flex: none;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.25rem;
+  gap: 0.4rem;
 }
 
-.kanji-sheet-hero .kanji-glyph {
-  font-size: clamp(3.5rem, 22vw, 5rem);
+/* the practice square: a dashed cross on the box itself, so it always runs
+   edge to edge whatever size the drawing ends up */
+.ks-sq {
+  position: relative;
+  overflow: hidden;
 }
 
-.kanji-sheet-meaning {
-  font-size: 1.15rem;
+.ks-sq::before,
+.ks-sq::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.ks-sq::before {
+  inset: 50% 0 auto;
+  border-top: 1px dashed var(--kanji-guide);
+}
+
+.ks-sq::after {
+  inset: 0 auto 0 50%;
+  border-left: 1px dashed var(--kanji-guide);
+}
+
+.ks-sq svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ks-glyph {
+  width: 124px;
+  height: 124px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.ks-glyph svg {
+  stroke-width: 5;
+}
+
+.ks-ink path {
+  stroke: var(--text);
+}
+
+.ks-ink path.is-radical {
+  stroke: var(--radical);
+}
+
+/* tracing paper, only while drawing */
+.ks-ghost path {
+  stroke: var(--kanji-ghost);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.ks-glyph.is-drawing .ks-ghost path {
+  opacity: 1;
+}
+
+.ks-dot {
+  fill: var(--radical);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.ks-dot.is-shown {
+  opacity: 1;
+}
+
+.ks-tip {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.ks-tip svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--accent-text);
+}
+
+.ks-stats {
+  flex: 1;
+  min-width: 0;
+}
+
+.ks-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.05rem;
   font-weight: 600;
 }
 
-.kanji-sheet-meta {
-  font-size: 0.75rem;
+.ks-stat:last-child {
+  border-bottom: 0;
+}
+
+.ks-section {
+  display: block;
+  margin: 1.1rem 0 0.5rem;
+}
+
+/* flex: none - the sheet body is a flex column, and with overflow hidden the
+   strip let itself be squeezed to nothing */
+.ks-strip {
+  flex: none;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* lines drawn on the boxes rather than a filled gap, so the boxes stay
+   see-through and match the sheet in both themes */
+.ks-cell {
+  aspect-ratio: 1;
+  box-shadow: inset -1px 0 var(--border), inset 0 -1px var(--border);
+  transition: background 0.2s;
+}
+
+.ks-cell.is-last-col {
+  box-shadow: inset 0 -1px var(--border);
+}
+
+.ks-cell.is-last-row {
+  box-shadow: inset -1px 0 var(--border);
+}
+
+.ks-cell.is-last-col.is-last-row {
+  box-shadow: none;
+}
+
+.ks-cell.is-now {
+  background: var(--kanji-now);
+}
+
+.ks-cell svg {
+  stroke-width: 6;
+}
+
+.ks-cell path {
+  stroke: var(--kanji-done-stroke);
+}
+
+.ks-cell path.is-current {
+  stroke: var(--text);
+  stroke-width: 7;
+}
+
+.ks-cell circle {
+  fill: var(--radical);
+}
+
+.ks-cell span {
+  position: absolute;
+  top: 1px;
+  left: 3px;
+  font-size: 0.68rem;
+  color: var(--accent-text);
+}
+
+.ks-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ks-strip + .ks-row {
+  margin-top: 0.4rem;
+}
+
+.ks-row .ks-label {
+  flex: none;
+  width: 4.4rem;
+}
+
+.ks-meaning {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ks-shapes {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.ks-shape {
+  font-family: var(--font-jp);
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.ks-shape.is-radical {
+  color: var(--radical);
+}
+
+.ks-readings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ks-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.ks-chip-row .ks-label {
+  width: 3.3rem;
+}
+
+.ks-chip {
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-family: var(--font-jp);
+  font-size: 1rem;
+}
+
+.ks-chip.is-on {
+  color: var(--accent-text);
+  background: var(--reading-fill);
+}
+
+.ks-chip.is-kun {
+  color: var(--kun-text);
+  background: var(--kun-fill);
+}
+
+/* names look different on purpose - they are not readings he will meet in words */
+.ks-chip.is-name {
+  padding: 0.15rem 0.65rem;
+  border: 1px solid var(--name-border);
+  font-size: 0.9rem;
   color: var(--text-muted);
+}
+
+.ks-note {
+  padding: 0.75rem 0 0.5rem;
+}
+
+.ks-note-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.ks-note-text {
+  padding: 0.6rem 0.75rem;
+  border-radius: 12px;
+  background: var(--note-fill);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.ks-note-empty {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px dashed var(--kanji-guide);
+  border-radius: 12px;
+  background: none;
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.ks-note-input {
+  display: block;
+  width: 100%;
+  min-height: 5.25rem;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid var(--accent-primary);
+  border-radius: 12px;
+  outline: none;
+  background: var(--surface-raised);
+  /* 16px or ios zooms the page in when the field takes focus */
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  resize: none;
+}
+
+.ks-note-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.ks-note-done {
+  flex: none;
+  height: 2rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
 }
 
 /* KANJIDIC2 attribution - a licence requirement, not decoration. */
@@ -216,7 +555,7 @@ body.light-theme .kana-char {
 }
 
 .data-credit a {
-  color: var(--accent-cyan);
+  color: var(--accent-text);
 }
 
 /* Sheet title. The glyph and its meaning are separated by space, never by a

@@ -22,6 +22,21 @@
   --accent-orange-glow: rgba(249, 115, 22, 0.4);
   --accent-green: #10b981;
   --accent-red: #ef4444;
+  /* accent as text colour. same as cyan here; light mode needs a darker blue
+     than its accent to reach 4.5:1 on white */
+  --accent-text: var(--accent-cyan);
+
+  /* kanji sheet */
+  --radical: #e24b4a;
+  --reading-fill: rgba(6, 182, 212, 0.12);
+  --kun-text: #f59e0b;
+  --kun-fill: rgba(245, 158, 11, 0.12);
+  --name-border: rgba(255, 255, 255, 0.2);
+  --kanji-guide: rgba(255, 255, 255, 0.28);
+  --kanji-ghost: #2a2f3a;
+  --kanji-done-stroke: #4b5563;
+  --kanji-now: rgba(6, 182, 212, 0.14);
+  --note-fill: rgba(6, 182, 212, 0.08);
   --accent-amber: #f59e0b;
   --accent-purple: #8b5cf6;
 

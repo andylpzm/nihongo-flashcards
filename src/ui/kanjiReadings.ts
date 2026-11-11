@@ -7,14 +7,14 @@
  * raw looks like a typo, so the stem is rendered normally and the okurigana
  * tail in a dimmer weight.
  */
+export function readingHtml(r: string): string {
+  const dot = r.indexOf('.');
+  if (dot === -1) return r;
+  return `${r.slice(0, dot)}<span class="okurigana">${r.slice(dot + 1)}</span>`;
+}
+
 export function readingRow(label: string, values: string[]): string {
   if (values.length === 0) return '';
-  const rendered = values
-    .map((r) => {
-      const dot = r.indexOf('.');
-      if (dot === -1) return r;
-      return `${r.slice(0, dot)}<span class="okurigana">${r.slice(dot + 1)}</span>`;
-    })
-    .join('・');
+  const rendered = values.map(readingHtml).join('・');
   return `<div class="kanji-reading-row"><span class="kanji-reading-label">${label}</span><span class="kanji-reading-values" lang="ja">${rendered}</span></div>`;
 }
